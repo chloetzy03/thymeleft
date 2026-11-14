@@ -23,13 +23,20 @@ People who throw away groceries because they forgot the date, and want an easy a
 | App skeleton, theme (light + dark), 4-tab bar | 0 | Done |
 | Pantry list with expiry badges, location filters, swipe to delete, dark mode, VoiceOver | 1 | Done |
 | Add / edit item manually (emoji preview, quick dates, validation) | 2 | Done |
-| Expiry reminders (local notifications) | 3 | Planned |
+| Expiry reminders (local notifications), per-item override, friendly permission explainer | 3 | Done |
+| Settings in the Me tab: reminder time/days, date format, red/amber thresholds | 3 | Done |
 | Scan expiry date with camera | 4 | Planned |
 | Recipe suggestions (TheMealDB) | 5 | Planned |
 | Polish: icon, empty states, tests, accessibility | 6 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
+
+## Reminders (how they behave)
+- Default: 1 day before at 9:00 AM; both editable in Me. Each item can override (Same day / 1-3 days / 1 week / Never).
+- Permission is asked only after the user first saves an item that would get a reminder, with a one-time plain-language explainer. Never at launch. If denied, a banner in Me links to iOS Settings.
+- Reminders are local to the phone (no server, no account), which supports the privacy-first promise.
+- iOS holds at most 64 pending reminders, so the soonest 60 are scheduled and topped up whenever the app opens or something changes.
 
 ## Design
 - Direction: **Sage & Cream** (see `docs/design/mockups-v3.html`).
@@ -47,7 +54,7 @@ NoWaste, Pantry Check, Fridgely, Cooklist, Kitchen Pal. Related: Too Good To Go,
 - [ ] Apple Developer Program membership (~US$99/year)
 - [ ] Check name availability / trademark for "thyme left"
 - [ ] Camera usage description (plain-language reason)
-- [ ] Notification permission shown at a sensible moment (not on first launch)
+- [x] Notification permission shown at a sensible moment (not on first launch)
 - [ ] Privacy policy URL (can be a GitHub Pages page)
 - [ ] Privacy manifest (`PrivacyInfo.xcprivacy`) and App Privacy answers
 - [ ] TheMealDB: check terms for commercial use and attribution; may need their paid key for release
