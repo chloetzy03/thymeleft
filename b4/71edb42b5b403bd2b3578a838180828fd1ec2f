@@ -1,0 +1,31 @@
+"thyme left/App/AppContainer.swift"
+  s_7ae13adebac50a::t_ee49c1c59e88af 22-23,26-27,32-37
+"thyme left/Modules/PantryList/PantryListContracts.swift"
+  s_7ae13adebac50a::t_7a6f66a044fb5d 55,79-81
+"thyme left/Modules/PantryList/PantryListPresenter.swift"
+  s_7ae13adebac50a::t_5c7c4f65d426d3 18-19,53-59,69
+"thyme left/Modules/PantryList/PantryListRouter.swift"
+  s_7ae13adebac50a::t_2b45a46ad97597 3-6,14-26,28-31,45-49
+"thyme left/Modules/PantryList/View/PantryItemCell.swift"
+  s_7ae13adebac50a::t_d0c92df4c2f5e2 19
+"thyme left/Modules/PantryList/View/PantryListViewController.swift"
+  s_7ae13adebac50a::t_4e1a859d2990c0 144-148
+"thyme leftTests/PantryListPresenterTests.swift"
+  s_7ae13adebac50a::t_811c0f9cc93c04 32-36,191-227
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b471edb42b5b403bd2b3578a838180828fd1ec2f",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
