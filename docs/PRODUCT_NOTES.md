@@ -22,7 +22,7 @@ People who throw away groceries because they forgot the date, and want an easy a
 |---|---|---|
 | App skeleton, theme (light + dark), 4-tab bar | 0 | Done |
 | Pantry list with expiry badges, location filters, swipe to delete, dark mode, VoiceOver | 1 | Done |
-| Add / edit item manually | 2 | Planned |
+| Add / edit item manually (emoji preview, quick dates, validation) | 2 | Done |
 | Expiry reminders (local notifications) | 3 | Planned |
 | Scan expiry date with camera | 4 | Planned |
 | Recipe suggestions (TheMealDB) | 5 | Planned |
