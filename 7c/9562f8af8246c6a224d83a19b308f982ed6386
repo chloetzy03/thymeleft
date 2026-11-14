@@ -1,0 +1,30 @@
+"thyme leftTests/AddEditItemPresenterTests.swift"
+  s_7ae13adebac50a::t_a49248b5f693c6 1-239
+"thyme left/Modules/AddEditItem/AddEditItemRouter.swift"
+  s_7ae13adebac50a::t_c123ef1e7a93a3 1-37
+"thyme left/Modules/AddEditItem/AddEditItemContracts.swift"
+  s_7ae13adebac50a::t_5359f122cbfed5 1-63
+"thyme left/Modules/AddEditItem/AddEditItemPresenter.swift"
+  s_7ae13adebac50a::t_bfcc5318e30d63 1-117
+"thyme left/Modules/AddEditItem/AddEditItemInteractor.swift"
+  s_7ae13adebac50a::t_4c73553e0a2f5a 1-48
+"thyme leftTests/AddEditItemInteractorTests.swift"
+  s_7ae13adebac50a::t_cf56e0c8f132e3 31,33
+  s_7ae13adebac50a::t_67575061aebfbe 1-30,32,34-152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7c9562f8af8246c6a224d83a19b308f982ed6386",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
