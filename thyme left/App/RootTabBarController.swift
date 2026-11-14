@@ -20,9 +20,17 @@ final class RootTabBarController: UITabBarController {
 
         let pantry = PantryListBuilder.build(
             repository: container.pantryRepository,
-            policy: container.expiryPolicy,
+            settingsStore: container.settingsStore,
             dateProvider: container.dateProvider,
-            iconProvider: container.foodIconProvider)
+            iconProvider: container.foodIconProvider,
+            dateFormatter: container.dateFormatter,
+            reminders: container.reminders)
+
+        let settings = SettingsBuilder.build(
+            settingsStore: container.settingsStore,
+            reminders: container.reminders,
+            dateFormatter: container.dateFormatter,
+            dateProvider: container.dateProvider)
 
         viewControllers = [
             makeTab(title: "Home", symbol: "house",
@@ -30,14 +38,16 @@ final class RootTabBarController: UITabBarController {
                         title: "Home", message: "Your daily summary is coming in a later milestone.")),
             makeTab(title: "Scan", symbol: "viewfinder",
                     content: PlaceholderViewController(
-                        title: "Scan", message: "Date scanning arrives in Milestone 4.")),
+                        title: "Scan", message: "Date scanning arrives in a later milestone.")),
             // The pantry sits inside a navigation controller: it gives us the big title on top
             // and lets us push other screens (like "Add item") on top of it.
             makeTab(title: "Pantry", symbol: "refrigerator",
                     content: UINavigationController(rootViewController: pantry)),
             makeTab(title: "Recipes", symbol: "fork.knife",
                     content: PlaceholderViewController(
-                        title: "Recipes", message: "Recipe ideas arrive in Milestone 5."))
+                        title: "Recipes", message: "Recipe ideas arrive in a later milestone.")),
+            makeTab(title: "Me", symbol: "person.crop.circle",
+                    content: UINavigationController(rootViewController: settings))
         ]
         selectedIndex = 2 // open on Pantry, the heart of the app
         styleTabBar()

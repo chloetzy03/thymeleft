@@ -38,17 +38,22 @@ final class PantryListRouter: PantryListRouterProtocol {
 enum PantryListBuilder {
 
     static func build(repository: PantryRepository,
-                      policy: ExpiryPolicy,
+                      settingsStore: SettingsStore,
                       dateProvider: DateProviding,
-                      iconProvider: FoodIconProviding) -> UIViewController {
+                      iconProvider: FoodIconProviding,
+                      dateFormatter: ExpiryDateFormatter,
+                      reminders: ReminderServicing) -> UIViewController {
         let view = PantryListViewController()
         let router = PantryListRouter { existing, onSaved in
             AddEditItemBuilder.build(existing: existing, repository: repository,
                                      dateProvider: dateProvider, iconProvider: iconProvider,
+                                     settingsStore: settingsStore, reminders: reminders,
                                      onSaved: onSaved)
         }
-        let interactor = PantryListInteractor(repository: repository, policy: policy, dateProvider: dateProvider)
-        let presenter = PantryListPresenter(view: view, interactor: interactor, router: router, iconProvider: iconProvider)
+        let interactor = PantryListInteractor(repository: repository, settingsStore: settingsStore,
+                                           dateProvider: dateProvider, reminders: reminders)
+        let presenter = PantryListPresenter(view: view, interactor: interactor, router: router,
+                                          iconProvider: iconProvider, dateFormatter: dateFormatter)
 
         view.presenter = presenter
         interactor.output = presenter

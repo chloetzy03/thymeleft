@@ -23,6 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         Theme.applyAppearance()
         window?.rootViewController = RootTabBarController(container: container)
         window?.makeKeyAndVisible()
+        container.reminders.syncWithSystem() // make sure the phone's reminders match the pantry
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -43,6 +44,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
+        // The day may have changed, or the user may have toggled notifications in iOS Settings.
+        container.reminders.syncWithSystem()
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
     }

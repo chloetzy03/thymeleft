@@ -42,14 +42,18 @@ final class PantryListPresenterTests: XCTestCase {
         let view = ViewSpy()
         let interactor = InteractorSpy()
         let router = RouterSpy()
+        var settings = AppSettings()
+        settings.dateFormat = .dayMonthYear // a fixed format keeps the expected text predictable
+        let dateFormatter = ExpiryDateFormatter(settingsStore: InMemorySettingsStore(settings: settings))
         let sut = PantryListPresenter(view: view, interactor: interactor, router: router,
-                                      iconProvider: EmojiFoodIconProvider())
+                                      iconProvider: EmojiFoodIconProvider(), dateFormatter: dateFormatter)
         return (sut, view, interactor, router)
     }
 
     private func makeEntry(_ name: String, days: Int, status: ExpiryStatus,
                            place: StorageLocation = .fridge, quantity: Int = 1) -> ExpiringItem {
-        ExpiringItem(item: PantryItem(name: name, quantity: quantity, location: place, expiryDate: Date()),
+        let expiry = Calendar.current.date(from: DateComponents(year: 2026, month: 11, day: 18, hour: 12))!
+        return ExpiringItem(item: PantryItem(name: name, quantity: quantity, location: place, expiryDate: expiry),
                      daysRemaining: days, status: status)
     }
 
@@ -144,7 +148,7 @@ final class PantryListPresenterTests: XCTestCase {
         // Assert
         let row = try XCTUnwrap(view.sections.first?.rows.first)
         XCTAssertEqual(row.emoji, "🥛")
-        XCTAssertEqual(row.subtitle, "Fridge · x2")
+        XCTAssertEqual(row.subtitle, "Fridge · x2 · 18/11/2026")
         XCTAssertEqual(row.badgeText, "1 day")
         XCTAssertEqual(row.accessibilityText, "Milk, Fridge, quantity 2, expires tomorrow")
     }

@@ -9,23 +9,28 @@ final class PantryListInteractor: PantryListInteractorInput {
     weak var output: PantryListInteractorOutput?
 
     private let repository: PantryRepository
-    private let policy: ExpiryPolicy
+    private let settingsStore: SettingsStore
     private let dateProvider: DateProviding
+    private let reminders: ReminderServicing
     private let calendar: Calendar
 
     init(repository: PantryRepository,
-         policy: ExpiryPolicy,
+         settingsStore: SettingsStore,
          dateProvider: DateProviding,
+         reminders: ReminderServicing,
          calendar: Calendar = .current) {
         self.repository = repository
-        self.policy = policy
+        self.settingsStore = settingsStore
         self.dateProvider = dateProvider
+        self.reminders = reminders
         self.calendar = calendar
     }
 
     func loadItems(in location: StorageLocation?) {
         do {
             let now = dateProvider.now
+            // Read the red/amber thresholds fresh each time, so Settings changes apply instantly.
+            let policy = settingsStore.load().expiryPolicy
             let items = try repository.fetchAll()
                 .filter { location == nil || $0.location == location }
                 .map { item -> ExpiringItem in
@@ -46,6 +51,7 @@ final class PantryListInteractor: PantryListInteractorInput {
     func deleteItem(id: UUID) {
         do {
             try repository.delete(id: id)
+            reminders.reschedule() // the deleted item's reminder must go too
             output?.didDeleteItem()
         } catch {
             output?.didFail(error)
