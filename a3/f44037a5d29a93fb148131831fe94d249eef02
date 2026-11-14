@@ -1,0 +1,35 @@
+"thyme left/Common/Views/PillLabel.swift"
+  s_7ae13adebac50a::t_25459479da66ac 1-42
+"thyme left/Modules/PantryList/View/PantryItemCell.swift"
+  s_7ae13adebac50a::t_a307d97cb16d90 1-88
+"thyme left/Common/Theme/Theme+Appearance.swift"
+  s_7ae13adebac50a::t_f0ab91afe84fdd 1-24
+"thyme left/Common/Theme/ExpiryStatus+Theme.swift"
+  s_7ae13adebac50a::t_b4ce26a80cc8b4 1-21
+"thyme left/Common/Views/EmptyStateView.swift"
+  s_7ae13adebac50a::t_6888ff22531735 1-72
+"thyme left/Modules/PantryList/View/PantryListViewController.swift"
+  s_7ae13adebac50a::t_28624cff8af17a 1-154
+"thyme left/Common/Theme/Theme.swift"
+  s_7ae13adebac50a::t_bfce6a823984da 17-18,34,51,62,76
+"thyme left/Modules/PantryList/View/PantrySectionHeaderView.swift"
+  s_7ae13adebac50a::t_6f21c082ed8a9a 1-44
+"thyme left/Common/Views/FilterChipBar.swift"
+  s_7ae13adebac50a::t_41406f09ab12c0 1-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a3f44037a5d29a93fb148131831fe94d249eef02",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
