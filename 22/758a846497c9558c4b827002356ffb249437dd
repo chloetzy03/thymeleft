@@ -1,0 +1,38 @@
+"thyme leftTests/TestSupport.swift"
+  s_7ae13adebac50a::t_86e7ce9c8e05a7 1-48
+"thyme left/Services/SettingsStore.swift"
+  s_7ae13adebac50a::t_c5695d1d4ffd1e 1-50
+"thyme leftTests/ReminderPlannerTests.swift"
+  s_7ae13adebac50a::t_c86283530fbfff 1-183
+"thyme leftTests/UserNotificationSchedulerTests.swift"
+  s_7ae13adebac50a::t_794653f380c008 1-5,10-17,21-53,56-120
+  s_7ae13adebac50a::t_1575d66381d7c0 6-9,18-20
+  s_7ae13adebac50a::t_c85cdc3ab41b33 54-55
+"thyme left/Services/ReminderService.swift"
+  s_7ae13adebac50a::t_484e8028b19ec6 1-9,12-90
+  s_7ae13adebac50a::t_d75a45ebf3e50b 10-11
+"thyme left/Services/ExpiryDateFormatter.swift"
+  s_7ae13adebac50a::t_9ea81bee8e9c60 1-49
+"thyme left/Services/NotificationScheduling.swift"
+  s_7ae13adebac50a::t_e4a08cc77079be 1-84
+"thyme leftTests/ReminderServiceTests.swift"
+  s_7ae13adebac50a::t_7b52b0b1657c11 1-136
+"thyme left/Services/ReminderPlanner.swift"
+  s_7ae13adebac50a::t_8e9c5df5b51aee 1-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "22758a846497c9558c4b827002356ffb249437dd",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
