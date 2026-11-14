@@ -10,6 +10,8 @@ struct PantryItem: Identifiable, Equatable {
     var location: StorageLocation
     var expiryDate: Date
     var reminder: ReminderPreference
+    /// Name of the photo file on the phone, or nil when the item has no photo (we show an emoji).
+    var photoFileName: String?
     let createdAt: Date
 
     init(id: UUID = UUID(),
@@ -18,6 +20,7 @@ struct PantryItem: Identifiable, Equatable {
          location: StorageLocation,
          expiryDate: Date,
          reminder: ReminderPreference = .useDefault,
+         photoFileName: String? = nil,
          createdAt: Date = Date()) {
         self.id = id
         self.name = name
@@ -25,6 +28,7 @@ struct PantryItem: Identifiable, Equatable {
         self.location = location
         self.expiryDate = expiryDate
         self.reminder = reminder
+        self.photoFileName = photoFileName
         self.createdAt = createdAt
     }
 }
