@@ -9,6 +9,7 @@ struct PantryItem: Identifiable, Equatable {
     var quantity: Int
     var location: StorageLocation
     var expiryDate: Date
+    var reminder: ReminderPreference
     let createdAt: Date
 
     init(id: UUID = UUID(),
@@ -16,12 +17,14 @@ struct PantryItem: Identifiable, Equatable {
          quantity: Int = 1,
          location: StorageLocation,
          expiryDate: Date,
+         reminder: ReminderPreference = .useDefault,
          createdAt: Date = Date()) {
         self.id = id
         self.name = name
         self.quantity = quantity
         self.location = location
         self.expiryDate = expiryDate
+        self.reminder = reminder
         self.createdAt = createdAt
     }
 }

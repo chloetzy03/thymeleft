@@ -1,11 +1,6 @@
 import XCTest
 @testable import thyme_left
 
-/// A clock that always says the same moment. (Translation: "today" never changes in tests.)
-struct FixedDateProvider: DateProviding {
-    let now: Date
-}
-
 /// Writes down what the Interactor reported. (Translation: a pretend Presenter.)
 @MainActor
 final class InteractorOutputSpy: PantryListInteractorOutput {
@@ -39,21 +34,24 @@ final class PantryListInteractorTests: XCTestCase {
     }
 
     /// Builds the Interactor under test, plus its pretend neighbours.
-    private func makeSUT(items: [PantryItem]) -> (sut: PantryListInteractor, output: InteractorOutputSpy) {
+    private func makeSUT(items: [PantryItem], settings: AppSettings = AppSettings())
+        -> (sut: PantryListInteractor, output: InteractorOutputSpy, reminders: ReminderServiceSpy) {
+        let reminders = ReminderServiceSpy()
         let sut = PantryListInteractor(repository: InMemoryPantryRepository(items: items),
-                                       policy: ExpiryPolicy(urgentDays: 1, soonDays: 5),
+                                       settingsStore: InMemorySettingsStore(settings: settings),
                                        dateProvider: FixedDateProvider(now: today),
+                                       reminders: reminders,
                                        calendar: calendar)
         let output = InteractorOutputSpy()
         sut.output = output
-        return (sut, output)
+        return (sut, output, reminders)
     }
 
     // MARK: Tests
 
     func test_loadItems_withMixedDates_sortsSoonestFirstWithExpiredOnTop() async {
         // Arrange
-        let (sut, output) = makeSUT(items: [
+        let (sut, output, _) = makeSUT(items: [
             makeItem("Pasta", daysFromToday: 120),
             makeItem("Milk", daysFromToday: 3),
             makeItem("Yoghurt", daysFromToday: -1)
@@ -68,7 +66,7 @@ final class PantryListInteractorTests: XCTestCase {
 
     func test_loadItems_withSameExpiryDay_sortsAlphabetically() async {
         // Arrange
-        let (sut, output) = makeSUT(items: [
+        let (sut, output, _) = makeSUT(items: [
             makeItem("Tomatoes", daysFromToday: 2),
             makeItem("apples", daysFromToday: 2)
         ])
@@ -82,7 +80,7 @@ final class PantryListInteractorTests: XCTestCase {
 
     func test_loadItems_withLocationFilter_returnsOnlyThatLocation() async {
         // Arrange
-        let (sut, output) = makeSUT(items: [
+        let (sut, output, _) = makeSUT(items: [
             makeItem("Milk", in: .fridge, daysFromToday: 3),
             makeItem("Peas", in: .freezer, daysFromToday: 90)
         ])
@@ -96,7 +94,7 @@ final class PantryListInteractorTests: XCTestCase {
 
     func test_loadItems_attachesCountdownAndStatus() async throws {
         // Arrange
-        let (sut, output) = makeSUT(items: [makeItem("Avocado", daysFromToday: 1)])
+        let (sut, output, _) = makeSUT(items: [makeItem("Avocado", daysFromToday: 1)])
 
         // Act
         sut.loadItems(in: nil)
@@ -110,7 +108,7 @@ final class PantryListInteractorTests: XCTestCase {
     func test_deleteItem_removesItAndTellsOutput() async {
         // Arrange
         let milk = makeItem("Milk", daysFromToday: 3)
-        let (sut, output) = makeSUT(items: [milk])
+        let (sut, output, _) = makeSUT(items: [milk])
 
         // Act
         sut.deleteItem(id: milk.id)
@@ -119,5 +117,30 @@ final class PantryListInteractorTests: XCTestCase {
         // Assert
         XCTAssertEqual(output.deleteCount, 1)
         XCTAssertTrue(output.loaded.isEmpty)
+    }
+
+    func test_deleteItem_replansReminders() async {
+        // Arrange
+        let milk = makeItem("Milk", daysFromToday: 3)
+        let (sut, _, reminders) = makeSUT(items: [milk])
+
+        // Act
+        sut.deleteItem(id: milk.id)
+
+        // Assert
+        XCTAssertEqual(reminders.rescheduleCount, 1)
+    }
+
+    func test_loadItems_usesTheThresholdsFromSettings() async throws {
+        // Arrange: the user made "red" last 3 days instead of 1
+        var settings = AppSettings()
+        settings.urgentDays = 3
+        let (sut, output, _) = makeSUT(items: [makeItem("Milk", daysFromToday: 3)], settings: settings)
+
+        // Act
+        sut.loadItems(in: nil)
+
+        // Assert
+        XCTAssertEqual(try XCTUnwrap(output.loaded.first).status, .urgent)
     }
 }

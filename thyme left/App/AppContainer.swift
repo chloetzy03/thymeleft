@@ -10,7 +10,9 @@ import os
 final class AppContainer {
 
     let pantryRepository: PantryRepository
-    let expiryPolicy: ExpiryPolicy
+    let settingsStore: SettingsStore
+    let reminders: ReminderServicing
+    let dateFormatter: ExpiryDateFormatter
     let dateProvider: DateProviding
     let foodIconProvider: FoodIconProviding
 
@@ -19,31 +21,45 @@ final class AppContainer {
 
     private static let logger = Logger(subsystem: "com.fp.thyme-left", category: "storage")
 
-    /// - Parameter inMemoryOnly: skip the real database. UI tests launch the app with
-    ///   `-uiTesting` so they always start with an empty pantry and never touch real data.
-    init(expiryPolicy: ExpiryPolicy = ExpiryPolicy(),
-         dateProvider: DateProviding = SystemDateProvider(),
+    /// - Parameter arguments: the launch arguments. UI tests start the app with `-uiTesting`
+    ///   to get an empty pantry, throw-away settings and no real notification pop-ups.
+    ///   Adding `-uiTestingPermissionUndetermined` pretends iOS hasn't been asked yet.
+    init(dateProvider: DateProviding = SystemDateProvider(),
          foodIconProvider: FoodIconProviding = EmojiFoodIconProvider(),
-         inMemoryOnly: Bool = ProcessInfo.processInfo.arguments.contains("-uiTesting")) {
-        self.expiryPolicy = expiryPolicy
+         arguments: [String] = ProcessInfo.processInfo.arguments) {
         self.dateProvider = dateProvider
         self.foodIconProvider = foodIconProvider
 
-        if inMemoryOnly {
-            modelContainer = nil
-            pantryRepository = InMemoryPantryRepository()
-            return
-        }
+        let isUITesting = arguments.contains("-uiTesting")
 
-        do {
-            let container = try ModelContainer(for: PantryItemRecord.self)
-            modelContainer = container
-            pantryRepository = SwiftDataPantryRepository(context: container.mainContext)
-        } catch {
-            // Safety net: if the database can't open, keep the app usable (items just won't be saved).
-            Self.logger.error("Could not open database: \(error.localizedDescription)")
-            modelContainer = nil
-            pantryRepository = InMemoryPantryRepository()
+        // Where the pantry is stored
+        var container: ModelContainer?
+        let repository: PantryRepository
+        if isUITesting {
+            repository = InMemoryPantryRepository()
+        } else {
+            do {
+                let opened = try ModelContainer(for: PantryItemRecord.self)
+                container = opened
+                repository = SwiftDataPantryRepository(context: opened.mainContext)
+            } catch {
+                // Safety net: if the database can't open, keep the app usable (items just won't be saved).
+                Self.logger.error("Could not open database: \(error.localizedDescription)")
+                repository = InMemoryPantryRepository()
+            }
         }
+        modelContainer = container
+        pantryRepository = repository
+
+        // Settings and reminders
+        let settingsStore: SettingsStore = isUITesting ? InMemorySettingsStore() : UserDefaultsSettingsStore()
+        let scheduler: NotificationScheduling = isUITesting
+            ? StubNotificationScheduler(permission: arguments.contains("-uiTestingPermissionUndetermined")
+                                        ? .notDetermined : .authorized)
+            : UserNotificationScheduler()
+        self.settingsStore = settingsStore
+        reminders = ReminderService(repository: repository, settingsStore: settingsStore,
+                                    scheduler: scheduler, dateProvider: dateProvider)
+        dateFormatter = ExpiryDateFormatter(settingsStore: settingsStore)
     }
 }

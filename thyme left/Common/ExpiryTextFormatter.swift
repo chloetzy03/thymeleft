@@ -28,4 +28,14 @@ struct ExpiryTextFormatter {
         default: return "expires in \(badgeText(daysRemaining: days))"
         }
     }
+
+    /// How early a reminder is, e.g. "1 day before", "1 week before", "Same day".
+    func reminderLeadText(daysBefore days: Int) -> String {
+        switch days {
+        case 0: return "Same day"
+        case 1: return "1 day before"
+        case 7: return "1 week before"
+        default: return "\(days) days before"
+        }
+    }
 }

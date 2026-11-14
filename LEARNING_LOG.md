@@ -198,3 +198,67 @@ Tap **+** (or the empty-state button) to add an item, or tap any row to edit it.
 5. Why do UI tests launch with `-uiTesting`?
 
 ---
+
+## Milestone 3 – Settings and reminders (`feature/settings-reminders`)
+
+The biggest milestone so far. Two features that depend on each other: a Settings screen (the **Me** tab) and expiry reminders that follow those settings.
+
+### What you can do now
+- **Me tab:** turn reminders on/off, choose the default ("same day" ... "1 week before"), the reminder time, the date format (match phone / DD/MM/YYYY / MM/DD/YYYY / YYYY-MM-DD, with a live preview), and when items turn red or amber.
+- **Per-item reminders:** the Add/Edit form has a "Remind me" row: Default (1 day before), Never, Same day, 1/2/3 days, 1 week.
+- **Friendly permission:** the first time you save an item that would get a reminder, we explain why ("Get reminders?") before iOS shows its own pop-up. Only once. If iOS blocks us, Me shows a banner with an "Open Settings" shortcut.
+- **Dates on rows:** each pantry row now shows its exact expiry date in your chosen format.
+
+### Your question: two items, different expiry dates, any clash?
+No. Every reminder's name is built from the item's **id** (`expiry-<uuid>`), never its name. Two "Milk" items, or renaming an item, can never collide. Editing or deleting an item replaces or removes only its own reminder. (iOS also keeps only 64 pending reminders, so we schedule the soonest 60.)
+
+### The new pieces
+| Part | File | Job in plain words |
+|---|---|---|
+| Entity | `ReminderPreference` | "Use default", "never", or "N days before" for one item (stored as a single number) |
+| Entity | `AppSettings` | All the user's preferences in one bundle. Old saved settings still load when we add new fields later |
+| Entity | `PlannedReminder`, `NotificationPermission` | A reminder we decided to send; whether iOS allows it |
+| Service | `ReminderPlanner` | **The brain.** Pure maths: items + settings + "now" -> list of reminders. No iOS inside, so every rule is unit-tested |
+| Service | `NotificationScheduling` | Job description for "put reminders on the phone". Real version (`UserNotificationScheduler`) + pretend version (`StubNotificationScheduler`) |
+| Service | `ReminderService` | Says "re-plan and replace everything" whenever something changes. Jobs queue one after another so they never overlap |
+| Service | `SettingsStore` | Job description for remembering settings (UserDefaults now, iCloud possible later) |
+| Service | `ExpiryDateFormatter` | The one place that writes dates in the user's chosen format |
+| **Module** | `Modules/Settings/` | A full VIPER module for the Me tab (View, Presenter, Interactor, Router, Builder) |
+| Changed | `Modules/AddEditItem/` | New "Remind me" row and the one-time explainer flow |
+| Changed | `Modules/PantryList/` | Reads thresholds from settings, shows exact dates, re-plans reminders after a delete |
+
+### Concepts in plain words
+- **Split "deciding" from "doing".** `ReminderPlanner` decides (pure, testable); `UserNotificationScheduler` does (talks to iOS). We test the deciding thoroughly and check the doing separately.
+- **Fire-and-forget with a queue.** `reschedule()` returns immediately and does the work in the background. Each job waits for the one before it, so two quick changes can't tangle.
+- **Re-plan everything, every time.** Instead of tracking "which reminder to add/remove" we rebuild the whole list and swap it. Simpler, and it can't drift out of sync.
+- **A "primer" before the permission pop-up.** iOS lets you ask for notification permission only once. Asking at the right moment, with a reason, gets more "Allow" taps. Our one-time explainer is the "primer".
+- **Disabled vs dimmed.** Greyed-out controls must also be `isEnabled = false`, or VoiceOver and automated tests still treat them as usable.
+- **Hidden views leave gaps.** Hiding the banner *card* left its margins behind. We hide the whole wrapper row instead.
+- **Integration test.** `UserNotificationSchedulerTests` talk to the real iOS notification centre (not a pretend one). iOS only accepts reminders once permission was granted on that simulator, so they skip themselves otherwise.
+
+### Things we tried that didn't work (and why)
+- Typing into the browser preview doesn't reach the simulator, so form flows are checked by UI tests instead. Taps do work, which is how we granted notification permission once for the integration tests.
+- iOS silently refuses to schedule reminders without permission, even in tests. That is why the integration tests need a one-time "Allow".
+
+### Verified
+126 tests pass: 109 unit (planner rules, service, settings, formatter, interactors, presenters), 5 against the real notification centre, 12 UI (explainer allow/decline, "Never", Me tab, date format preview, switching reminders off), and no crash reports.
+Not yet verified: seeing a reminder actually appear at its time on a real iPhone. To try it: add an item, set Remind me = "Same day", set the Me tab time to 2 minutes from now, and lock the phone.
+
+### Commit messages used
+- `feat: add reminder preference, app settings and planned reminder entities`
+- `feat: add settings store, date formatter, reminder planner and scheduling services with tests`
+- `feat: add per-item reminder option and reminder explainer to the add/edit form`
+- `feat: add settings screen (Me tab) with tests`
+- `feat: use settings in the pantry list, show exact dates and keep reminders in sync`
+- `test: add UI tests for reminders and settings`
+- `docs: add milestone 3 notes`
+
+### Check your understanding
+1. Why is each reminder named after the item's id and not its name?
+2. Why does `ReminderPlanner` not talk to iOS directly? What does that make easier?
+3. Why do we rebuild ALL reminders after every change instead of adding or removing just one?
+4. Why do we show our own "Get reminders?" message before iOS's pop-up?
+5. If you changed the default from "1 day before" to "3 days before" in Me, which existing reminders change, and which part makes that happen?
+6. Where would you add a new setting (say "quiet days")? List the files you would touch, in order.
+
+---

@@ -10,6 +10,7 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
     private let interactor: PantryListInteractorInput
     private let router: PantryListRouterProtocol
     private let iconProvider: FoodIconProviding
+    private let dateFormatter: ExpiryDateFormatter
     private let formatter: ExpiryTextFormatter
 
     /// The filter chips: "All" first, then each storage location.
@@ -22,11 +23,13 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
          interactor: PantryListInteractorInput,
          router: PantryListRouterProtocol,
          iconProvider: FoodIconProviding,
+         dateFormatter: ExpiryDateFormatter,
          formatter: ExpiryTextFormatter = ExpiryTextFormatter()) {
         self.view = view
         self.interactor = interactor
         self.router = router
         self.iconProvider = iconProvider
+        self.dateFormatter = dateFormatter
         self.formatter = formatter
     }
 
@@ -103,7 +106,7 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
             id: item.id,
             emoji: iconProvider.emoji(for: item.name),
             title: item.name,
-            subtitle: "\(item.location.displayName) · x\(item.quantity)",
+            subtitle: "\(item.location.displayName) · x\(item.quantity) · \(dateFormatter.string(from: item.expiryDate))",
             badgeText: badge,
             status: entry.status,
             accessibilityText: "\(item.name), \(item.location.displayName), quantity \(item.quantity), "
