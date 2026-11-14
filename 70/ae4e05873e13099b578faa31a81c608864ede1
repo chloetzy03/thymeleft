@@ -1,0 +1,32 @@
+"thyme left/Entities/PantryItem.swift"
+  s_7ae13adebac50a::t_31e4f2fec75251 12,20,27
+"thyme left/Services/Pantry/PantryItemRecord.swift"
+  s_7ae13adebac50a::t_31e4f2fec75251 15-16,18-19,25,32-33,41,48-49
+"thyme left/Entities/PantryItemDraft.swift"
+  s_7ae13adebac50a::t_31e4f2fec75251 11
+"thyme left/Entities/PlannedReminder.swift"
+  s_7ae13adebac50a::t_58e21a6f2d3058 1-17
+"thyme left/Common/ExpiryTextFormatter.swift"
+  s_7ae13adebac50a::t_9af4361daaef3c 31-40
+"thyme left/Entities/ReminderPreference.swift"
+  s_7ae13adebac50a::t_5d5cbb2ae4fc3a 1-28
+"thyme left/Entities/AppSettings.swift"
+  s_7ae13adebac50a::t_8fab3eea037bbe 1-32,35-49,51-64
+  s_7ae13adebac50a::t_9af4361daaef3c 33-34,50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "70ae4e05873e13099b578faa31a81c608864ede1",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
