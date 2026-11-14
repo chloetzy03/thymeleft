@@ -1,0 +1,25 @@
+"thyme left/App/SceneDelegate.swift"
+  s_7ae13adebac50a::t_b7c157ac6bb28b 13-14,23-24
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_b7c157ac6bb28b 7,10-17,21-26,29-30,32-35,37,39-40,51,53-56
+"thyme left/Services/SampleDataSeeder.swift"
+  s_7ae13adebac50a::t_945864b592a776 1-39
+"thyme left/App/AppContainer.swift"
+  s_7ae13adebac50a::t_b01e4810848a2f 1-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5ccc5c943a8b26a0ab3c98f7da8cdc8bdd2052e8",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
