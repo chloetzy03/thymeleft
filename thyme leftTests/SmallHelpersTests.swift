@@ -1,51 +1,95 @@
-import Testing
-import Foundation
+import XCTest
 @testable import thyme_left
 
-struct ExpiryTextFormatterTests {
+final class ExpiryTextFormatterTests: XCTestCase {
+
     private let formatter = ExpiryTextFormatter()
 
-    @Test(arguments: [
-        (-3, "Expired"), (0, "Today"), (1, "1 day"), (2, "2 days"),
-        (59, "59 days"), (60, "2 months"), (120, "4 months")
-    ])
-    func badgeText(days: Int, expected: String) {
-        #expect(formatter.badgeText(daysRemaining: days) == expected)
+    func test_badgeText_forDifferentCountdowns_readsNaturally() {
+        // Arrange: (days left, the words we expect)
+        let cases: [(days: Int, expected: String)] = [
+            (-3, "Expired"), (0, "Today"), (1, "1 day"), (2, "2 days"),
+            (59, "59 days"), (60, "2 months"), (120, "4 months")
+        ]
+
+        for testCase in cases {
+            // Act
+            let text = formatter.badgeText(daysRemaining: testCase.days)
+
+            // Assert
+            XCTAssertEqual(text, testCase.expected, "\(testCase.days) days left")
+        }
     }
 
-    @Test(arguments: [
-        (-1, "expired yesterday"), (-3, "expired 3 days ago"),
-        (0, "expires today"), (1, "expires tomorrow"), (4, "expires in 4 days")
-    ])
-    func spokenText(days: Int, expected: String) {
-        #expect(formatter.spokenText(daysRemaining: days) == expected)
+    func test_spokenText_forDifferentCountdowns_readsAsASentence() {
+        // Arrange
+        let cases: [(days: Int, expected: String)] = [
+            (-1, "expired yesterday"), (-3, "expired 3 days ago"),
+            (0, "expires today"), (1, "expires tomorrow"), (4, "expires in 4 days")
+        ]
+
+        for testCase in cases {
+            // Act
+            let text = formatter.spokenText(daysRemaining: testCase.days)
+
+            // Assert
+            XCTAssertEqual(text, testCase.expected, "\(testCase.days) days left")
+        }
     }
 }
 
-struct EmojiFoodIconProviderTests {
+final class EmojiFoodIconProviderTests: XCTestCase {
+
     private let provider = EmojiFoodIconProvider()
 
-    @Test(arguments: [
-        ("Milk", "🥛"), ("  FULL CREAM MILK ", "🥛"), ("Eggplant", "🍆"), ("Eggs", "🥚"),
-        ("Peanut butter", "🥜"), ("Frozen peas", "🫛"),
-        ("Mystery sauce", "🥫"), ("Xyzzy", EmojiFoodIconProvider.fallback)
-    ])
-    func picksTheRightEmoji(name: String, expected: String) {
-        #expect(provider.emoji(for: name) == expected)
+    func test_emoji_forKnownAndUnknownFoods_picksTheRightOne() {
+        // Arrange: (what the user typed, the emoji we expect)
+        let cases: [(name: String, expected: String)] = [
+            ("Milk", "🥛"), ("  FULL CREAM MILK ", "🥛"),
+            ("Eggplant", "🍆"), ("Eggs", "🥚"),          // "eggplant" must win over "egg"
+            ("Peanut butter", "🥜"), ("Frozen peas", "🫛"),
+            ("Mystery sauce", "🥫"), ("Xyzzy", EmojiFoodIconProvider.fallback)
+        ]
+
+        for testCase in cases {
+            // Act
+            let emoji = provider.emoji(for: testCase.name)
+
+            // Assert
+            XCTAssertEqual(emoji, testCase.expected, testCase.name)
+        }
     }
 }
 
 @MainActor
-struct RepositoryTests {
-    @Test func inMemorySaveUpdateDelete() throws {
-        let repo = InMemoryPantryRepository()
-        var milk = PantryItem(name: "Milk", location: .fridge, expiryDate: .now)
-        try repo.save(milk)
+final class InMemoryPantryRepositoryTests: XCTestCase {
+
+    func test_save_withExistingId_updatesInsteadOfDuplicating() async throws {
+        // Arrange
+        let repository = InMemoryPantryRepository()
+        var milk = PantryItem(name: "Milk", location: .fridge, expiryDate: Date())
+        try repository.save(milk)
+
+        // Act
         milk.quantity = 3
-        try repo.save(milk) // same id, so it updates instead of adding a second copy
-        #expect(try repo.fetchAll().count == 1)
-        #expect(try repo.fetchAll().first?.quantity == 3)
-        try repo.delete(id: milk.id)
-        #expect(try repo.fetchAll().isEmpty)
+        try repository.save(milk)
+
+        // Assert
+        let items = try repository.fetchAll()
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items.first?.quantity, 3)
+    }
+
+    func test_delete_removesTheItem() async throws {
+        // Arrange
+        let repository = InMemoryPantryRepository()
+        let milk = PantryItem(name: "Milk", location: .fridge, expiryDate: Date())
+        try repository.save(milk)
+
+        // Act
+        try repository.delete(id: milk.id)
+
+        // Assert
+        XCTAssertTrue(try repository.fetchAll().isEmpty)
     }
 }
