@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thyme Left – Design Mockups v1</title>
+<style>
+  :root{
+    --brand:#5B8C5A; --bg:#FAF6EE; --card:#FFFFFF;
+    --fresh:#6BAA75; --soon:#F2A541; --urgent:#D9534F; --text:#2E2A25; --muted:#8A8378;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"SF Pro Text",Helvetica,Arial,sans-serif;background:#E9E4D8;color:var(--text);padding:32px}
+  h1{font-size:28px;margin-bottom:4px}
+  .sub{color:var(--muted);margin-bottom:28px}
+  .row{display:flex;gap:28px;flex-wrap:wrap}
+  .col{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .label{font-weight:600;font-size:14px}
+  .phone{width:300px;height:620px;border-radius:44px;background:var(--bg);border:10px solid #1d1d1f;position:relative;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#1d1d1f;border-radius:14px;z-index:5}
+  .status{height:44px}
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:6px 18px 8px}
+  .nav h2{font-size:26px;font-weight:800}
+  .plus{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center}
+  .chips{display:flex;gap:6px;padding:0 18px 10px;overflow:hidden}
+  .chip{padding:6px 12px;border-radius:16px;background:#fff;font-size:12px;border:1px solid #E6E0D2;white-space:nowrap}
+  .chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .section{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--muted);padding:6px 18px}
+  .card{background:var(--card);margin:6px 14px;border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .emoji{width:42px;height:42px;border-radius:12px;background:#F1ECE0;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .meta{flex:1}
+  .meta b{font-size:15px;display:block}
+  .meta span{font-size:12px;color:var(--muted)}
+  .badge{font-size:11px;font-weight:700;color:#fff;padding:5px 9px;border-radius:12px;white-space:nowrap}
+  .urgent{background:var(--urgent)} .soon{background:var(--soon)} .fresh{background:var(--fresh)}
+  .tabbar{position:absolute;bottom:0;left:0;right:0;height:72px;background:rgba(255,255,255,.95);border-top:1px solid #E6E0D2;display:flex;justify-content:space-around;padding-top:10px;font-size:10px;color:var(--muted)}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .tab i{font-style:normal;font-size:20px}
+  .tab.on{color:var(--brand);font-weight:700}
+  .mascot{position:absolute;right:14px;bottom:84px;background:#fff;border-radius:16px;padding:8px 12px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.12);max-width:190px}
+  .mascot em{font-style:normal;font-size:26px;display:block}
+  .field{background:#fff;margin:8px 14px;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;font-size:14px}
+  .field span{color:var(--muted)}
+  .btn{margin:12px 14px;background:var(--brand);color:#fff;border-radius:16px;padding:14px;text-align:center;font-weight:700}
+  .btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+  .cam{margin:8px 14px;height:260px;border-radius:20px;background:linear-gradient(160deg,#444,#222);position:relative;display:flex;align-items:center;justify-content:center}
+  .frame{width:200px;height:64px;border:3px solid #fff;border-radius:12px;color:#fff;font-family:Menlo,monospace;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.08)}
+  .hint{text-align:center;color:var(--muted);font-size:12px;padding:6px}
+  .found{margin:8px 14px;background:#E8F3E8;border-radius:14px;padding:12px;font-size:14px}
+  .rcard{background:#fff;margin:8px 14px;border-radius:18px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .rimg{height:110px;display:flex;align-items:center;justify-content:center;font-size:54px}
+  .rbody{padding:10px 12px}
+  .rbody b{font-size:15px}
+  .tags{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .tag{font-size:11px;padding:3px 8px;border-radius:10px;background:#E8F3E8;color:var(--brand);font-weight:600}
+  .tag.miss{background:#FBEAEA;color:var(--urgent)}
+  .empty{text-align:center;padding:70px 30px}
+  .empty .big{font-size:80px}
+  .swatches{display:flex;gap:12px;margin:28px 0 32px;flex-wrap:wrap}
+  .sw{width:110px;border-radius:14px;overflow:hidden;background:#fff;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .sw div{height:56px} .sw p{padding:6px 8px}
+</style>
+</head>
+<body>
+<h1>🌿 Thyme Left — Design Mockups v1</h1>
+<p class="sub">Palette: "Garden Pantry". Status uses colour + word (accessible). Mascot: "Sprig" (placeholder emoji).</p>
+
+<div class="swatches">
+  <div class="sw"><div style="background:#5B8C5A"></div><p><b>Thyme</b><br>#5B8C5A</p></div>
+  <div class="sw"><div style="background:#FAF6EE"></div><p><b>Cream</b><br>#FAF6EE</p></div>
+  <div class="sw"><div style="background:#6BAA75"></div><p><b>Fresh</b><br>#6BAA75</p></div>
+  <div class="sw"><div style="background:#F2A541"></div><p><b>Soon</b><br>#F2A541</p></div>
+  <div class="sw"><div style="background:#D9534F"></div><p><b>Urgent</b><br>#D9534F</p></div>
+  <div class="sw"><div style="background:#2E2A25"></div><p><b>Text</b><br>#2E2A25</p></div>
+</div>
+
+<div class="row">
+
+  <!-- 1 Pantry -->
+  <div class="col"><div class="phone"><div class="notch"></div><div class="status"></div>
+    <div class="nav"><h2>Thyme Left</h2><div class="plus">+</div></div>
+    <div class="chips"><div class="chip on">All</div><div class="chip">Fridge</div><div class="chip">Pantry</div><div class="chip">Freezer</div></div>
+    <div class="section">⚠ USE SOON</div>
+    <div class="card"><div class="emoji">🥛</div><div class="meta"><b>Milk</b><span>Fridge · x1</span></div><div class="badge urgent">1 day</div></div>
+    <div class="card"><div class="emoji">🥬</div><div class="meta"><b>Spinach</b><span>Fridge · 1 bag</span></div><div class="badge soon">3 days</div></div>
+    <div class="section">FRESH</div>
+    <div class="card"><div class="emoji">🥚</div><div class="meta"><b>Eggs</b><span>Fridge · x6</span></div><div class="badge fresh">12 days</div></div>
+    <div class="card"><div class="emoji">🍝</div><div class="meta"><b>Pasta</b><span>Pantry · x2</span></div><div class="badge fresh">4 months</div></div>
+    <div class="mascot"><em>🌿</em>Your milk is on its last leaf!</div>
+    <div class="tabbar"><div class="tab on"><i>🥫</i>Pantry</div><div class="tab"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+  </div><div class="label">1 · Pantry (home)</div></div>
+
+  <!-- 2 Add item -->
+  <div class="col"><div class="phone"><div class="notch"></div><div class="status"></div>
+    <div class="nav"><span style="color:var(--muted)">✕</span><h2 style="font-size:18px">Add item</h2><span style="color:var(--brand);font-weight:700">Save</span></div>
+    <div class="btn ghost">📷 Scan expiry date</div>
+    <div class="hint">— or type it in —</div>
+    <div class="field">Name<span>Milk</span></div>
+    <div class="field">Quantity<span>−&nbsp; 1 &nbsp;+</span></div>
+    <div class="field">Location<span>Fridge ▾</span></div>
+    <div class="field">Expires<span>18 Nov 2026</span></div>
+    <div class="field">Remind me<span>1 day before ▾</span></div>
+    <div class="btn">Add to pantry</div>
+  </div><div class="label">2 · Add item</div></div>
+
+  <!-- 3 Scanner -->
+  <div class="col"><div class="phone"><div class="notch"></div><div class="status"></div>
+    <div class="nav"><span style="color:var(--muted)">✕</span><h2 style="font-size:18px">Point at the date</h2><span></span></div>
+    <div class="cam"><div class="frame">EXP 18/11/26</div></div>
+    <div class="hint">Hold steady — we'll find the date for you</div>
+    <div class="found">✅ Found: <b>18 Nov 2026</b></div>
+    <div class="btn">Use this date</div>
+    <div class="btn ghost">Retry</div>
+  </div><div class="label">3 · Scanner</div></div>
+
+  <!-- 4 Recipes -->
+  <div class="col"><div class="phone"><div class="notch"></div><div class="status"></div>
+    <div class="nav"><h2>Recipes</h2></div>
+    <div class="section">RESCUE THESE FIRST</div>
+    <div class="chips"><div class="chip">🥛 Milk</div><div class="chip">🥬 Spinach</div><div class="chip">🥚 Eggs</div></div>
+    <div class="rcard"><div class="rimg" style="background:#F6E7C8">🥧</div><div class="rbody"><b>Spinach Quiche</b><div class="tags"><span class="tag">Uses 3 of your items</span><span class="tag miss">Missing: cream</span></div></div></div>
+    <div class="rcard"><div class="rimg" style="background:#DCEBD8">🍲</div><div class="rbody"><b>Creamy Spinach Soup</b><div class="tags"><span class="tag">Uses 2 of your items</span></div></div></div>
+    <div class="tabbar"><div class="tab"><i>🥫</i>Pantry</div><div class="tab on"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+  </div><div class="label">4 · Recipe suggestions</div></div>
+
+  <!-- 5 Empty -->
+  <div class="col"><div class="phone"><div class="notch"></div><div class="status"></div>
+    <div class="nav"><h2>Thyme Left</h2><div class="plus">+</div></div>
+    <div class="empty"><div class="big">🌿</div><h3 style="margin:14px 0 6px">Nothing here yet</h3><p style="color:var(--muted);font-size:14px">Add your first item and Sprig will watch the dates for you.</p></div>
+    <div class="btn">Add first item</div>
+    <div class="tabbar"><div class="tab on"><i>🥫</i>Pantry</div><div class="tab"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+  </div><div class="label">5 · Empty state (mascot)</div></div>
+
+  <!-- 6 Me -->
+  <div class="col"><div class="phone"><div class="notch"></div><div class="status"></div>
+    <div class="nav"><h2>Me</h2></div>
+    <div class="card" style="background:var(--brand);color:#fff;flex-direction:column;align-items:flex-start;gap:2px"><span style="color:#E3F0E3;font-size:12px">Saved from the bin</span><b style="font-size:30px">12 items · $34</b></div>
+    <div class="field">Reminder time<span>9:00 AM ▾</span></div>
+    <div class="field">Default reminder<span>1 day before ▾</span></div>
+    <div class="field">☕ Buy Sprig a coffee<span>›</span></div>
+    <div class="field">Privacy policy<span>›</span></div>
+    <div class="field">About<span>›</span></div>
+    <div class="tabbar"><div class="tab"><i>🥫</i>Pantry</div><div class="tab"><i>🍳</i>Recipes</div><div class="tab on"><i>👤</i>Me</div></div>
+  </div><div class="label">6 · Me (stats, tip jar, settings)</div></div>
+
+</div>
+</body>
+</html>
