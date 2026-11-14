@@ -1,0 +1,42 @@
+"thyme left.xcodeproj/project.pbxproj"
+  h_ee194195c1c2bb 1-586
+"thyme left.xcodeproj/project.xcworkspace/contents.xcworkspacedata"
+  h_ee194195c1c2bb 1-7
+"thyme left.xcodeproj/xcuserdata/chloe.tay.xcuserdatad/xcschemes/xcschememanagement.plist"
+  h_ee194195c1c2bb 1-14
+"thyme left/AppDelegate.swift"
+  h_ee194195c1c2bb 1-36
+"thyme left/Assets.xcassets/AccentColor.colorset/Contents.json"
+  h_ee194195c1c2bb 1-11
+"thyme left/Assets.xcassets/AppIcon.appiconset/Contents.json"
+  h_ee194195c1c2bb 1-35
+"thyme left/Assets.xcassets/Contents.json"
+  h_ee194195c1c2bb 1-6
+"thyme left/Base.lproj/LaunchScreen.storyboard"
+  h_ee194195c1c2bb 1-25
+"thyme left/ContentView.swift"
+  h_ee194195c1c2bb 1-24
+"thyme left/Info.plist"
+  h_ee194195c1c2bb 1-23
+"thyme left/SceneDelegate.swift"
+  h_ee194195c1c2bb 1-55
+"thyme left/ViewController.swift"
+  h_ee194195c1c2bb 1-24
+"thyme leftTests/thyme_leftTests.swift"
+  h_ee194195c1c2bb 1-17
+"thyme leftUITests/thyme_leftUITests.swift"
+  h_ee194195c1c2bb 1-41
+"thyme leftUITests/thyme_leftUITestsLaunchTests.swift"
+  h_ee194195c1c2bb 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5e777a5a4b033ffeccc0747d3a4dd55f00cdcda2",
+  "prompts": {},
+  "humans": {
+    "h_ee194195c1c2bb": {
+      "author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
