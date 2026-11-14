@@ -134,3 +134,21 @@ Notice the View never talks to the Interactor, and the Interactor never talks to
 5. Why is `PantryListPresenter.view` marked `weak`?
 
 ---
+
+## Testing notes (`chore/xctest-aaa`)
+
+### What changed
+- Converted all tests from **Swift Testing** (`@Test`, `#expect`) to **XCTest** (`XCTestCase`, `test_...` methods, `XCTAssertEqual`), because that is the style you learned. They check the same things; only the vocabulary differs. (Xcode's new-project template defaults to Swift Testing; UI tests are always XCTest.)
+- Every test now follows **Arrange / Act / Assert**: set things up, do the ONE thing being tested, check the result.
+- Test names read like a sentence: `test_<thing>_<situation>_<expected result>`, e.g. `test_loadItems_withMixedDates_sortsSoonestFirstWithExpiredOnTop`.
+- Deleted the empty Xcode template test (`thyme_leftTests.swift`).
+
+### A crash worth remembering ("thyme left quit unexpectedly")
+Running the tests made macOS show a "quit unexpectedly" crash for the app, and the simulator dropped out. The crash report pointed at `PantryListPresenter.__deallocating_deinit` inside the test, i.e. the crash happened when a test finished and freed a main-actor object. The new Xcode "default to MainActor" setting makes our classes main-actor-bound, and freeing them at the end of a plain (non-async) XCTest method crashed the Swift runtime. Marking those test methods `async` fixes it (27 tests pass, zero crash reports). Rule of thumb: in this project, tests that create `@MainActor` objects should be `async`.
+Watch-out for Milestone 2: when a screen is closed its Presenter is freed too, so we will double-check that closing a screen in the real app does not crash.
+
+### Check your understanding
+1. In your own words, what do Arrange, Act and Assert each mean? Point to them in one test.
+2. Why does a test have one Act and not several?
+3. What is the difference between a "spy" and the real object it replaces?
+
