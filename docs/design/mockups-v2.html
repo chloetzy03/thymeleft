@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>thyme left. – Design Directions v2</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"SF Pro Text",Helvetica,Arial,sans-serif;background:#E6E3DA;color:#222;padding:32px}
+  h1{font-size:28px}.sub{color:#777;margin:4px 0 28px}
+  .opt{margin-bottom:48px}.opt h2{font-size:20px;margin-bottom:2px}.opt p.d{color:#666;font-size:14px;margin-bottom:12px;max-width:760px}
+  .sw{display:flex;gap:6px;margin-bottom:14px}.sw i{width:32px;height:32px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.1)}
+  .row{display:flex;gap:26px;flex-wrap:wrap}
+  .phone{width:290px;height:610px;border-radius:42px;border:10px solid #111;position:relative;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.22)}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:86px;height:22px;background:#111;border-radius:14px;z-index:9}
+  .top{height:48px}
+  svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar{position:absolute;bottom:0;left:0;right:0;height:74px;display:flex;justify-content:space-around;padding-top:10px;font-size:10px}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px}
+  .pad{padding:0 16px}
+
+  /* ============ E · Sage & Cream ============ */
+  .E{background:#FAF6EA;color:#2B4A32}
+  .E .logo{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 18px 0}
+  .E .logo h3{font-size:30px;font-weight:700;letter-spacing:-.5px}
+  .E .tag{font-size:13px;color:#6F8A74;padding:0 18px 10px}
+  .E .greet{margin:4px 14px;background:#E6EDDB;border-radius:22px;padding:14px}
+  .E .greet b{font-size:19px;display:block}.E .greet span{font-size:13px;color:#52705A}
+  .E .tiles{display:flex;gap:8px;margin-top:10px}
+  .E .t{flex:1;background:#fff;border-radius:16px;text-align:center;padding:10px 4px;font-size:12px}
+  .E .t .e{font-size:28px}.E .t b{display:block;font-weight:500;margin-top:2px;font-size:13px}.E .t span{color:#7C8F80;font-size:12px}
+  .E .cta{margin:10px 14px;background:#2F5A3E;color:#fff;border-radius:22px;padding:15px;text-align:center}
+  .E .cta b{font-size:17px;font-weight:600}.E .cta span{display:block;font-size:12px;opacity:.85;margin-top:3px}
+  .E .tabbar{background:#FAF6EA;border-top:1px solid #E7E0CB;color:#8DA192}.E .tab.on{color:#2F5A3E;font-weight:600}
+  .E .row2{margin:6px 14px;background:#fff;border-radius:18px;padding:11px 12px;display:flex;align-items:center;gap:12px}
+  .E .row2 .e{width:42px;height:42px;border-radius:13px;background:#EEF2E6;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .E .row2 .m{flex:1}.E .row2 b{display:block;font-size:15px;font-weight:600}.E .row2 span{font-size:12px;color:#7C8F80}
+  .E .pill{font-size:11px;font-weight:600;padding:5px 10px;border-radius:12px}
+  .E .p1{background:#F8DDD6;color:#A4412F}.E .p2{background:#FBE9C4;color:#8A6012}.E .p3{background:#DDEBD6;color:#2F5A3E}
+  .E .seg{display:flex;gap:6px;padding:4px 14px 8px}.E .seg i{font-style:normal;font-size:12px;padding:6px 12px;border-radius:14px;background:#EFEADA;color:#52705A}.E .seg i.on{background:#2F5A3E;color:#fff}
+  .E .rc{margin:8px 14px;background:#fff;border-radius:22px;overflow:hidden}
+  .E .ri{height:104px;display:flex;align-items:center;justify-content:center;font-size:52px}
+  .E .rb{padding:10px 14px 12px}.E .rb b{font-size:16px}.E .rb span{display:block;font-size:12px;color:#7C8F80;margin-top:3px}
+  .E .bar{height:6px;border-radius:3px;background:#E6EDDB;margin-top:8px;overflow:hidden}.E .bar i{display:block;height:100%;background:#2F5A3E}
+
+  /* ============ F · Pastel Tiles ============ */
+  .F{background:#F7F3EA;color:#33302B}
+  .F h3{font-size:34px;font-weight:700;letter-spacing:-1px;padding:6px 18px 0}
+  .F .tag{font-size:13px;color:#8A8578;padding:2px 18px 12px}
+  .F .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
+  .F .g{border-radius:22px;padding:12px 14px;min-height:96px}
+  .F .g .e{font-size:30px}.F .g b{display:block;font-size:17px;margin-top:8px}.F .g span{font-size:12px}
+  .F .c1{background:#F5DAD4;color:#8A3B2B}.F .c2{background:#F5E4D2;color:#7A5226}.F .c3{background:#E3EAD9;color:#3C5C3F}
+  .F .c4{background:#DCE6E5;color:#2F5558}.F .c5{background:#E4DFEE;color:#51426E}.F .c6{background:#EFEADC;color:#5E5740}
+  .F .wide{grid-column:span 2;display:flex;align-items:center;gap:12px;min-height:0}
+  .F .tabbar{background:#F7F3EA;color:#A19B8B}.F .tab.on{color:#33302B;font-weight:700}
+  .F .search{margin:0 14px 10px;background:#fff;border-radius:16px;padding:11px 14px;font-size:14px;color:#A19B8B}
+  .F .scanfab{position:absolute;right:16px;bottom:88px;background:#33302B;color:#fff;border-radius:26px;padding:13px 18px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}
+  .F .scanfab svg{width:18px;height:18px}
+  .F .rl{margin:0 14px 10px;border-radius:22px;padding:14px;display:flex;gap:12px;align-items:center}
+  .F .rl .e{font-size:40px}.F .rl b{font-size:16px;display:block}.F .rl span{font-size:12px}
+
+  /* ============ G · Editorial ============ */
+  .G{background:#F4EFE3;color:#1F3B2A;font-family:Georgia,"New York",serif}
+  .G .mast{padding:6px 20px 8px;border-bottom:1.5px solid #1F3B2A;margin:0 16px}
+  .G .mast small{font-family:-apple-system,Helvetica,sans-serif;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:#6B7C6E}
+  .G .mast h3{font-size:34px;font-weight:400;font-style:italic;line-height:1.05;margin-top:4px}
+  .G .day{padding:10px 20px 2px;font-family:-apple-system,Helvetica,sans-serif;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:#6B7C6E;display:flex;justify-content:space-between}
+  .G .it{display:flex;align-items:center;gap:12px;padding:7px 20px;border-bottom:1px solid #DED7C3}
+  .G .it .e{font-size:26px}.G .it b{flex:1;font-weight:400;font-size:19px}
+  .G .it span{font-family:-apple-system,Helvetica,sans-serif;font-size:12px;color:#6B7C6E}
+  .G .it .dot{width:8px;height:8px;border-radius:50%}
+  .G .quote{margin:14px 16px;background:#1F3B2A;color:#F4EFE3;border-radius:6px;padding:16px}
+  .G .quote i{font-size:19px;line-height:1.25;display:block}.G .quote small{font-family:-apple-system,Helvetica,sans-serif;font-size:12px;opacity:.8;display:block;margin-top:8px}
+  .G .tabbar{background:#F4EFE3;border-top:1.5px solid #1F3B2A;color:#8A9A8D;font-family:-apple-system,Helvetica,sans-serif}.G .tab.on{color:#1F3B2A;font-weight:600}
+  .G .rec{padding:14px 20px;border-bottom:1px solid #DED7C3}
+  .G .rec small{font-family:-apple-system,Helvetica,sans-serif;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#B0552F}
+  .G .rec b{display:block;font-size:22px;font-weight:400;margin:3px 0}.G .rec span{font-family:-apple-system,Helvetica,sans-serif;font-size:12px;color:#6B7C6E}
+</style>
+</head>
+<body>
+<h1>🌱 thyme left. — Design Directions v2</h1>
+<p class="sub">Inspired by your cream-and-green references. Three looks × three screens (Home, Pantry, Recipes). The Scan tab is a camera screen we'll style to match whichever you pick.</p>
+<div id="app"></div>
+
+<script>
+const I = {
+  home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  scan:'<svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/></svg>',
+  pantry:'<svg viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM6 10h12M9 6v1.5M9 13v3"/></svg>',
+  recipes:'<svg viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 1.5-7.7 4 4 0 0 1 7 0A4 4 0 1 1 17 14v5H7zM7 17h10"/></svg>',
+  plus:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'
+};
+const tabs = a => `<div class="tabbar">${[['home','Home'],['scan','Scan'],['pantry','Pantry'],['recipes','Recipes']]
+  .map(([k,l])=>`<div class="tab ${k===a?'on':''}">${I[k]}${l}</div>`).join('')}</div>`;
+const phone = (cls, inner) => `<div class="phone ${cls}"><div class="notch"></div><div class="top"></div>${inner}</div>`;
+const sw = c => `<div class="sw">${c.map(x=>`<i style="background:${x}"></i>`).join('')}</div>`;
+const sec = (t,d,c,sws,phones) => `<div class="opt"><h2>${t}</h2><p class="d">${d}</p>${sw(sws)}<div class="row">${phones.join('')}</div></div>`;
+
+const items = [['🥑','Avocado','Fridge · x2',1],['🍅','Tomatoes','Counter · x4',2],['🥛','Milk','Fridge · 1 L',3],['🥚','Eggs','Fridge · x6',12],['🍝','Pasta','Pantry · x2',120]];
+const when = d => d===1?'1 day':d<30?d+' days':Math.round(d/30)+' months';
+const cls = d => d<=1?'p1':d<=3?'p2':'p3';
+
+/* ---------- E ---------- */
+const E_home = phone('E', `
+  <div class="logo"><h3>thyme left.</h3><span style="font-size:26px">🌱</span></div>
+  <div class="tag">Make good food go further.</div>
+  <div class="greet"><b>Good morning, chef!</b><span>You've got 3 ingredients to use soon.</span>
+    <div class="tiles">${items.slice(0,3).map(i=>`<div class="t"><div class="e">${i[0]}</div><b>${i[1]}</b><span>${when(i[3])}</span></div>`).join('')}</div></div>
+  <div class="cta"><b>✨ What can I cook?</b><span>Recipes using your existing ingredients</span></div>
+  <div class="greet" style="background:#fff"><b style="font-size:15px">Saved from the bin</b><span>12 items · about $34 this month</span></div>
+  ${tabs('home')}`);
+const E_pantry = phone('E', `
+  <div class="logo"><h3 style="font-size:26px">Pantry</h3><span style="color:#2F5A3E">${I.plus}</span></div>
+  <div class="seg"><i class="on">All</i><i>Fridge</i><i>Pantry</i><i>Freezer</i></div>
+  ${items.map(i=>`<div class="row2"><div class="e">${i[0]}</div><div class="m"><b>${i[1]}</b><span>${i[2]}</span></div><span class="pill ${cls(i[3])}">${when(i[3])}</span></div>`).join('')}
+  ${tabs('pantry')}`);
+const E_rec = phone('E', `
+  <div class="logo"><h3 style="font-size:26px">Recipes</h3></div>
+  <div class="tag">Using avocado, tomatoes &amp; milk first</div>
+  <div class="rc"><div class="ri" style="background:#F3E3C9">🥗</div><div class="rb"><b>Avocado Tomato Salad</b><span>20 min · Missing: lime</span><div class="bar"><i style="width:80%"></i></div></div></div>
+  <div class="rc"><div class="ri" style="background:#DDEBD6">🥣</div><div class="rb"><b>Creamy Tomato Soup</b><span>30 min · Missing: basil, garlic</span><div class="bar"><i style="width:55%"></i></div></div></div>
+  ${tabs('recipes')}`);
+
+/* ---------- F ---------- */
+const F_home = phone('F', `
+  <h3>thyme left.</h3><div class="tag">A little thyme goes a long way.</div>
+  <div class="grid">
+    <div class="g wide c1"><div class="e">🥑</div><div><b style="margin:0">Avocado</b><span>Use today or tomorrow</span></div></div>
+    <div class="g c2"><div class="e">🍅</div><b>Tomatoes</b><span>2 days left</span></div>
+    <div class="g c3"><div class="e">🥛</div><b>Milk</b><span>3 days left</span></div>
+    <div class="g c4"><div class="e">🥚</div><b>Eggs</b><span>12 days left</span></div>
+    <div class="g c5"><div class="e">🍳</div><b>What can I cook?</b><span>3 ideas for you</span></div>
+  </div>
+  <div class="scanfab">${I.scan} Scan date</div>
+  ${tabs('home')}`);
+const F_pantry = phone('F', `
+  <h3 style="font-size:28px">Pantry</h3><div class="tag">5 items · 1 needs you today</div>
+  <div class="search">🔍 Search your pantry</div>
+  <div class="grid">
+    <div class="g c1"><div class="e">🥑</div><b>Avocado</b><span>1 day</span></div>
+    <div class="g c2"><div class="e">🍅</div><b>Tomatoes</b><span>2 days</span></div>
+    <div class="g c3"><div class="e">🥛</div><b>Milk</b><span>3 days</span></div>
+    <div class="g c4"><div class="e">🥚</div><b>Eggs</b><span>12 days</span></div>
+    <div class="g c6"><div class="e">🍝</div><b>Pasta</b><span>4 months</span></div>
+  </div>
+  <div class="scanfab">${I.plus} Add item</div>
+  ${tabs('pantry')}`);
+const F_rec = phone('F', `
+  <h3 style="font-size:28px">Recipes</h3><div class="tag">Made from what you already have</div>
+  <div class="rl c3"><div class="e">🥗</div><div><b>Avocado Tomato Salad</b><span>Uses 3 · 20 min</span></div></div>
+  <div class="rl c2"><div class="e">🥣</div><div><b>Creamy Tomato Soup</b><span>Uses 2 · 30 min</span></div></div>
+  <div class="rl c5"><div class="e">🥑</div><div><b>Avocado Toast</b><span>Uses 2 · 5 min</span></div></div>
+  <div class="rl c4"><div class="e">🍳</div><div><b>Shakshuka</b><span>Uses 2 · 25 min</span></div></div>
+  ${tabs('recipes')}`);
+
+/* ---------- G ---------- */
+const dot = d => d<=1?'#C0533A':d<=3?'#D49A2A':'#5E8C61';
+const G_home = phone('G', `
+  <div class="mast"><small>Saturday · 15 November</small><h3>Three things want eating soon.</h3></div>
+  <div class="day"><span>Today &amp; tomorrow</span></div>
+  <div class="it"><div class="e">🥑</div><b>Avocado</b><div class="dot" style="background:${dot(1)}"></div><span>1 day</span></div>
+  <div class="day"><span>This week</span></div>
+  <div class="it"><div class="e">🍅</div><b>Tomatoes</b><div class="dot" style="background:${dot(2)}"></div><span>2 days</span></div>
+  <div class="it"><div class="e">🥛</div><b>Milk</b><div class="dot" style="background:${dot(3)}"></div><span>3 days</span></div>
+  <div class="quote"><i>"A little thyme goes a long way."</i><small>See what you can cook →</small></div>
+  ${tabs('home')}`);
+const G_pantry = phone('G', `
+  <div class="mast"><small>5 items</small><h3>The Pantry</h3></div>
+  ${items.map(i=>`<div class="it"><div class="e">${i[0]}</div><b>${i[1]}</b><div class="dot" style="background:${dot(i[3])}"></div><span>${when(i[3])}</span></div>`).join('')}
+  <div class="quote" style="background:#E8E1CE;color:#1F3B2A;text-align:center"><i style="font-size:16px">+ Add an item</i></div>
+  ${tabs('pantry')}`);
+const G_rec = phone('G', `
+  <div class="mast"><small>Made from your pantry</small><h3>Tonight, perhaps…</h3></div>
+  <div class="rec"><small>Uses avocado, tomatoes</small><b>Avocado Tomato Salad</b><span>20 min · missing lime</span></div>
+  <div class="rec"><small>Uses tomatoes, milk</small><b>Creamy Tomato Soup</b><span>30 min · missing basil, garlic</span></div>
+  <div class="rec"><small>Uses avocado, eggs</small><b>Avocado Toast &amp; Egg</b><span>5 min · missing bread</span></div>
+  ${tabs('recipes')}`);
+
+document.getElementById('app').innerHTML =
+  sec('E · Sage & Cream — closest to your reference','Greeting card, pastel use-soon tiles, big dark-green "What can I cook?" button. Warm, soft and polished.',null,['#FAF6EA','#E6EDDB','#2F5A3E','#F8DDD6'],[E_home,E_pantry,E_rec]) +
+  sec('F · Pastel Tiles — playful grid','Each item is a soft pastel tile like your name cards. Big lowercase title, floating action button. Fun, colourful and easy to scan.',null,['#F7F3EA','#F5DAD4','#E3EAD9','#E4DFEE'],[F_home,F_pantry,F_rec]) +
+  sec('G · Editorial — magazine / journal feel','Serif italics, thin rules, grouped by Today / This week. Calm and grown-up, with a very different feel from other food apps.',null,['#F4EFE3','#1F3B2A','#B0552F','#5E8C61'],[G_home,G_pantry,G_rec]);
+</script>
+</body>
+</html>
