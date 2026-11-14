@@ -25,11 +25,16 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     private let iconProvider: FoodIconProviding
     private let dateProvider: DateProviding
     private let settingsStore: SettingsStore
+    private let photoStore: PhotoStoring
     private let formatter: ExpiryTextFormatter
     private let calendar: Calendar
     private let existingItem: PantryItem?
     /// Called after a successful save, so the previous screen can refresh itself.
     private let onSaved: () -> Void
+
+    /// What the user has decided about the photo so far (nothing is saved until they tap Save).
+    private var photoChange: PhotoChange = .keep
+    private var hasPhoto: Bool
 
     private let locations = StorageLocation.allCases
     /// The "Remind me" choices, in the order they appear. Filled in when the form loads.
@@ -41,6 +46,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
          iconProvider: FoodIconProviding,
          dateProvider: DateProviding,
          settingsStore: SettingsStore,
+         photoStore: PhotoStoring,
          existingItem: PantryItem?,
          formatter: ExpiryTextFormatter = ExpiryTextFormatter(),
          calendar: Calendar = .current,
@@ -51,7 +57,9 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         self.iconProvider = iconProvider
         self.dateProvider = dateProvider
         self.settingsStore = settingsStore
+        self.photoStore = photoStore
         self.existingItem = existingItem
+        self.hasPhoto = existingItem?.photoFileName != nil
         self.formatter = formatter
         self.calendar = calendar
         self.onSaved = onSaved
@@ -79,6 +87,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
             selectedLocationIndex: locations.firstIndex(of: location) ?? 0,
             reminderTitles: reminderOptions.map(\.title),
             selectedReminderIndex: reminderOptions.firstIndex { $0.preference == reminder } ?? 0,
+            photoData: existingItem?.photoFileName.flatMap { photoStore.photoData(named: $0) },
             expiryDate: existingItem?.expiryDate ?? defaultExpiry,
             quickDateTitles: quickDates.map(\.title)))
     }
@@ -94,13 +103,40 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         view?.showExpiryDate(date)
     }
 
+    func didTapPhoto() {
+        var options: [PhotoOption] = [.takePhoto, .chooseFromLibrary]
+        if hasPhoto { options.append(.removePhoto) }
+        view?.showPhotoOptions(options)
+    }
+
+    func didSelectPhotoOption(_ option: PhotoOption) {
+        switch option {
+        case .takePhoto:
+            view?.presentPhotoPicker(.camera)
+        case .chooseFromLibrary:
+            view?.presentPhotoPicker(.library)
+        case .removePhoto:
+            // Only an item that already HAS a saved photo needs a "remove" later.
+            photoChange = existingItem?.photoFileName == nil ? .keep : .remove
+            hasPhoto = false
+            view?.showPhoto(nil)
+        }
+    }
+
+    func didPickPhoto(_ data: Data) {
+        photoChange = .replace(data)
+        hasPhoto = true
+        view?.showPhoto(data)
+    }
+
     func didTapSave(name: String, quantity: Int, locationIndex: Int, reminderIndex: Int, expiryDate: Date) {
         guard locations.indices.contains(locationIndex),
               reminderOptions.indices.contains(reminderIndex) else { return }
         let draft = PantryItemDraft(name: name, quantity: quantity,
                                     location: locations[locationIndex],
                                     expiryDate: expiryDate,
-                                    reminder: reminderOptions[reminderIndex].preference)
+                                    reminder: reminderOptions[reminderIndex].preference,
+                                    photo: photoChange)
         interactor.save(draft, replacing: existingItem)
     }
 

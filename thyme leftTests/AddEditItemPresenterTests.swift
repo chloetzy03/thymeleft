@@ -13,6 +13,9 @@ final class AddEditItemPresenterTests: XCTestCase {
         var nameError: String?
         var errorMessage: String?
         var primerShownCount = 0
+        var shownPhotos: [Data?] = []
+        var photoOptions: [[PhotoOption]] = []
+        var pickerSources: [PhotoSource] = []
 
         func showForm(_ form: AddEditFormViewModel) { self.form = form }
         func showEmoji(_ emoji: String) { self.emoji = emoji }
@@ -20,6 +23,9 @@ final class AddEditItemPresenterTests: XCTestCase {
         func showNameError(_ message: String?) { nameError = message }
         func showError(message: String) { errorMessage = message }
         func showReminderPrimer() { primerShownCount += 1 }
+        func showPhoto(_ data: Data?) { shownPhotos.append(data) }
+        func showPhotoOptions(_ options: [PhotoOption]) { photoOptions.append(options) }
+        func presentPhotoPicker(_ source: PhotoSource) { pickerSources.append(source) }
     }
 
     private final class InteractorSpy: AddEditItemInteractorInput {
@@ -54,6 +60,7 @@ final class AddEditItemPresenterTests: XCTestCase {
 
     private func makeSUT(existing: PantryItem? = nil,
                          settings: AppSettings = AppSettings(),
+                         photoStore: InMemoryPhotoStore? = nil,
                          onSaved: @escaping () -> Void = {})
         -> (sut: AddEditItemPresenter, view: ViewSpy, interactor: InteractorSpy, router: RouterSpy) {
         let view = ViewSpy()
@@ -63,6 +70,7 @@ final class AddEditItemPresenterTests: XCTestCase {
                                        iconProvider: EmojiFoodIconProvider(),
                                        dateProvider: FixedDateProvider(now: today),
                                        settingsStore: InMemorySettingsStore(settings: settings),
+                                       photoStore: photoStore ?? InMemoryPhotoStore(),
                                        existingItem: existing, calendar: calendar, onSaved: onSaved)
         return (sut, view, interactor, router)
     }
@@ -337,5 +345,111 @@ final class AddEditItemPresenterTests: XCTestCase {
         XCTAssertEqual(interactor.permissionRequestCount, 0)
         XCTAssertEqual(router.closeCount, 1)
         XCTAssertEqual(savedCallbackCount, 1)
+    }
+
+    // MARK: Photos
+
+    private let picture = Data([1, 2, 3])
+
+    func test_viewDidLoad_whenEditingAnItemWithAPhoto_showsThatPhoto() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let name = try photos.savePhoto(picture)
+        let item = PantryItem(name: "Milk", location: .fridge, expiryDate: today, photoFileName: name)
+        let (sut, view, _, _) = makeSUT(existing: item, photoStore: photos)
+
+        // Act
+        sut.viewDidLoad()
+
+        // Assert
+        XCTAssertEqual(view.form?.photoData, picture)
+    }
+
+    func test_viewDidLoad_whenAdding_hasNoPhoto() async {
+        // Arrange
+        let (sut, view, _, _) = makeSUT()
+
+        // Act
+        sut.viewDidLoad()
+
+        // Assert
+        XCTAssertNil(view.form?.photoData)
+    }
+
+    func test_didTapPhoto_offersCameraAndLibrary_butRemoveOnlyWhenThereIsAPhoto() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let name = try photos.savePhoto(picture)
+        let withoutPhoto = makeSUT()
+        let withPhoto = makeSUT(existing: PantryItem(name: "Milk", location: .fridge, expiryDate: today,
+                                                     photoFileName: name), photoStore: photos)
+
+        // Act
+        withoutPhoto.sut.didTapPhoto()
+        withPhoto.sut.didTapPhoto()
+
+        // Assert
+        XCTAssertEqual(withoutPhoto.view.photoOptions, [[.takePhoto, .chooseFromLibrary]])
+        XCTAssertEqual(withPhoto.view.photoOptions, [[.takePhoto, .chooseFromLibrary, .removePhoto]])
+    }
+
+    func test_didSelectPhotoOption_opensTheRightPicker() async {
+        // Arrange
+        let (sut, view, _, _) = makeSUT()
+
+        // Act
+        sut.didSelectPhotoOption(.takePhoto)
+        sut.didSelectPhotoOption(.chooseFromLibrary)
+
+        // Assert
+        XCTAssertEqual(view.pickerSources, [.camera, .library])
+    }
+
+    func test_didPickPhoto_showsItAndIncludesItInTheDraft() async {
+        // Arrange
+        let (sut, view, interactor, _) = makeSUT()
+        sut.viewDidLoad()
+
+        // Act
+        sut.didPickPhoto(picture)
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        // Assert
+        XCTAssertEqual(view.shownPhotos.last ?? nil, picture)
+        XCTAssertEqual(interactor.savedDrafts.last?.photo, .replace(picture))
+    }
+
+    func test_removingAnExistingPhoto_showsTheEmojiAndMarksItForRemoval() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let name = try photos.savePhoto(picture)
+        let item = PantryItem(name: "Milk", location: .fridge, expiryDate: today, photoFileName: name)
+        let (sut, view, interactor, _) = makeSUT(existing: item, photoStore: photos)
+        sut.viewDidLoad()
+
+        // Act
+        sut.didSelectPhotoOption(.removePhoto)
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+        sut.didTapPhoto()
+
+        // Assert
+        XCTAssertEqual(view.shownPhotos.count, 1)
+        XCTAssertNil(view.shownPhotos[0])
+        XCTAssertEqual(interactor.savedDrafts.last?.photo, .remove)
+        XCTAssertEqual(view.photoOptions.last, [.takePhoto, .chooseFromLibrary], "nothing left to remove")
+    }
+
+    func test_pickingThenRemoving_onAnItemWithoutAPhoto_changesNothing() async {
+        // Arrange
+        let (sut, _, interactor, _) = makeSUT()
+        sut.viewDidLoad()
+
+        // Act
+        sut.didPickPhoto(picture)
+        sut.didSelectPhotoOption(.removePhoto)
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        // Assert: there was never a saved photo, so there is nothing to remove or replace
+        XCTAssertEqual(interactor.savedDrafts.last?.photo, .keep)
     }
 }

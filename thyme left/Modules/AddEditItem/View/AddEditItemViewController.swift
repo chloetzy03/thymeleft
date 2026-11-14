@@ -1,4 +1,6 @@
 import UIKit
+import PhotosUI
+import AVFoundation
 
 /// The waiter of the Add / Edit screen: shows the form and reports what the user typed or tapped.
 final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol {
@@ -7,6 +9,8 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
     // The form controls. Created once, filled in when the Presenter calls `showForm`.
     private let emojiLabel = UILabel()
+    private let photoButton = UIButton(type: .custom) // the square tile: shows the photo or the emoji
+    private let photoImageView = UIImageView()
     private let nameField = UITextField()
     private let nameErrorLabel = UILabel()
     private let quantityValueLabel = UILabel()
@@ -51,6 +55,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         title = form.title
         emojiLabel.text = form.emoji
         nameField.text = form.name
+        showPhoto(form.photoData)
 
         stepper.minimumValue = Double(form.quantityRange.lowerBound)
         stepper.maximumValue = Double(form.quantityRange.upperBound)
@@ -88,6 +93,79 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
     func showEmoji(_ emoji: String) {
         emojiLabel.text = emoji
+    }
+
+    func showPhoto(_ data: Data?) {
+        if let data, let image = UIImage(data: data) {
+            photoImageView.image = image
+            photoImageView.isHidden = false
+            emojiLabel.isHidden = true
+        } else {
+            photoImageView.image = nil
+            photoImageView.isHidden = true
+            emojiLabel.isHidden = false
+        }
+    }
+
+    func showPhotoOptions(_ options: [PhotoOption]) {
+        let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        for option in options {
+            switch option {
+            case .takePhoto:
+                // The simulator has no camera, so only offer this when one exists.
+                guard UIImagePickerController.isSourceTypeAvailable(.camera) else { continue }
+                sheet.addAction(UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
+                    self?.presenter?.didSelectPhotoOption(.takePhoto)
+                })
+            case .chooseFromLibrary:
+                sheet.addAction(UIAlertAction(title: "Choose from library", style: .default) { [weak self] _ in
+                    self?.presenter?.didSelectPhotoOption(.chooseFromLibrary)
+                })
+            case .removePhoto:
+                sheet.addAction(UIAlertAction(title: "Remove photo", style: .destructive) { [weak self] _ in
+                    self?.presenter?.didSelectPhotoOption(.removePhoto)
+                })
+            }
+        }
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        sheet.popoverPresentationController?.sourceView = photoButton // needed on iPad
+        present(sheet, animated: true)
+    }
+
+    func presentPhotoPicker(_ source: PhotoSource) {
+        switch source {
+        case .library:
+            // The library picker runs outside our app, so it needs no permission at all.
+            var configuration = PHPickerConfiguration()
+            configuration.filter = .images
+            configuration.selectionLimit = 1
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            present(picker, animated: true)
+        case .camera:
+            presentCamera()
+        }
+    }
+
+    private func presentCamera() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .denied, .restricted:
+            let alert = UIAlertController(
+                title: "Camera is off",
+                message: "Allow camera access in iOS Settings to take photos of your food.",
+                preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Not now", style: .cancel))
+            alert.addAction(UIAlertAction(title: "Open Settings", style: .default) { _ in
+                if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+            })
+            present(alert, animated: true)
+        default:
+            // If the user hasn't decided yet, iOS shows its "Allow camera?" question by itself.
+            let picker = UIImagePickerController()
+            picker.sourceType = .camera
+            picker.delegate = self
+            present(picker, animated: true)
+        }
     }
 
     func showExpiryDate(_ date: Date) {
@@ -143,7 +221,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
     private func buildLayout() {
         // --- Name + emoji preview
-        let emojiTile = UIView()
+        let emojiTile = photoButton
         emojiTile.backgroundColor = Theme.Colors.iconTile
         emojiTile.layer.cornerRadius = 18
         emojiTile.translatesAutoresizingMaskIntoConstraints = false
@@ -151,6 +229,37 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         emojiLabel.isAccessibilityElement = false // decoration only
         emojiTile.addSubview(emojiLabel)
+
+        // The photo fills the tile (cropped to fit) and sits on top of the emoji when present.
+        photoImageView.contentMode = .scaleAspectFill
+        photoImageView.clipsToBounds = true
+        photoImageView.layer.cornerRadius = 18
+        photoImageView.isHidden = true
+        photoImageView.translatesAutoresizingMaskIntoConstraints = false
+        emojiTile.addSubview(photoImageView)
+
+        // A small camera badge hints that the tile can be tapped.
+        let badge = UIImageView(image: UIImage(systemName: "camera.fill"))
+        badge.tintColor = Theme.Colors.onBrand
+        badge.contentMode = .center
+        badge.backgroundColor = Theme.Colors.brand
+        badge.layer.cornerRadius = 12
+        badge.translatesAutoresizingMaskIntoConstraints = false
+        emojiTile.addSubview(badge)
+        NSLayoutConstraint.activate([
+            photoImageView.topAnchor.constraint(equalTo: emojiTile.topAnchor),
+            photoImageView.bottomAnchor.constraint(equalTo: emojiTile.bottomAnchor),
+            photoImageView.leadingAnchor.constraint(equalTo: emojiTile.leadingAnchor),
+            photoImageView.trailingAnchor.constraint(equalTo: emojiTile.trailingAnchor),
+            badge.widthAnchor.constraint(equalToConstant: 24),
+            badge.heightAnchor.constraint(equalToConstant: 24),
+            badge.trailingAnchor.constraint(equalTo: emojiTile.trailingAnchor, constant: 6),
+            badge.bottomAnchor.constraint(equalTo: emojiTile.bottomAnchor, constant: 6)
+        ])
+
+        emojiTile.accessibilityLabel = "Item photo"
+        emojiTile.accessibilityHint = "Add, change or remove a photo"
+        emojiTile.addAction(UIAction { [weak self] _ in self?.presenter?.didTapPhoto() }, for: .touchUpInside)
 
         nameField.placeholder = "What is it? e.g. Milk"
         nameField.font = Theme.Typography.sectionTitle.font
@@ -282,5 +391,32 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             column.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             column.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
         ])
+    }
+}
+
+// MARK: - Receiving the picked photo
+
+extension AddEditItemViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else { return }
+        provider.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
+            // This runs in the background; turn the picture into data there, then hop back to the main thread.
+            guard let data = (object as? UIImage)?.jpegData(compressionQuality: 0.9) else { return }
+            DispatchQueue.main.async { self?.presenter?.didPickPhoto(data) }
+        }
+    }
+}
+
+extension AddEditItemViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        picker.dismiss(animated: true)
+        guard let data = (info[.originalImage] as? UIImage)?.jpegData(compressionQuality: 0.9) else { return }
+        presenter?.didPickPhoto(data)
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
     }
 }
