@@ -1,0 +1,63 @@
+import Foundation
+
+// The "who may ask whom" rulebook for the Add / Edit screen.
+// (Same pattern as the Pantry screen: View -> Presenter -> Interactor, answers come back.)
+
+/// Everything the form needs to draw itself the first time.
+struct AddEditFormViewModel: Equatable {
+    let title: String
+    let saveButtonTitle: String
+    let name: String
+    let emoji: String
+    let quantity: Int
+    let quantityRange: ClosedRange<Int>
+    let locationTitles: [String]
+    let selectedLocationIndex: Int
+    let expiryDate: Date
+    let quickDateTitles: [String]
+}
+
+// MARK: - View (the waiter)
+
+@MainActor
+protocol AddEditItemViewProtocol: AnyObject {
+    func showForm(_ form: AddEditFormViewModel)
+    func showEmoji(_ emoji: String)
+    func showExpiryDate(_ date: Date)
+    /// `nil` clears the message.
+    func showNameError(_ message: String?)
+    func showError(message: String)
+}
+
+// MARK: - Presenter (the manager)
+
+@MainActor
+protocol AddEditItemPresenterProtocol: AnyObject {
+    func viewDidLoad()
+    func nameChanged(_ text: String)
+    func didSelectQuickDate(at index: Int)
+    func didTapSave(name: String, quantity: Int, locationIndex: Int, expiryDate: Date)
+    func didTapCancel()
+}
+
+// MARK: - Interactor (the chef)
+
+@MainActor
+protocol AddEditItemInteractorInput: AnyObject {
+    /// `existing` is the item being edited, or `nil` when adding a new one.
+    func save(_ draft: PantryItemDraft, replacing existing: PantryItem?)
+}
+
+@MainActor
+protocol AddEditItemInteractorOutput: AnyObject {
+    func didSave()
+    func didFailValidation(_ error: ItemValidationError)
+    func didFail(_ error: Error)
+}
+
+// MARK: - Router (the host)
+
+@MainActor
+protocol AddEditItemRouterProtocol: AnyObject {
+    func close()
+}
