@@ -8,6 +8,7 @@ struct PantryItemDraft: Equatable {
     var quantity: Int
     var location: StorageLocation
     var expiryDate: Date
+    var reminder: ReminderPreference = .useDefault
 }
 
 /// The rules an item must follow before we save it.

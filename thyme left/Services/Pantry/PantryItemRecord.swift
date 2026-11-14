@@ -12,20 +12,25 @@ final class PantryItemRecord {
     var locationRawValue: String
     var expiryDate: Date
     var createdAt: Date
+    /// See `ReminderPreference.storedValue`. The default (-2) lets older saved items upgrade smoothly.
+    var reminderStoredValue: Int = -2
 
-    init(id: UUID, name: String, quantity: Int, locationRawValue: String, expiryDate: Date, createdAt: Date) {
+    init(id: UUID, name: String, quantity: Int, locationRawValue: String, expiryDate: Date,
+         reminderStoredValue: Int, createdAt: Date) {
         self.id = id
         self.name = name
         self.quantity = quantity
         self.locationRawValue = locationRawValue
         self.expiryDate = expiryDate
+        self.reminderStoredValue = reminderStoredValue
         self.createdAt = createdAt
     }
 
     convenience init(_ item: PantryItem) {
         self.init(id: item.id, name: item.name, quantity: item.quantity,
                   locationRawValue: item.location.rawValue,
-                  expiryDate: item.expiryDate, createdAt: item.createdAt)
+                  expiryDate: item.expiryDate, reminderStoredValue: item.reminder.storedValue,
+                  createdAt: item.createdAt)
     }
 
     func update(from item: PantryItem) {
@@ -33,12 +38,14 @@ final class PantryItemRecord {
         quantity = item.quantity
         locationRawValue = item.location.rawValue
         expiryDate = item.expiryDate
+        reminderStoredValue = item.reminder.storedValue
     }
 
     /// Converts back to the plain `PantryItem` the app uses.
     var entity: PantryItem {
         PantryItem(id: id, name: name, quantity: quantity,
                    location: StorageLocation(rawValue: locationRawValue) ?? .pantry,
-                   expiryDate: expiryDate, createdAt: createdAt)
+                   expiryDate: expiryDate, reminder: ReminderPreference(storedValue: reminderStoredValue),
+                   createdAt: createdAt)
     }
 }
