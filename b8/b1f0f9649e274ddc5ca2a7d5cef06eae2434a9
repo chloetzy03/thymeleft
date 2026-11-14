@@ -1,0 +1,29 @@
+"thyme left/Entities/ExpiryPolicy.swift"
+  s_7ae13adebac50a::t_eec5a31839edfc 1-26
+"thyme left/Entities/PantryItem.swift"
+  s_7ae13adebac50a::t_fbf5123faea6f7 1-27
+"thyme left/Entities/StorageLocation.swift"
+  s_7ae13adebac50a::t_21cc74d3a817e8 1-16
+"thyme left/Entities/ExpiryStatus.swift"
+  s_7ae13adebac50a::t_f49735e4a4ab41 1-13
+"thyme leftTests/ExpiryPolicyTests.swift"
+  s_7ae13adebac50a::t_4c580abd0b4607 1-48
+"thyme left/Entities/ExpiringItem.swift"
+  s_7ae13adebac50a::t_dcfd0699dbe77e 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b8b1f0f9649e274ddc5ca2a7d5cef06eae2434a9",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
