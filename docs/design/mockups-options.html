@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thyme Left – Design Directions</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"SF Pro Text",Helvetica,Arial,sans-serif;background:#ECECEC;color:#222;padding:32px}
+  h1{font-size:28px} .sub{color:#777;margin:4px 0 28px}
+  .opt{margin-bottom:44px}
+  .opt h2{font-size:20px;margin-bottom:2px} .opt p.d{color:#666;font-size:14px;margin-bottom:14px;max-width:760px}
+  .sw{display:flex;gap:6px;margin-bottom:14px}.sw i{width:34px;height:34px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.1)}
+  .row{display:flex;gap:26px;flex-wrap:wrap}
+  .phone{width:290px;height:600px;border-radius:42px;border:10px solid #111;position:relative;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.25)}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:86px;height:22px;background:#111;border-radius:14px;z-index:9}
+  .top{height:46px}
+  .tabbar{position:absolute;bottom:0;left:0;right:0;height:70px;display:flex;justify-content:space-around;padding-top:10px;font-size:10px}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:2px}.tab i{font-style:normal;font-size:19px}
+  .badge{font-size:11px;font-weight:700;padding:5px 9px;border-radius:12px;white-space:nowrap;color:#fff}
+
+  /* ===== A: Garden Pantry (cards) ===== */
+  .A{background:#FAF6EE;color:#2E2A25}
+  .A .h{display:flex;justify-content:space-between;align-items:center;padding:6px 18px}
+  .A h3{font-size:26px;font-weight:800}
+  .A .plus{width:34px;height:34px;border-radius:50%;background:#5B8C5A;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center}
+  .A .sec{font-size:11px;font-weight:700;letter-spacing:.6px;color:#8A8378;padding:10px 18px 2px}
+  .A .card{background:#fff;margin:6px 14px;border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .A .em{width:42px;height:42px;border-radius:12px;background:#F1ECE0;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .A .m{flex:1}.A .m b{display:block;font-size:15px}.A .m span{font-size:12px;color:#8A8378}
+  .A .tabbar{background:#fff;border-top:1px solid #E6E0D2;color:#8A8378}.A .tab.on{color:#5B8C5A;font-weight:700}
+  .A .rc{background:#fff;margin:8px 14px;border-radius:18px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .A .ri{height:110px;display:flex;align-items:center;justify-content:center;font-size:54px}
+  .A .rb{padding:10px 12px}.A .tag{font-size:11px;padding:3px 8px;border-radius:10px;background:#E8F3E8;color:#5B8C5A;font-weight:600;display:inline-block;margin:6px 4px 0 0}
+  .A .tag.x{background:#FBEAEA;color:#D9534F}
+
+  /* ===== B: Mascot-first / playful ===== */
+  .B{background:#FFF4D6;color:#3B2A12}
+  .B .hero{margin:6px 14px 0;background:#5B8C5A;border-radius:26px;padding:16px;color:#fff;display:flex;gap:10px;align-items:center}
+  .B .hero .big{font-size:58px}
+  .B .hero b{font-size:17px;display:block;line-height:1.2}.B .hero span{font-size:12px;opacity:.9}
+  .B .sec{font-weight:800;font-size:17px;padding:14px 18px 4px}
+  .B .tile{display:inline-block;width:124px;margin:4px 0 4px 14px;border-radius:22px;padding:12px;vertical-align:top}
+  .B .tile .e{font-size:34px}.B .tile b{display:block;font-size:14px;margin-top:6px}.B .tile span{font-size:12px;font-weight:700}
+  .B .strip{white-space:nowrap;overflow:hidden}
+  .B .li{margin:6px 14px;background:#fff;border-radius:18px;padding:10px 12px;display:flex;align-items:center;gap:10px;border:2px solid #3B2A12}
+  .B .li .e{font-size:24px}.B .li b{flex:1;font-size:14px}
+  .B .tabbar{background:#fff;border-top:2px solid #3B2A12;color:#8a7350}.B .tab.on{color:#3B2A12;font-weight:800}
+  .B .fab{position:absolute;right:16px;bottom:84px;width:54px;height:54px;border-radius:50%;background:#F2A541;border:2px solid #3B2A12;font-size:28px;display:flex;align-items:center;justify-content:center;box-shadow:3px 3px 0 #3B2A12}
+  .B .rc{margin:8px 14px;background:#fff;border:2px solid #3B2A12;border-radius:22px;padding:12px;display:flex;gap:12px;align-items:center;box-shadow:3px 3px 0 #3B2A12}
+  .B .rc .e{font-size:44px}.B .rc b{font-size:15px;display:block}.B .rc span{font-size:12px;color:#8a7350}
+  .B .rc span.pill{background:#5B8C5A;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;display:inline-block;margin-top:4px}
+
+  /* ===== C: Minimal / clean ===== */
+  .C{background:#fff;color:#111}
+  .C h3{font-size:34px;font-weight:700;padding:6px 20px 2px;letter-spacing:-.5px}
+  .C .cap{padding:0 20px 10px;color:#888;font-size:13px}
+  .C .row2{display:flex;align-items:center;padding:13px 20px;border-bottom:1px solid #F0F0F0;gap:12px}
+  .C .dot{width:10px;height:10px;border-radius:50%}
+  .C .row2 b{flex:1;font-weight:500;font-size:16px}.C .row2 span{font-size:13px;color:#888}
+  .C .sec{font-size:12px;color:#888;padding:14px 20px 4px;text-transform:uppercase;letter-spacing:.8px}
+  .C .tabbar{background:#fff;border-top:1px solid #eee;color:#aaa}.C .tab.on{color:#111;font-weight:600}
+  .C .big{padding:6px 20px}.C .big .n{font-size:64px;font-weight:700;letter-spacing:-2px;line-height:1}.C .big span{color:#888;font-size:14px}
+  .C .rr{padding:14px 20px;border-bottom:1px solid #F0F0F0}.C .rr b{font-size:16px;font-weight:600;display:block}.C .rr span{font-size:13px;color:#888}
+  .C .bar{height:5px;border-radius:3px;background:#eee;margin-top:8px;overflow:hidden}.C .bar i{display:block;height:100%;background:#111}
+
+  /* ===== D: Dark, modern ===== */
+  .D{background:#101714;color:#E8F0EA}
+  .D h3{font-size:26px;font-weight:800;padding:6px 18px}
+  .D .ring{margin:4px 14px 8px;background:#18221D;border-radius:22px;padding:14px;display:flex;align-items:center;gap:14px}
+  .D .rg{width:70px;height:70px;border-radius:50%;background:conic-gradient(#D9534F 0 25%,#F2A541 25% 55%,#4ADE80 55% 100%);display:flex;align-items:center;justify-content:center}
+  .D .rg div{width:52px;height:52px;border-radius:50%;background:#18221D;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+  .D .ring b{font-size:15px;display:block}.D .ring span{font-size:12px;color:#8FA698}
+  .D .card{background:#18221D;margin:6px 14px;border-radius:18px;padding:12px;display:flex;align-items:center;gap:12px;border-left:5px solid}
+  .D .card .em{font-size:24px}.D .m{flex:1}.D .m b{display:block;font-size:15px}.D .m span{font-size:12px;color:#8FA698}
+  .D .tabbar{background:#18221D;color:#6F8578}.D .tab.on{color:#4ADE80;font-weight:700}
+  .D .rc{background:#18221D;margin:8px 14px;border-radius:20px;overflow:hidden}
+  .D .ri{height:100px;display:flex;align-items:center;justify-content:center;font-size:50px;background:linear-gradient(135deg,#1F3A2A,#2B4A36)}
+  .D .rb{padding:10px 12px}.D .tag{font-size:11px;padding:3px 8px;border-radius:10px;background:#1F3A2A;color:#4ADE80;font-weight:600;display:inline-block;margin:6px 4px 0 0}
+  .D .tag.x{background:#3A1F1F;color:#FF8A85}
+</style>
+</head>
+<body>
+<h1>🌿 Thyme Left — Design Directions</h1>
+<p class="sub">Four looks for the same two screens (Pantry + Recipes). Tell me which you like, or mix and match.</p>
+
+<!-- ============ A ============ -->
+<div class="opt">
+  <h2>A · Garden Pantry — warm &amp; friendly cards</h2>
+  <p class="d">Cream background, soft cards, thyme-green accents. Familiar and calm. Safest choice.</p>
+  <div class="sw"><i style="background:#5B8C5A"></i><i style="background:#FAF6EE"></i><i style="background:#F2A541"></i><i style="background:#D9534F"></i></div>
+  <div class="row">
+    <div class="phone A"><div class="notch"></div><div class="top"></div>
+      <div class="h"><h3>Thyme Left</h3><div class="plus">+</div></div>
+      <div class="sec">⚠ USE SOON</div>
+      <div class="card"><div class="em">🥛</div><div class="m"><b>Milk</b><span>Fridge · x1</span></div><div class="badge" style="background:#D9534F">1 day</div></div>
+      <div class="card"><div class="em">🥬</div><div class="m"><b>Spinach</b><span>Fridge · 1 bag</span></div><div class="badge" style="background:#F2A541">3 days</div></div>
+      <div class="sec">FRESH</div>
+      <div class="card"><div class="em">🥚</div><div class="m"><b>Eggs</b><span>Fridge · x6</span></div><div class="badge" style="background:#6BAA75">12 days</div></div>
+      <div class="card"><div class="em">🍝</div><div class="m"><b>Pasta</b><span>Pantry · x2</span></div><div class="badge" style="background:#6BAA75">4 mths</div></div>
+      <div class="tabbar"><div class="tab on"><i>🥫</i>Pantry</div><div class="tab"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+    </div>
+    <div class="phone A"><div class="notch"></div><div class="top"></div>
+      <div class="h"><h3>Recipes</h3></div>
+      <div class="sec">RESCUE THESE FIRST: 🥛 🥬 🥚</div>
+      <div class="rc"><div class="ri" style="background:#F6E7C8">🥧</div><div class="rb"><b>Spinach Quiche</b><br><span class="tag">Uses 3 of your items</span><span class="tag x">Missing: cream</span></div></div>
+      <div class="rc"><div class="ri" style="background:#DCEBD8">🍲</div><div class="rb"><b>Creamy Spinach Soup</b><br><span class="tag">Uses 2 of your items</span></div></div>
+      <div class="tabbar"><div class="tab"><i>🥫</i>Pantry</div><div class="tab on"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ B ============ -->
+<div class="opt">
+  <h2>B · Sprig Says — mascot-first &amp; playful</h2>
+  <p class="d">Bold outlines, chunky shadows, big mascot banner. Most memorable and shareable, and it leans into the pun.</p>
+  <div class="sw"><i style="background:#FFF4D6"></i><i style="background:#5B8C5A"></i><i style="background:#F2A541"></i><i style="background:#3B2A12"></i></div>
+  <div class="row">
+    <div class="phone B"><div class="notch"></div><div class="top"></div>
+      <div class="hero"><div class="big">🌿</div><div><b>3 things need love today!</b><span>Sprig is worried about your milk</span></div></div>
+      <div class="sec">Use me first</div>
+      <div class="strip">
+        <div class="tile" style="background:#F9C6C3"><div class="e">🥛</div><b>Milk</b><span style="color:#B3261E">Tomorrow!</span></div><div class="tile" style="background:#FBE0AE"><div class="e">🥬</div><b>Spinach</b><span style="color:#8A5A00">3 days</span></div>
+      </div>
+      <div class="sec">All good</div>
+      <div class="li"><div class="e">🥚</div><b>Eggs</b><span class="badge" style="background:#5B8C5A">12 days</span></div>
+      <div class="li"><div class="e">🍝</div><b>Pasta</b><span class="badge" style="background:#5B8C5A">4 mths</span></div>
+      <div class="fab">+</div>
+      <div class="tabbar"><div class="tab on"><i>🥫</i>Pantry</div><div class="tab"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+    </div>
+    <div class="phone B"><div class="notch"></div><div class="top"></div>
+      <div class="hero" style="background:#F2A541;color:#3B2A12"><div class="big">🍳</div><div><b>Let's rescue that spinach!</b><span>2 recipes ready to cook</span></div></div>
+      <div class="rc"><div class="e">🥧</div><div><b>Spinach Quiche</b><span>Uses milk, spinach, eggs</span><br><span class="pill">3/4 ingredients</span></div></div>
+      <div class="rc"><div class="e">🍲</div><div><b>Creamy Spinach Soup</b><span>Uses milk, spinach</span><br><span class="pill">2/5 ingredients</span></div></div>
+      <div class="tabbar"><div class="tab"><i>🥫</i>Pantry</div><div class="tab on"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ C ============ -->
+<div class="opt">
+  <h2>C · Plain &amp; Clean — minimal list</h2>
+  <p class="d">White, lots of space, small status dots, big numbers. Feels like an Apple-made app, and it's the quickest to build.</p>
+  <div class="sw"><i style="background:#fff"></i><i style="background:#111"></i><i style="background:#F2A541"></i><i style="background:#D9534F"></i></div>
+  <div class="row">
+    <div class="phone C"><div class="notch"></div><div class="top"></div>
+      <h3>Pantry</h3><div class="cap">2 items need attention</div>
+      <div class="big"><div class="n">1</div><span>day until your milk expires</span></div>
+      <div class="sec">Expiring</div>
+      <div class="row2"><div class="dot" style="background:#D9534F"></div><b>Milk</b><span>1 day</span></div>
+      <div class="row2"><div class="dot" style="background:#F2A541"></div><b>Spinach</b><span>3 days</span></div>
+      <div class="sec">Fresh</div>
+      <div class="row2"><div class="dot" style="background:#4CAF50"></div><b>Eggs</b><span>12 days</span></div>
+      <div class="row2"><div class="dot" style="background:#4CAF50"></div><b>Pasta</b><span>4 months</span></div>
+      <div class="tabbar"><div class="tab on"><i>●</i>Pantry</div><div class="tab"><i>○</i>Recipes</div><div class="tab"><i>○</i>Me</div></div>
+    </div>
+    <div class="phone C"><div class="notch"></div><div class="top"></div>
+      <h3>Recipes</h3><div class="cap">Based on milk, spinach, eggs</div>
+      <div class="rr"><b>Spinach Quiche</b><span>Missing 1: cream</span><div class="bar"><i style="width:75%"></i></div></div>
+      <div class="rr"><b>Creamy Spinach Soup</b><span>Missing 3</span><div class="bar"><i style="width:40%"></i></div></div>
+      <div class="rr"><b>Shakshuka with Spinach</b><span>Missing 2</span><div class="bar"><i style="width:55%"></i></div></div>
+      <div class="tabbar"><div class="tab"><i>○</i>Pantry</div><div class="tab on"><i>●</i>Recipes</div><div class="tab"><i>○</i>Me</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ D ============ -->
+<div class="opt">
+  <h2>D · Night Kitchen — dark &amp; modern</h2>
+  <p class="d">Dark background, glowing status colours and a "freshness ring" summary. Looks premium, and it's good for late-night snackers.</p>
+  <div class="sw"><i style="background:#101714"></i><i style="background:#4ADE80"></i><i style="background:#F2A541"></i><i style="background:#D9534F"></i></div>
+  <div class="row">
+    <div class="phone D"><div class="notch"></div><div class="top"></div>
+      <h3>Thyme Left</h3>
+      <div class="ring"><div class="rg"><div>8</div></div><div><b>8 items tracked</b><span>1 urgent · 2 soon · 5 fresh</span></div></div>
+      <div class="card" style="border-color:#D9534F"><div class="em">🥛</div><div class="m"><b>Milk</b><span>Fridge · x1</span></div><b style="color:#FF8A85">1 day</b></div>
+      <div class="card" style="border-color:#F2A541"><div class="em">🥬</div><div class="m"><b>Spinach</b><span>Fridge · 1 bag</span></div><b style="color:#F2A541">3 days</b></div>
+      <div class="card" style="border-color:#4ADE80"><div class="em">🥚</div><div class="m"><b>Eggs</b><span>Fridge · x6</span></div><b style="color:#4ADE80">12 days</b></div>
+      <div class="tabbar"><div class="tab on"><i>🥫</i>Pantry</div><div class="tab"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+    </div>
+    <div class="phone D"><div class="notch"></div><div class="top"></div>
+      <h3>Recipes</h3>
+      <div class="rc"><div class="ri">🥧</div><div class="rb"><b>Spinach Quiche</b><br><span class="tag">Uses 3 of your items</span><span class="tag x">Missing: cream</span></div></div>
+      <div class="rc"><div class="ri">🍲</div><div class="rb"><b>Creamy Spinach Soup</b><br><span class="tag">Uses 2 of your items</span></div></div>
+      <div class="tabbar"><div class="tab"><i>🥫</i>Pantry</div><div class="tab on"><i>🍳</i>Recipes</div><div class="tab"><i>👤</i>Me</div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
