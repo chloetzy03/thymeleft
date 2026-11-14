@@ -1,0 +1,40 @@
+"thyme left/Common/PhotoImageCache.swift"
+  s_7ae13adebac50a::t_ad7ffc225f8a3b 1-22
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_0076730963a56b 27-29
+"thyme left/Modules/PantryList/View/PantryItemCell.swift"
+  s_7ae13adebac50a::t_d57b3071ebba62 11,27-37,61-66,97-100
+"thyme leftTests/PantryListInteractorTests.swift"
+  s_7ae13adebac50a::t_29940ef07486bd 37-38,45,124-135
+  s_7ae13adebac50a::t_cec66223493237 136-137
+"thyme left/App/AppContainer.swift"
+  s_7ae13adebac50a::t_0076730963a56b 16-17,66-70
+"thyme left/Modules/PantryList/PantryListContracts.swift"
+  s_7ae13adebac50a::t_d57b3071ebba62 17-18
+"thyme left/Modules/PantryList/View/PantryListViewController.swift"
+  s_7ae13adebac50a::t_d57b3071ebba62 8,15-22,141
+"thyme left/Modules/PantryList/PantryListInteractor.swift"
+  s_7ae13adebac50a::t_d57b3071ebba62 15,22,28,56-57,59
+"thyme left/Modules/PantryList/PantryListRouter.swift"
+  s_7ae13adebac50a::t_d57b3071ebba62 45-48,53,56-57
+"thyme left/Modules/PantryList/PantryListPresenter.swift"
+  s_7ae13adebac50a::t_d57b3071ebba62 108
+"thyme leftTests/PantryListPresenterTests.swift"
+  s_7ae13adebac50a::t_29940ef07486bd 156-170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "33ddbf7115d15efab10bc1485f17307dab6d9172",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
