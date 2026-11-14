@@ -1,0 +1,33 @@
+"thyme leftTests/SettingsTests.swift"
+  s_7ae13adebac50a::t_607f031bee859a 17,31,46,56,72,87,100,112,133,152,167
+  s_7ae13adebac50a::t_c2218a7c299241 1-16,18-30,32-45,47-55,57-71,73-86,88-99,101-111,113-132,134-151,153-166,168-334,336-461
+  s_7ae13adebac50a::t_f9f6b65f2ad0be 335
+"thyme left/Modules/Settings/SettingsPresenter.swift"
+  s_7ae13adebac50a::t_20fc42636af6bb 1-126
+"thyme left/Modules/Settings/SettingsContracts.swift"
+  s_7ae13adebac50a::t_e8a0381ca370c6 1-66
+"thyme left/Modules/Settings/SettingsInteractor.swift"
+  s_7ae13adebac50a::t_c3fe5f0795fd7a 1-59
+"thyme left/Modules/Settings/View/SettingsViewController.swift"
+  s_7ae13adebac50a::t_8eae0f33e0aacb 66-70
+  s_7ae13adebac50a::t_8c2bd85de89bc9 16,43,181-182,192
+  s_7ae13adebac50a::t_a9356616d31534 1-15,17-42,44-65,71-180,183-191,193-225
+"thyme left/Modules/Settings/SettingsRouter.swift"
+  s_7ae13adebac50a::t_667780bfe49292 1-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1a7a6ae5458e6c0d0595946da5cb16a607057e21",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
