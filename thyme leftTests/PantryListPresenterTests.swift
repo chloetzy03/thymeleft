@@ -1,13 +1,12 @@
-import Testing
-import Foundation
+import XCTest
 @testable import thyme_left
 
 @MainActor
-struct PantryListPresenterTests {
+final class PantryListPresenterTests: XCTestCase {
 
     // MARK: Pretend neighbours (so we test ONLY the Presenter)
 
-    final class ViewSpy: PantryListViewProtocol {
+    private final class ViewSpy: PantryListViewProtocol {
         var filterTitles: [String] = []
         var selectedFilter = -1
         var sections: [PantrySectionViewModel] = []
@@ -20,122 +19,194 @@ struct PantryListPresenterTests {
         func showError(message: String) { errorMessage = message }
     }
 
-    final class InteractorSpy: PantryListInteractorInput {
+    private final class InteractorSpy: PantryListInteractorInput {
         var requestedLocations: [StorageLocation?] = []
         var deletedIDs: [UUID] = []
+
         func loadItems(in location: StorageLocation?) { requestedLocations.append(location) }
         func deleteItem(id: UUID) { deletedIDs.append(id) }
     }
 
-    final class RouterSpy: PantryListRouterProtocol {
+    private final class RouterSpy: PantryListRouterProtocol {
         var addItemCount = 0
         func showAddItem() { addItemCount += 1 }
     }
 
-    private func makeSUT() -> (PantryListPresenter, ViewSpy, InteractorSpy, RouterSpy) {
-        let view = ViewSpy(), interactor = InteractorSpy(), router = RouterSpy()
+    // MARK: Helpers
+
+    private func makeSUT() -> (sut: PantryListPresenter, view: ViewSpy, interactor: InteractorSpy, router: RouterSpy) {
+        let view = ViewSpy()
+        let interactor = InteractorSpy()
+        let router = RouterSpy()
         let sut = PantryListPresenter(view: view, interactor: interactor, router: router,
                                       iconProvider: EmojiFoodIconProvider())
         return (sut, view, interactor, router)
     }
 
-    private func entry(_ name: String, days: Int, status: ExpiryStatus,
-                       place: StorageLocation = .fridge, quantity: Int = 1) -> ExpiringItem {
+    private func makeEntry(_ name: String, days: Int, status: ExpiryStatus,
+                           place: StorageLocation = .fridge, quantity: Int = 1) -> ExpiringItem {
         ExpiringItem(item: PantryItem(name: name, quantity: quantity, location: place, expiryDate: Date()),
                      daysRemaining: days, status: status)
     }
 
-    // MARK: Tests
+    // MARK: Filters
 
-    @Test func viewDidLoadShowsAllFilterChipsWithAllSelected() {
+    func test_viewDidLoad_showsAllFilterChipsWithAllSelected() async {
+        // Arrange
         let (sut, view, _, _) = makeSUT()
+
+        // Act
         sut.viewDidLoad()
-        #expect(view.filterTitles == ["All", "Fridge", "Pantry", "Freezer", "Counter"])
-        #expect(view.selectedFilter == 0)
+
+        // Assert
+        XCTAssertEqual(view.filterTitles, ["All", "Fridge", "Pantry", "Freezer", "Counter"])
+        XCTAssertEqual(view.selectedFilter, 0)
     }
 
-    @Test func refreshAsksForEveryLocationByDefault() {
+    func test_refreshRequested_asksForEveryLocationByDefault() async {
+        // Arrange
         let (sut, _, interactor, _) = makeSUT()
+
+        // Act
         sut.refreshRequested()
-        #expect(interactor.requestedLocations == [nil])
+
+        // Assert
+        XCTAssertEqual(interactor.requestedLocations, [nil])
     }
 
-    @Test func selectingAChipReloadsThatLocation() {
+    func test_didSelectFilter_reloadsThatLocation() async {
+        // Arrange
         let (sut, view, interactor, _) = makeSUT()
         sut.viewDidLoad()
+
+        // Act
         sut.didSelectFilter(at: 1)
-        #expect(view.selectedFilter == 1)
-        #expect(interactor.requestedLocations == [.fridge])
+
+        // Assert
+        XCTAssertEqual(view.selectedFilter, 1)
+        XCTAssertEqual(interactor.requestedLocations, [.fridge])
     }
 
-    @Test func selectingTheSameOrInvalidChipDoesNothing() {
+    func test_didSelectFilter_withSameOrInvalidIndex_doesNothing() async {
+        // Arrange
         let (sut, _, interactor, _) = makeSUT()
+
+        // Act
         sut.didSelectFilter(at: 0)
         sut.didSelectFilter(at: 99)
-        #expect(interactor.requestedLocations.isEmpty)
+
+        // Assert
+        XCTAssertTrue(interactor.requestedLocations.isEmpty)
     }
 
-    @Test func splitsIntoUseSoonAndFreshSections() {
+    // MARK: Sections and rows
+
+    func test_didLoad_splitsIntoUseSoonAndFreshSections() async {
+        // Arrange
         let (sut, view, _, _) = makeSUT()
-        sut.didLoad([
-            entry("Yoghurt", days: -1, status: .expired),
-            entry("Milk", days: 3, status: .soon),
-            entry("Pasta", days: 120, status: .fresh)
-        ])
-        #expect(view.sections.map(\.title) == ["USE SOON", "FRESH"])
-        #expect(view.sections[0].rows.map(\.title) == ["Yoghurt", "Milk"])
-        #expect(view.sections[1].rows.map(\.title) == ["Pasta"])
+        let entries = [
+            makeEntry("Yoghurt", days: -1, status: .expired),
+            makeEntry("Milk", days: 3, status: .soon),
+            makeEntry("Pasta", days: 120, status: .fresh)
+        ]
+
+        // Act
+        sut.didLoad(entries)
+
+        // Assert
+        XCTAssertEqual(view.sections.map(\.title), ["USE SOON", "FRESH"])
+        XCTAssertEqual(view.sections[0].rows.map(\.title), ["Yoghurt", "Milk"])
+        XCTAssertEqual(view.sections[1].rows.map(\.title), ["Pasta"])
     }
 
-    @Test func omitsEmptySections() {
+    func test_didLoad_withOnlyFreshItems_omitsTheUseSoonSection() async {
+        // Arrange
         let (sut, view, _, _) = makeSUT()
-        sut.didLoad([entry("Pasta", days: 120, status: .fresh)])
-        #expect(view.sections.map(\.title) == ["FRESH"])
+
+        // Act
+        sut.didLoad([makeEntry("Pasta", days: 120, status: .fresh)])
+
+        // Assert
+        XCTAssertEqual(view.sections.map(\.title), ["FRESH"])
     }
 
-    @Test func rowsContainFriendlyText() throws {
+    func test_didLoad_buildsRowsWithFriendlyText() async throws {
+        // Arrange
         let (sut, view, _, _) = makeSUT()
-        sut.didLoad([entry("Milk", days: 1, status: .urgent, place: .fridge, quantity: 2)])
-        let row = try #require(view.sections.first?.rows.first)
-        #expect(row.emoji == "🥛")
-        #expect(row.subtitle == "Fridge · x2")
-        #expect(row.badgeText == "1 day")
-        #expect(row.accessibilityText == "Milk, Fridge, quantity 2, expires tomorrow")
+
+        // Act
+        sut.didLoad([makeEntry("Milk", days: 1, status: .urgent, place: .fridge, quantity: 2)])
+
+        // Assert
+        let row = try XCTUnwrap(view.sections.first?.rows.first)
+        XCTAssertEqual(row.emoji, "🥛")
+        XCTAssertEqual(row.subtitle, "Fridge · x2")
+        XCTAssertEqual(row.badgeText, "1 day")
+        XCTAssertEqual(row.accessibilityText, "Milk, Fridge, quantity 2, expires tomorrow")
     }
 
-    @Test func emptyPantryOffersToAddFirstItem() {
+    // MARK: Empty states
+
+    func test_didLoad_withNoItems_offersToAddTheFirstItem() async {
+        // Arrange
         let (sut, view, _, _) = makeSUT()
+
+        // Act
         sut.didLoad([])
-        #expect(view.emptyState?.buttonTitle == "Add first item")
+
+        // Assert
+        XCTAssertEqual(view.emptyState?.buttonTitle, "Add first item")
     }
 
-    @Test func emptyFilterNamesTheLocationAndHasNoButton() {
+    func test_didLoad_withNoItemsInAFilter_namesTheLocationAndHasNoButton() async {
+        // Arrange
         let (sut, view, _, _) = makeSUT()
         sut.didSelectFilter(at: 3) // Freezer
+
+        // Act
         sut.didLoad([])
-        #expect(view.emptyState?.title == "Nothing in the freezer")
-        #expect(view.emptyState?.buttonTitle == nil)
+
+        // Assert
+        XCTAssertEqual(view.emptyState?.title, "Nothing in the freezer")
+        XCTAssertNil(view.emptyState?.buttonTitle)
     }
 
-    @Test func tappingAddAsksTheRouter() {
+    // MARK: Actions
+
+    func test_didTapAdd_asksTheRouterToShowAddItem() async {
+        // Arrange
         let (sut, _, _, router) = makeSUT()
+
+        // Act
         sut.didTapAdd()
-        #expect(router.addItemCount == 1)
+
+        // Assert
+        XCTAssertEqual(router.addItemCount, 1)
     }
 
-    @Test func deletingAsksInteractorThenReloadsCurrentFilter() {
+    func test_didDeleteRow_thenDidDeleteItem_reloadsTheCurrentFilter() async {
+        // Arrange
         let (sut, _, interactor, _) = makeSUT()
         let id = UUID()
         sut.didSelectFilter(at: 2) // Pantry
+
+        // Act
         sut.didDeleteRow(id: id)
         sut.didDeleteItem()
-        #expect(interactor.deletedIDs == [id])
-        #expect(interactor.requestedLocations.last == .pantry)
+
+        // Assert
+        XCTAssertEqual(interactor.deletedIDs, [id])
+        XCTAssertEqual(interactor.requestedLocations.last, .pantry)
     }
 
-    @Test func failureShowsAFriendlyMessage() {
+    func test_didFail_showsAFriendlyMessage() async {
+        // Arrange
         let (sut, view, _, _) = makeSUT()
+
+        // Act
         sut.didFail(NSError(domain: "test", code: 1))
-        #expect(view.errorMessage != nil)
+
+        // Assert
+        XCTAssertNotNil(view.errorMessage)
     }
 }
