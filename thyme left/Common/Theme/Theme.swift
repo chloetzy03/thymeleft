@@ -14,6 +14,8 @@ enum Theme {
         static let ink        = UIColor.dynamic(light: 0x2B4A32, dark: 0xE8F0EA) // main text
         static let muted      = UIColor.dynamic(light: 0x7C8F80, dark: 0x9AAE9F) // quiet text
         static let divider    = UIColor.dynamic(light: 0xE7E0CB, dark: 0x2A332C) // thin lines
+        static let chip       = UIColor.dynamic(light: 0xEFEADA, dark: 0x232C25) // unselected filter chip
+        static let iconTile   = UIColor.dynamic(light: 0xEEF2E6, dark: 0x26312A) // square behind an emoji
 
         // Expiry status: a soft background plus a readable text colour for each.
         static let urgentBackground = UIColor.dynamic(light: 0xF8DDD6, dark: 0x4A2A24)
@@ -29,7 +31,7 @@ enum Theme {
     /// Right now every role uses the clean sans-serif look. To make a role serif later,
     /// return `.serif` for it in `design` below - nothing else needs touching.
     enum Typography {
-        case logo, screenTitle, sectionTitle, itemName, body, caption, pill, button
+        case logo, screenTitle, sectionTitle, itemName, body, caption, chip, pill, button
 
         /// `.default` = clean sans-serif, `.serif` = book-style letters with little "feet".
         private var design: UIFontDescriptor.SystemDesign {
@@ -46,6 +48,7 @@ enum Theme {
             case .itemName: return 17
             case .body: return 15
             case .caption: return 12
+            case .chip: return 13
             case .pill: return 11
             case .button: return 17
             }
@@ -56,6 +59,7 @@ enum Theme {
             case .logo: return .bold
             case .screenTitle, .sectionTitle: return .semibold
             case .itemName, .button: return .semibold
+            case .chip: return .medium
             case .pill: return .bold
             case .body, .caption: return .regular
             }
@@ -69,6 +73,7 @@ enum Theme {
             case .sectionTitle: return .title3
             case .itemName, .button: return .headline
             case .body: return .body
+            case .chip: return .footnote
             case .caption, .pill: return .caption1
             }
         }
