@@ -1,0 +1,24 @@
+"thyme left/Services/Photos/PhotoStoring.swift"
+  s_7ae13adebac50a::t_c52145f34828fa 1-27,30-31,33-87
+  s_7ae13adebac50a::t_473daa3238ec41 28-29,32
+"thyme leftTests/JPEGThumbnailerTests.swift"
+  s_7ae13adebac50a::t_29940ef07486bd 1-188
+"thyme left/Services/Photos/JPEGThumbnailer.swift"
+  s_7ae13adebac50a::t_0836b050ffef4d 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "43b4a629d003642a0e0036adbe9466f00bf76e3b",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
