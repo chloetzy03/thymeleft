@@ -1,0 +1,20 @@
+docs/design/mockups-options.html
+  s_7ae13adebac50a::t_0d54c23bb053da 1-50,52-189
+  s_7ae13adebac50a::t_8626e41fa028a6 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "087a4641507ff9258ae5729510d0c2754f3009e4",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
