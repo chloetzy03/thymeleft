@@ -1,0 +1,20 @@
+"thyme leftUITests/ReminderAndSettingsUITests.swift"
+  s_7ae13adebac50a::t_8eae0f33e0aacb 131
+  s_7ae13adebac50a::t_1d58038d884beb 1-130,132-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e0849cc57bd0173d29c16435a8db1b60649232f8",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
