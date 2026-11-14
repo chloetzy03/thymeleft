@@ -1,0 +1,28 @@
+"thyme left/App/SceneDelegate.swift"
+  s_7ae13adebac50a::t_df199b2e8864bd 21
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_cf11e58f533cd7 7-8,24-28,33,38-52
+  s_7ae13adebac50a::t_924a9e7b6fb325 53
+  s_7ae13adebac50a::t_aa8fee3ea13785 34-36
+  s_7ae13adebac50a::t_ed5ab21a448f65 63-71
+  s_7ae13adebac50a::t_09d402468ad84e 73-76
+  s_7ae13adebac50a::t_5a639fa8492a00 1-6,9-23,29-32,37,54-62,72,77-80
+"thyme left/Common/PlaceholderViewController.swift"
+  s_7ae13adebac50a::t_c52b4624d6f5a3 1-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b6613cd13b674d95b54dd5424d55d0a0f51f412c",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
