@@ -4,20 +4,40 @@ import UIKit
 /// (Translation: the "front door" of the app. Each tab opens one screen.)
 final class RootTabBarController: UITabBarController {
 
+    private let container: AppContainer
     private var symbols: [String: String] = [:] // tab title -> icon name
+
+    init(container: AppContainer) {
+        self.container = container
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError("Not used - we build screens in code") }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let pantry = PantryListBuilder.build(
+            repository: container.pantryRepository,
+            policy: container.expiryPolicy,
+            dateProvider: container.dateProvider,
+            iconProvider: container.foodIconProvider)
+
         viewControllers = [
             makeTab(title: "Home", symbol: "house",
-                    message: "Your daily summary is coming in a later milestone."),
+                    content: PlaceholderViewController(
+                        title: "Home", message: "Your daily summary is coming in a later milestone.")),
             makeTab(title: "Scan", symbol: "viewfinder",
-                    message: "Date scanning arrives in Milestone 4."),
+                    content: PlaceholderViewController(
+                        title: "Scan", message: "Date scanning arrives in Milestone 4.")),
+            // The pantry sits inside a navigation controller: it gives us the big title on top
+            // and lets us push other screens (like "Add item") on top of it.
             makeTab(title: "Pantry", symbol: "refrigerator",
-                    message: "Your pantry list arrives in Milestone 1."),
+                    content: UINavigationController(rootViewController: pantry)),
             makeTab(title: "Recipes", symbol: "fork.knife",
-                    message: "Recipe ideas arrive in Milestone 5.")
+                    content: PlaceholderViewController(
+                        title: "Recipes", message: "Recipe ideas arrive in Milestone 5."))
         ]
         selectedIndex = 2 // open on Pantry, the heart of the app
         styleTabBar()
@@ -28,13 +48,12 @@ final class RootTabBarController: UITabBarController {
         }
     }
 
-    private func makeTab(title: String, symbol: String, message: String) -> UIViewController {
-        let screen = PlaceholderViewController(title: title, message: message)
+    private func makeTab(title: String, symbol: String, content: UIViewController) -> UIViewController {
         symbols[title] = symbol
-        screen.tabBarItem = UITabBarItem(title: title,
-                                         image: icon(symbol, color: Theme.Colors.muted),
-                                         selectedImage: icon(symbol, color: Theme.Colors.brand))
-        return screen
+        content.tabBarItem = UITabBarItem(title: title,
+                                          image: icon(symbol, color: Theme.Colors.muted),
+                                          selectedImage: icon(symbol, color: Theme.Colors.brand))
+        return content
     }
 
     /// Our own coloured icons. (Translation: iOS 26's new tab bar ignores the icon colour

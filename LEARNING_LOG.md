@@ -64,3 +64,73 @@ Pattern: `type: short summary`. `feat` = new feature, `chore` = housekeeping, `d
 4. Which VIPER part creates the *first* screen the user sees? (Hint: it is not one of the five letters yet. We'll see where it lives when we build our first module.)
 
 ---
+
+## Milestone 1 – Pantry list (`feature/pantry-list`)
+
+This is our first full **VIPER module**. Read it top to bottom: it is the pattern every later screen copies.
+
+### What you can do now
+See your items sorted by soonest expiry, grouped into "USE SOON" and "FRESH", with colour badges, filter by Fridge / Pantry / Freezer / Counter, swipe left to delete, and see a friendly empty state. (Debug builds start with sample food. We delete that once "Add item" exists.)
+
+### The files, in the order data flows
+| Part | File | Job in plain words |
+|---|---|---|
+| **Entity** | `Entities/PantryItem.swift` | One item: name, quantity, where, expiry date. Pure facts. |
+| Entity | `Entities/ExpiryPolicy.swift` | The rulebook: "red when 1 day or less, amber up to 5, else green". |
+| Entity | `Entities/ExpiringItem.swift` | An item plus its countdown and colour status. |
+| Service | `Services/Pantry/PantryRepository.swift` | A *job description*: "something that can save, load and delete items". |
+| Service | `SwiftDataPantryRepository.swift` | The real worker that stores items on the phone. |
+| Service | `InMemoryPantryRepository.swift` | A pretend worker for tests, and a safety net. |
+| **Interactor** | `Modules/PantryList/PantryListInteractor.swift` | The chef: loads, filters, counts days, sorts. |
+| **Presenter** | `PantryListPresenter.swift` | The manager: turns results into sections, words and emoji. |
+| **View** | `View/PantryListViewController.swift` + cell/header | The waiter: draws it and passes taps along. |
+| **Router** | `PantryListRouter.swift` | The host: goes to the "Add item" screen. |
+| Contracts | `PantryListContracts.swift` | Who may ask whom for what (all the protocols in one place). |
+| Builder | bottom of `PantryListRouter.swift` | Assembles the five parts and introduces them. |
+| Wiring | `App/AppContainer.swift` | Builds the real database/clock/etc. once, at start-up. |
+
+### How one tap travels (follow the arrows)
+Tap the "Fridge" chip -> **View** tells **Presenter** `didSelectFilter(1)` -> Presenter tells **Interactor** `loadItems(in: .fridge)` -> Interactor asks the **Repository** for items, works out countdowns, sorts -> Interactor reports `didLoad(items)` to the Presenter -> Presenter builds `PantrySectionViewModel`s -> View draws them.
+Notice the View never talks to the Interactor, and the Interactor never talks to the View.
+
+### Concepts in plain words
+- **Entity vs the database record.** `PantryItem` is plain data the whole app uses. `PantryItemRecord` is SwiftData's private copy. We convert between them so the rest of the app never needs to know SwiftData exists.
+- **Protocol = job description.** `PantryRepository` says what must be possible, not how. The Interactor only knows the description. (**SOLID D**: depend on the description, not the specific worker.)
+- **View models.** The Presenter hands the View ready-to-show text (`badgeText: "3 days"`), so the View needs zero logic.
+- **`weak`.** Two objects that hold each other tightly can never be cleaned up from memory. `weak` means "I know you, but I won't hold you." The Presenter holds the View weakly.
+- **Composition root (`AppContainer`).** One place that builds the real parts and hands them out (this is "dependency injection": tools are *given* to a screen instead of the screen grabbing them).
+- **`DateProviding`.** We ask a clock object for "now" instead of calling `Date()` everywhere. In tests we give it a frozen clock, so tests never break just because the day changed.
+- **Spies in tests.** To test the Presenter alone we plug in pretend View/Interactor/Router objects that simply write down what they were told. No real screens or database needed.
+- **Accessibility.** Each row reads as one sentence in VoiceOver ("Milk, Fridge, quantity 1, expires tomorrow"), status always has words not just colour, text grows with the phone's text size.
+- **Safety net.** If the database fails to open, the app falls back to in-memory storage instead of crashing.
+
+### SOLID, where you can see it
+| Letter | Where | Plain words |
+|---|---|---|
+| **S** Single responsibility | `ExpiryPolicy`, `ExpiryTextFormatter`, `Theme`, `FoodIconProvider` | Each type does one job |
+| **O** Open/closed | `EmojiFoodIconProvider` is behind `FoodIconProviding`; policy numbers are injected | Add new behaviour by adding new code, not editing old |
+| **L** Liskov | `InMemoryPantryRepository` and `SwiftDataPantryRepository` are interchangeable | Any stand-in must behave like the original |
+| **I** Interface segregation | View, Presenter, Interactor input/output are separate small protocols | Nobody is forced to know methods it never uses |
+| **D** Dependency inversion | Interactor depends on `PantryRepository`, not SwiftData | High-level logic doesn't depend on low-level details |
+
+### Bugs found and fixed along the way
+- Emoji lookup: "Eggplant" matched "egg" first and showed an egg. Fix: specific words go above general ones. Same idea for "peas" vs "peach/pear".
+- Removed over-greedy keywords ("can" matched "pancake").
+- Reminder: the order of items in a list can be part of the logic. We covered this in tests.
+
+### Commit messages used
+- `feat: add pantry entities and expiry policy with tests`
+- `feat: add pantry storage (repository protocol, SwiftData, in-memory)`
+- `feat: add pantry list logic (interactor, presenter, router) with tests`
+- `feat: add pantry list screen (cells, filter chips, empty state)`
+- `feat: wire pantry list into the app with AppContainer and debug sample data`
+- `docs: add milestone 1 notes to learning log`
+
+### Check your understanding
+1. If we replaced SwiftData with a plain text file, which files would change? Which would not?
+2. Why does the Presenter hand the View `"3 days"` instead of the number 3?
+3. Why do we give the Interactor a `DateProviding` instead of letting it call `Date()`?
+4. A user says "my expired yoghurt isn't at the top!" Which VIPER part would you check first, and why?
+5. Why is `PantryListPresenter.view` marked `weak`?
+
+---
