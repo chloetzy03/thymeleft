@@ -13,6 +13,8 @@ struct AddEditFormViewModel: Equatable {
     let quantityRange: ClosedRange<Int>
     let locationTitles: [String]
     let selectedLocationIndex: Int
+    let reminderTitles: [String]
+    let selectedReminderIndex: Int
     let expiryDate: Date
     let quickDateTitles: [String]
 }
@@ -27,6 +29,8 @@ protocol AddEditItemViewProtocol: AnyObject {
     /// `nil` clears the message.
     func showNameError(_ message: String?)
     func showError(message: String)
+    /// Our own friendly "Get reminders?" explanation, shown before iOS's pop-up.
+    func showReminderPrimer()
 }
 
 // MARK: - Presenter (the manager)
@@ -36,7 +40,8 @@ protocol AddEditItemPresenterProtocol: AnyObject {
     func viewDidLoad()
     func nameChanged(_ text: String)
     func didSelectQuickDate(at index: Int)
-    func didTapSave(name: String, quantity: Int, locationIndex: Int, expiryDate: Date)
+    func didTapSave(name: String, quantity: Int, locationIndex: Int, reminderIndex: Int, expiryDate: Date)
+    func didRespondToReminderPrimer(allow: Bool)
     func didTapCancel()
 }
 
@@ -46,11 +51,14 @@ protocol AddEditItemPresenterProtocol: AnyObject {
 protocol AddEditItemInteractorInput: AnyObject {
     /// `existing` is the item being edited, or `nil` when adding a new one.
     func save(_ draft: PantryItemDraft, replacing existing: PantryItem?)
+    func requestReminderPermission()
 }
 
 @MainActor
 protocol AddEditItemInteractorOutput: AnyObject {
-    func didSave()
+    /// `shouldExplainReminders` is true when we should show our reminder explainer first.
+    func didSave(shouldExplainReminders: Bool)
+    func didFinishReminderPermission()
     func didFailValidation(_ error: ItemValidationError)
     func didFail(_ error: Error)
 }

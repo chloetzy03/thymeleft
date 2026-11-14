@@ -22,12 +22,16 @@ enum AddEditItemBuilder {
                       repository: PantryRepository,
                       dateProvider: DateProviding,
                       iconProvider: FoodIconProviding,
+                      settingsStore: SettingsStore,
+                      reminders: ReminderServicing,
                       onSaved: @escaping () -> Void) -> UIViewController {
         let view = AddEditItemViewController()
         let router = AddEditItemRouter()
-        let interactor = AddEditItemInteractor(repository: repository, dateProvider: dateProvider)
+        let interactor = AddEditItemInteractor(repository: repository, dateProvider: dateProvider,
+                                             settingsStore: settingsStore, reminders: reminders)
         let presenter = AddEditItemPresenter(view: view, interactor: interactor, router: router,
                                              iconProvider: iconProvider, dateProvider: dateProvider,
+                                             settingsStore: settingsStore,
                                              existingItem: existing, onSaved: onSaved)
         view.presenter = presenter
         interactor.output = presenter

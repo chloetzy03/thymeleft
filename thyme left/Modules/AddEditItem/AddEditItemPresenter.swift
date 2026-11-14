@@ -24,19 +24,25 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     private let router: AddEditItemRouterProtocol
     private let iconProvider: FoodIconProviding
     private let dateProvider: DateProviding
+    private let settingsStore: SettingsStore
+    private let formatter: ExpiryTextFormatter
     private let calendar: Calendar
     private let existingItem: PantryItem?
     /// Called after a successful save, so the previous screen can refresh itself.
     private let onSaved: () -> Void
 
     private let locations = StorageLocation.allCases
+    /// The "Remind me" choices, in the order they appear. Filled in when the form loads.
+    private var reminderOptions: [(title: String, preference: ReminderPreference)] = []
 
     init(view: AddEditItemViewProtocol,
          interactor: AddEditItemInteractorInput,
          router: AddEditItemRouterProtocol,
          iconProvider: FoodIconProviding,
          dateProvider: DateProviding,
+         settingsStore: SettingsStore,
          existingItem: PantryItem?,
+         formatter: ExpiryTextFormatter = ExpiryTextFormatter(),
          calendar: Calendar = .current,
          onSaved: @escaping () -> Void) {
         self.view = view
@@ -44,7 +50,9 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         self.router = router
         self.iconProvider = iconProvider
         self.dateProvider = dateProvider
+        self.settingsStore = settingsStore
         self.existingItem = existingItem
+        self.formatter = formatter
         self.calendar = calendar
         self.onSaved = onSaved
     }
@@ -57,6 +65,9 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         let defaultExpiry = calendar.date(byAdding: .day, value: Self.defaultDaysUntilExpiry,
                                           to: dateProvider.now) ?? dateProvider.now
 
+        reminderOptions = makeReminderOptions()
+        let reminder = existingItem?.reminder ?? .useDefault
+
         view?.showForm(AddEditFormViewModel(
             title: existingItem == nil ? "Add item" : "Edit item",
             saveButtonTitle: existingItem == nil ? "Add to pantry" : "Save changes",
@@ -66,6 +77,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
             quantityRange: PantryItemRules.quantityRange,
             locationTitles: locations.map(\.displayName),
             selectedLocationIndex: locations.firstIndex(of: location) ?? 0,
+            reminderTitles: reminderOptions.map(\.title),
+            selectedReminderIndex: reminderOptions.firstIndex { $0.preference == reminder } ?? 0,
             expiryDate: existingItem?.expiryDate ?? defaultExpiry,
             quickDateTitles: quickDates.map(\.title)))
     }
@@ -81,11 +94,22 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         view?.showExpiryDate(date)
     }
 
-    func didTapSave(name: String, quantity: Int, locationIndex: Int, expiryDate: Date) {
-        guard locations.indices.contains(locationIndex) else { return }
+    func didTapSave(name: String, quantity: Int, locationIndex: Int, reminderIndex: Int, expiryDate: Date) {
+        guard locations.indices.contains(locationIndex),
+              reminderOptions.indices.contains(reminderIndex) else { return }
         let draft = PantryItemDraft(name: name, quantity: quantity,
-                                    location: locations[locationIndex], expiryDate: expiryDate)
+                                    location: locations[locationIndex],
+                                    expiryDate: expiryDate,
+                                    reminder: reminderOptions[reminderIndex].preference)
         interactor.save(draft, replacing: existingItem)
+    }
+
+    func didRespondToReminderPrimer(allow: Bool) {
+        if allow {
+            interactor.requestReminderPermission() // iOS shows its own pop-up now
+        } else {
+            finish()
+        }
     }
 
     func didTapCancel() {
@@ -94,9 +118,16 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
 
     // MARK: Things the Interactor tells us
 
-    func didSave() {
-        onSaved()
-        router.close()
+    func didSave(shouldExplainReminders: Bool) {
+        if shouldExplainReminders {
+            view?.showReminderPrimer() // we close the form once the user has answered
+        } else {
+            finish()
+        }
+    }
+
+    func didFinishReminderPermission() {
+        finish()
     }
 
     func didFailValidation(_ error: ItemValidationError) {
@@ -113,5 +144,25 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
 
     func didFail(_ error: Error) {
         view?.showError(message: "We couldn't save this item. Please try again.")
+    }
+
+    // MARK: Helpers
+
+    private func finish() {
+        onSaved()
+        router.close()
+    }
+
+    /// "Default (1 day before)" first, so the user can see what "default" currently means.
+    private func makeReminderOptions() -> [(title: String, preference: ReminderPreference)] {
+        let defaultDays = settingsStore.load().defaultReminderDaysBefore
+        var options: [(String, ReminderPreference)] = [
+            ("Default (\(formatter.reminderLeadText(daysBefore: defaultDays).lowercased()))", .useDefault),
+            ("Never", .never)
+        ]
+        for days in SettingsChoices.reminderDaysBefore {
+            options.append((formatter.reminderLeadText(daysBefore: days), .daysBefore(days)))
+        }
+        return options
     }
 }

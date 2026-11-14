@@ -12,17 +12,22 @@ final class AddEditItemPresenterTests: XCTestCase {
         var expiryDate: Date?
         var nameError: String?
         var errorMessage: String?
+        var primerShownCount = 0
 
         func showForm(_ form: AddEditFormViewModel) { self.form = form }
         func showEmoji(_ emoji: String) { self.emoji = emoji }
         func showExpiryDate(_ date: Date) { expiryDate = date }
         func showNameError(_ message: String?) { nameError = message }
         func showError(message: String) { errorMessage = message }
+        func showReminderPrimer() { primerShownCount += 1 }
     }
 
     private final class InteractorSpy: AddEditItemInteractorInput {
         var savedDrafts: [PantryItemDraft] = []
         var replaced: [PantryItem?] = []
+        var permissionRequestCount = 0
+
+        func requestReminderPermission() { permissionRequestCount += 1 }
 
         func save(_ draft: PantryItemDraft, replacing existing: PantryItem?) {
             savedDrafts.append(draft)
@@ -47,7 +52,9 @@ final class AddEditItemPresenterTests: XCTestCase {
         calendar.date(from: DateComponents(year: 2026, month: 11, day: 15, hour: 9))!
     }
 
-    private func makeSUT(existing: PantryItem? = nil, onSaved: @escaping () -> Void = {})
+    private func makeSUT(existing: PantryItem? = nil,
+                         settings: AppSettings = AppSettings(),
+                         onSaved: @escaping () -> Void = {})
         -> (sut: AddEditItemPresenter, view: ViewSpy, interactor: InteractorSpy, router: RouterSpy) {
         let view = ViewSpy()
         let interactor = InteractorSpy()
@@ -55,6 +62,7 @@ final class AddEditItemPresenterTests: XCTestCase {
         let sut = AddEditItemPresenter(view: view, interactor: interactor, router: router,
                                        iconProvider: EmojiFoodIconProvider(),
                                        dateProvider: FixedDateProvider(now: today),
+                                       settingsStore: InMemorySettingsStore(settings: settings),
                                        existingItem: existing, calendar: calendar, onSaved: onSaved)
         return (sut, view, interactor, router)
     }
@@ -149,9 +157,10 @@ final class AddEditItemPresenterTests: XCTestCase {
     func test_didTapSave_handsTheDraftToTheInteractor() async {
         // Arrange
         let (sut, _, interactor, _) = makeSUT()
+        sut.viewDidLoad() // the form must be on screen before anyone can tap Save
 
         // Act
-        sut.didTapSave(name: "Milk", quantity: 2, locationIndex: 3, expiryDate: today)
+        sut.didTapSave(name: "Milk", quantity: 2, locationIndex: 3, reminderIndex: 0, expiryDate: today)
 
         // Assert
         XCTAssertEqual(interactor.savedDrafts,
@@ -164,9 +173,10 @@ final class AddEditItemPresenterTests: XCTestCase {
         // Arrange
         let item = PantryItem(name: "Milk", location: .fridge, expiryDate: today)
         let (sut, _, interactor, _) = makeSUT(existing: item)
+        sut.viewDidLoad()
 
         // Act
-        sut.didTapSave(name: "Oat milk", quantity: 1, locationIndex: 0, expiryDate: today)
+        sut.didTapSave(name: "Oat milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
 
         // Assert
         XCTAssertEqual(interactor.replaced.first??.id, item.id)
@@ -177,7 +187,7 @@ final class AddEditItemPresenterTests: XCTestCase {
         let (sut, _, interactor, _) = makeSUT()
 
         // Act
-        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 99, expiryDate: today)
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 99, reminderIndex: 0, expiryDate: today)
 
         // Assert
         XCTAssertTrue(interactor.savedDrafts.isEmpty)
@@ -189,7 +199,7 @@ final class AddEditItemPresenterTests: XCTestCase {
         let (sut, _, _, router) = makeSUT(onSaved: { savedCallbackCount += 1 })
 
         // Act
-        sut.didSave()
+        sut.didSave(shouldExplainReminders: false)
 
         // Assert
         XCTAssertEqual(savedCallbackCount, 1)
@@ -235,5 +245,97 @@ final class AddEditItemPresenterTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(view.errorMessage, "We couldn't save this item. Please try again.")
+    }
+
+    // MARK: Reminders
+
+    func test_viewDidLoad_offersTheReminderChoicesWithTheCurrentDefaultSpelledOut() async throws {
+        // Arrange
+        var settings = AppSettings()
+        settings.defaultReminderDaysBefore = 2
+        let (sut, view, _, _) = makeSUT(settings: settings)
+
+        // Act
+        sut.viewDidLoad()
+
+        // Assert
+        let form = try XCTUnwrap(view.form)
+        XCTAssertEqual(form.reminderTitles, ["Default (2 days before)", "Never", "Same day",
+                                             "1 day before", "2 days before", "3 days before", "1 week before"])
+        XCTAssertEqual(form.selectedReminderIndex, 0)
+    }
+
+    func test_viewDidLoad_whenEditing_selectsTheItemsOwnReminder() async throws {
+        // Arrange
+        let item = PantryItem(name: "Milk", location: .fridge, expiryDate: today, reminder: .daysBefore(3))
+        let (sut, view, _, _) = makeSUT(existing: item)
+
+        // Act
+        sut.viewDidLoad()
+
+        // Assert
+        XCTAssertEqual(view.form?.selectedReminderIndex, 5) // "3 days before"
+    }
+
+    func test_didTapSave_turnsTheChosenReminderIntoAPreference() async {
+        // Arrange
+        let (sut, _, interactor, _) = makeSUT()
+        sut.viewDidLoad() // builds the reminder options
+        let choices: [(index: Int, expected: ReminderPreference)] = [
+            (0, .useDefault), (1, .never), (2, .daysBefore(0)), (5, .daysBefore(3)), (6, .daysBefore(7))
+        ]
+
+        for choice in choices {
+            // Act
+            sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: choice.index, expiryDate: today)
+
+            // Assert
+            XCTAssertEqual(interactor.savedDrafts.last?.reminder, choice.expected, "option #\(choice.index)")
+        }
+    }
+
+    func test_didSave_whenTheExplainerIsNeeded_showsItInsteadOfClosing() async {
+        // Arrange
+        var savedCallbackCount = 0
+        let (sut, view, _, router) = makeSUT(onSaved: { savedCallbackCount += 1 })
+
+        // Act
+        sut.didSave(shouldExplainReminders: true)
+
+        // Assert
+        XCTAssertEqual(view.primerShownCount, 1)
+        XCTAssertEqual(router.closeCount, 0)
+        XCTAssertEqual(savedCallbackCount, 0)
+    }
+
+    func test_answeringYesToTheExplainer_asksForPermissionThenClosesWhenDone() async {
+        // Arrange
+        var savedCallbackCount = 0
+        let (sut, _, interactor, router) = makeSUT(onSaved: { savedCallbackCount += 1 })
+
+        // Act
+        sut.didRespondToReminderPrimer(allow: true)
+        let closedBeforeAnswer = router.closeCount
+        sut.didFinishReminderPermission() // iOS's pop-up has been answered
+
+        // Assert
+        XCTAssertEqual(interactor.permissionRequestCount, 1)
+        XCTAssertEqual(closedBeforeAnswer, 0)
+        XCTAssertEqual(router.closeCount, 1)
+        XCTAssertEqual(savedCallbackCount, 1)
+    }
+
+    func test_answeringNotNowToTheExplainer_closesWithoutAskingIOS() async {
+        // Arrange
+        var savedCallbackCount = 0
+        let (sut, _, interactor, router) = makeSUT(onSaved: { savedCallbackCount += 1 })
+
+        // Act
+        sut.didRespondToReminderPrimer(allow: false)
+
+        // Assert
+        XCTAssertEqual(interactor.permissionRequestCount, 0)
+        XCTAssertEqual(router.closeCount, 1)
+        XCTAssertEqual(savedCallbackCount, 1)
     }
 }

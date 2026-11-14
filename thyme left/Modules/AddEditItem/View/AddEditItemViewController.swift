@@ -12,11 +12,13 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
     private let quantityValueLabel = UILabel()
     private let stepper = UIStepper()
     private let locationButton = UIButton(type: .system)
+    private let reminderButton = UIButton(type: .system)
     private let datePicker = UIDatePicker()
     private let quickDateBar = FilterChipBar()
     private let saveButton = UIButton(type: .system)
 
     private var selectedLocationIndex = 0
+    private var selectedReminderIndex = 0
 
     // MARK: Life of the screen
 
@@ -65,6 +67,15 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         locationButton.showsMenuAsPrimaryAction = true
         locationButton.changesSelectionAsPrimaryAction = true
 
+        selectedReminderIndex = form.selectedReminderIndex
+        reminderButton.menu = UIMenu(children: form.reminderTitles.enumerated().map { index, title in
+            UIAction(title: title, state: index == form.selectedReminderIndex ? .on : .off) { [weak self] _ in
+                self?.selectedReminderIndex = index
+            }
+        })
+        reminderButton.showsMenuAsPrimaryAction = true
+        reminderButton.changesSelectionAsPrimaryAction = true
+
         datePicker.date = form.expiryDate
         quickDateBar.update(titles: form.quickDateTitles, selectedIndex: -1) // -1 = none highlighted
 
@@ -92,6 +103,20 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         }
     }
 
+    func showReminderPrimer() {
+        let alert = UIAlertController(
+            title: "Get reminders?",
+            message: "We'll nudge you before things expire so nothing goes to waste. You can change this any time in the Me tab.",
+            preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Not now", style: .cancel) { [weak self] _ in
+            self?.presenter?.didRespondToReminderPrimer(allow: false)
+        })
+        alert.addAction(UIAlertAction(title: "Allow reminders", style: .default) { [weak self] _ in
+            self?.presenter?.didRespondToReminderPrimer(allow: true)
+        })
+        present(alert, animated: true)
+    }
+
     func showError(message: String) {
         let alert = UIAlertController(title: "Something went wrong", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -105,6 +130,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         presenter?.didTapSave(name: nameField.text ?? "",
                               quantity: Int(stepper.value),
                               locationIndex: selectedLocationIndex,
+                              reminderIndex: selectedReminderIndex,
                               expiryDate: datePicker.date)
     }
 
@@ -173,6 +199,12 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         locationButton.configuration = locationConfig
         locationButton.accessibilityLabel = "Storage location"
 
+        // --- Reminder
+        var reminderConfig = UIButton.Configuration.plain()
+        reminderConfig.baseForegroundColor = Theme.Colors.brand
+        reminderButton.configuration = reminderConfig
+        reminderButton.accessibilityLabel = "Reminder"
+
         // --- Expiry date
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
@@ -211,6 +243,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             padded(FormCardRow(title: "Where is it kept?", control: locationButton)),
             padded(FormCardRow(title: "Expires", control: datePicker)),
             quickDateBar, // already has its own side margins
+            padded(FormCardRow(title: "Remind me", control: reminderButton)),
             padded(saveButton)
         ])
         column.axis = .vertical
