@@ -152,3 +152,49 @@ Watch-out for Milestone 2: when a screen is closed its Presenter is freed too, s
 2. Why does a test have one Act and not several?
 3. What is the difference between a "spy" and the real object it replaces?
 
+## Milestone 2 – Add and edit items (`feature/add-edit-item`)
+
+Second VIPER module. Same five parts as Milestone 1, so this one is the "do it again" lesson.
+
+### What you can do now
+Tap **+** (or the empty-state button) to add an item, or tap any row to edit it. The form has a name with a live emoji preview, quantity (1-99), a storage-location menu, an expiry date picker and quick-date chips (Tomorrow / 3 days / 1 week / 1 month). Bad input shows a friendly message instead of saving.
+
+### The files
+| Part | File | Job in plain words |
+|---|---|---|
+| Entity | `Entities/PantryItemDraft.swift` | The form's rough copy, plus the rules (`PantryItemRules`) and the reasons it can be rejected (`ItemValidationError`) |
+| **Interactor** | `Modules/AddEditItem/AddEditItemInteractor.swift` | Checks the rules (trim the name, 1-40 characters, quantity 1-99), then saves. Keeps the original id and "date added" when editing |
+| **Presenter** | `AddEditItemPresenter.swift` | Sets up the form (blank for add, pre-filled for edit), works out quick dates, turns errors into friendly messages |
+| **View** | `View/AddEditItemViewController.swift` + `Common/Views/FormCardRow.swift` | Draws the form and reports what was typed/tapped |
+| **Router** | `AddEditItemRouter.swift` | Closes the form. The Builder at the bottom assembles the five parts |
+| Link | `PantryListRouter.swift` | Opens the form as a sheet and hands it an `onSaved` callback |
+
+### New ideas in plain words
+- **Draft vs real item.** The form produces a *draft*. Only the Interactor can turn it into a real `PantryItem`, after checking the rules. Nothing invalid can reach storage.
+- **One form, two jobs.** `existing: PantryItem?` is `nil` for Add and filled for Edit. The same code handles both; only the title, the starting values and "keep the old id" differ.
+- **`onSaved` callback.** The form doesn't know about the list. It just says "I saved" through a closure it was handed, and the list refreshes itself. (The list's Router is given a *factory* for building the form, so it never needs the database or clock.)
+- **Keyboard layout guide.** The scroll area is pinned to `view.keyboardLayoutGuide.topAnchor`, so the keyboard never covers the Save button.
+- **Pop-up menu button.** `UIButton` with a `UIMenu` and `changesSelectionAsPrimaryAction` gives the "Fridge v" picker for free.
+- **Test doubles.** A `FailingRepository` that always throws lets us test the "couldn't save" path without breaking anything real.
+- **UI tests.** Unit tests check one part alone. `AddEditItemFlowUITests` taps through the real app (add, edit, cancel, validation, swipe-delete). The app is launched with `-uiTesting`, which swaps in a throw-away in-memory store, so tests never touch real data.
+- **Removed:** the debug sample-data seeder (it was only a stand-in until this milestone).
+
+### Verified
+50 unit tests + 5 UI tests pass, and no crash reports. That includes closing the form (the Presenter being freed), which I had flagged as a risk after the test-host crash.
+
+### Commit messages used
+- `feat: add item rules, draft and validation entities`
+- `feat: add add/edit item logic (interactor, presenter, router) with tests`
+- `feat: add add/edit item form screen`
+- `feat: open add/edit form from the pantry list and remove sample data`
+- `test: add UI tests for add, edit, cancel, validation and delete`
+- `docs: add milestone 2 notes to learning log`
+
+### Check your understanding
+1. Why does the form create a *draft* instead of saving a `PantryItem` directly?
+2. How does the Pantry list know to refresh after the form saves, even though the form has never heard of the Pantry list?
+3. What would you change to also forbid names that are only numbers (e.g. "123")? Which VIPER part, and which test would you add?
+4. How does one screen handle both "Add" and "Edit"?
+5. Why do UI tests launch with `-uiTesting`?
+
+---
