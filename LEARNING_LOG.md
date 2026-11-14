@@ -186,7 +186,7 @@ Tap **+** (or the empty-state button) to add an item, or tap any row to edit it.
 - `feat: add item rules, draft and validation entities`
 - `feat: add add/edit item logic (interactor, presenter, router) with tests`
 - `feat: add add/edit item form screen`
-- `feat: open add/edit form from the pantry list and remove sample data`
+- `feat: open add/edit form from the pantry list` (the sample-data removal landed inside the first commit)
 - `test: add UI tests for add, edit, cancel, validation and delete`
 - `docs: add milestone 2 notes to learning log`
 
