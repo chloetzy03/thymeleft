@@ -16,6 +16,7 @@ final class PantryItemCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
         selectionStyle = .none
+        accessibilityTraits = .button // VoiceOver: "double-tap to open"
         buildLayout()
     }
 

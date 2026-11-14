@@ -52,6 +52,7 @@ protocol PantryListPresenterProtocol: AnyObject {
     func refreshRequested()
     func didSelectFilter(at index: Int)
     func didTapAdd()
+    func didSelectRow(id: UUID)
     func didDeleteRow(id: UUID)
 }
 
@@ -75,5 +76,7 @@ protocol PantryListInteractorOutput: AnyObject {
 
 @MainActor
 protocol PantryListRouterProtocol: AnyObject {
-    func showAddItem()
+    /// `onSaved` runs after the user saves, so this screen can refresh its list.
+    func showAddItem(onSaved: @escaping () -> Void)
+    func showEditItem(_ item: PantryItem, onSaved: @escaping () -> Void)
 }

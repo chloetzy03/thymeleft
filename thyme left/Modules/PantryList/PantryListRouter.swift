@@ -1,5 +1,9 @@
 import UIKit
 
+/// Builds the Add / Edit screen. (Translation: the Router is handed a "recipe" for making that
+/// screen, so it never needs to know about databases or clocks.)
+typealias AddEditItemFactory = (_ existing: PantryItem?, _ onSaved: @escaping () -> Void) -> UIViewController
+
 /// The host of the Pantry screen: knows how to move to other screens.
 /// (Translation: the Presenter says "go to Add Item"; the Router knows how to actually do it.)
 @MainActor
@@ -7,14 +11,24 @@ final class PantryListRouter: PantryListRouterProtocol {
 
     /// Weak so the Router doesn't keep the screen alive after it has been closed.
     weak var viewController: UIViewController?
+    private let makeAddEditItem: AddEditItemFactory
 
-    func showAddItem() {
-        // Placeholder until Milestone 2 builds the real "Add item" module.
-        let placeholder = PlaceholderViewController(
-            title: "Add item",
-            message: "Adding items by hand arrives in Milestone 2.")
-        placeholder.title = "Add item"
-        viewController?.navigationController?.pushViewController(placeholder, animated: true)
+    init(makeAddEditItem: @escaping AddEditItemFactory) {
+        self.makeAddEditItem = makeAddEditItem
+    }
+
+    func showAddItem(onSaved: @escaping () -> Void) {
+        present(makeAddEditItem(nil, onSaved))
+    }
+
+    func showEditItem(_ item: PantryItem, onSaved: @escaping () -> Void) {
+        present(makeAddEditItem(item, onSaved))
+    }
+
+    /// Slides the form up from the bottom, with its own top bar (Cancel / Save).
+    private func present(_ screen: UIViewController) {
+        let navigation = UINavigationController(rootViewController: screen)
+        viewController?.present(navigation, animated: true)
     }
 }
 
@@ -28,7 +42,11 @@ enum PantryListBuilder {
                       dateProvider: DateProviding,
                       iconProvider: FoodIconProviding) -> UIViewController {
         let view = PantryListViewController()
-        let router = PantryListRouter()
+        let router = PantryListRouter { existing, onSaved in
+            AddEditItemBuilder.build(existing: existing, repository: repository,
+                                     dateProvider: dateProvider, iconProvider: iconProvider,
+                                     onSaved: onSaved)
+        }
         let interactor = PantryListInteractor(repository: repository, policy: policy, dateProvider: dateProvider)
         let presenter = PantryListPresenter(view: view, interactor: interactor, router: router, iconProvider: iconProvider)
 

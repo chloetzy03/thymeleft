@@ -19,12 +19,21 @@ final class AppContainer {
 
     private static let logger = Logger(subsystem: "com.fp.thyme-left", category: "storage")
 
+    /// - Parameter inMemoryOnly: skip the real database. UI tests launch the app with
+    ///   `-uiTesting` so they always start with an empty pantry and never touch real data.
     init(expiryPolicy: ExpiryPolicy = ExpiryPolicy(),
          dateProvider: DateProviding = SystemDateProvider(),
-         foodIconProvider: FoodIconProviding = EmojiFoodIconProvider()) {
+         foodIconProvider: FoodIconProviding = EmojiFoodIconProvider(),
+         inMemoryOnly: Bool = ProcessInfo.processInfo.arguments.contains("-uiTesting")) {
         self.expiryPolicy = expiryPolicy
         self.dateProvider = dateProvider
         self.foodIconProvider = foodIconProvider
+
+        if inMemoryOnly {
+            modelContainer = nil
+            pantryRepository = InMemoryPantryRepository()
+            return
+        }
 
         do {
             let container = try ModelContainer(for: PantryItemRecord.self)
@@ -36,9 +45,5 @@ final class AppContainer {
             modelContainer = nil
             pantryRepository = InMemoryPantryRepository()
         }
-
-        #if DEBUG
-        SampleDataSeeder.seedIfNeeded(repository: pantryRepository, now: dateProvider.now)
-        #endif
     }
 }

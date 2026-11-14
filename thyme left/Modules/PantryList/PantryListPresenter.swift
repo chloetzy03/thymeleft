@@ -15,6 +15,8 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
     /// The filter chips: "All" first, then each storage location.
     private let locations: [StorageLocation?] = [nil] + StorageLocation.allCases.map { Optional($0) }
     private var selectedIndex = 0
+    /// The latest items we showed, so a tapped row can be turned back into its item.
+    private var latestItems: [ExpiringItem] = []
 
     init(view: PantryListViewProtocol,
          interactor: PantryListInteractorInput,
@@ -48,7 +50,13 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
     }
 
     func didTapAdd() {
-        router.showAddItem()
+        // After saving, the form calls this closure and we reload the list.
+        router.showAddItem(onSaved: { [weak self] in self?.refreshRequested() })
+    }
+
+    func didSelectRow(id: UUID) {
+        guard let entry = latestItems.first(where: { $0.item.id == id }) else { return }
+        router.showEditItem(entry.item, onSaved: { [weak self] in self?.refreshRequested() })
     }
 
     func didDeleteRow(id: UUID) {
@@ -58,6 +66,7 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
     // MARK: Things the Interactor tells us
 
     func didLoad(_ items: [ExpiringItem]) {
+        latestItems = items
         guard !items.isEmpty else {
             view?.showEmptyState(emptyState(for: selectedLocation))
             return

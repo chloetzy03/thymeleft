@@ -29,7 +29,11 @@ final class PantryListPresenterTests: XCTestCase {
 
     private final class RouterSpy: PantryListRouterProtocol {
         var addItemCount = 0
-        func showAddItem() { addItemCount += 1 }
+        var editedItems: [PantryItem] = []
+        var lastOnSaved: (() -> Void)?
+
+        func showAddItem(onSaved: @escaping () -> Void) { addItemCount += 1; lastOnSaved = onSaved }
+        func showEditItem(_ item: PantryItem, onSaved: @escaping () -> Void) { editedItems.append(item); lastOnSaved = onSaved }
     }
 
     // MARK: Helpers
@@ -182,6 +186,43 @@ final class PantryListPresenterTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(router.addItemCount, 1)
+    }
+
+    func test_didSelectRow_opensTheEditorForThatItem() async {
+        // Arrange
+        let (sut, _, _, router) = makeSUT()
+        let milk = makeEntry("Milk", days: 3, status: .soon)
+        sut.didLoad([milk, makeEntry("Pasta", days: 120, status: .fresh)])
+
+        // Act
+        sut.didSelectRow(id: milk.item.id)
+
+        // Assert
+        XCTAssertEqual(router.editedItems, [milk.item])
+    }
+
+    func test_didSelectRow_withUnknownId_doesNothing() async {
+        // Arrange
+        let (sut, _, _, router) = makeSUT()
+        sut.didLoad([makeEntry("Milk", days: 3, status: .soon)])
+
+        // Act
+        sut.didSelectRow(id: UUID())
+
+        // Assert
+        XCTAssertTrue(router.editedItems.isEmpty)
+    }
+
+    func test_afterSavingInTheForm_theListReloads() async {
+        // Arrange
+        let (sut, _, interactor, router) = makeSUT()
+        sut.didTapAdd()
+
+        // Act: the form reports "saved"
+        router.lastOnSaved?()
+
+        // Assert
+        XCTAssertEqual(interactor.requestedLocations, [nil])
     }
 
     func test_didDeleteRow_thenDidDeleteItem_reloadsTheCurrentFilter() async {

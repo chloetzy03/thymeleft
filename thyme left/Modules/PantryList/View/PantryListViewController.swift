@@ -141,6 +141,11 @@ extension PantryListViewController: UITableViewDataSource, UITableViewDelegate {
         return header
     }
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        presenter?.didSelectRow(id: sections[indexPath.section].rows[indexPath.row].id)
+    }
+
     // Swipe a row to the left to reveal "Delete".
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
