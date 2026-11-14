@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>thyme left. – Design v3 (E + serif)</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--ink:#2B4A32;--deep:#2F5A3E;--cream:#FAF6EA;--sage:#E6EDDB;--muted:#7C8F80;
+        --serif:Georgia,"New York",serif;--sans:-apple-system,"SF Pro Text",Helvetica,Arial,sans-serif}
+  body{font-family:var(--sans);background:#E6E3DA;padding:32px;color:#222}
+  h1{font-size:28px}.sub{color:#777;margin:4px 0 24px;max-width:760px}
+  .row{display:flex;gap:26px;flex-wrap:wrap}
+  .col{display:flex;flex-direction:column;align-items:center;gap:10px}.lbl{font-weight:600;font-size:14px}
+  .phone{width:290px;height:610px;border-radius:42px;border:10px solid #111;position:relative;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.22);background:var(--cream);color:var(--ink)}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:86px;height:22px;background:#111;border-radius:14px;z-index:9}
+  .top{height:48px}
+  svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar{position:absolute;bottom:0;left:0;right:0;height:74px;display:flex;justify-content:space-around;padding-top:10px;font-size:10px;background:var(--cream);border-top:1px solid #E7E0CB;color:#8DA192}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px}.tab.on{color:var(--deep);font-weight:600}
+  .logo{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 18px 0}
+  .logo h3{font-family:var(--sans);font-size:30px;font-weight:700;letter-spacing:-.5px}
+  .title{font-family:var(--serif);font-size:32px;font-weight:400;font-style:italic;letter-spacing:-.5px}
+  .tag{font-family:var(--serif);font-style:italic;font-size:14px;color:#6F8A74;padding:2px 18px 10px}
+  .greet{margin:4px 14px;background:var(--sage);border-radius:22px;padding:14px}
+  .greet b{font-family:var(--serif);font-size:21px;font-weight:400;display:block}
+  .greet span{font-size:13px;color:#52705A}
+  .tiles{display:flex;gap:8px;margin-top:10px}
+  .t{flex:1;background:#fff;border-radius:16px;text-align:center;padding:10px 4px}
+  .t .e{font-size:28px}.t b{display:block;font-family:var(--serif);font-weight:400;margin-top:2px;font-size:15px}.t span{color:var(--muted);font-size:12px}
+  .cta{margin:10px 14px;background:var(--deep);color:#fff;border-radius:22px;padding:15px;text-align:center}
+  .cta b{font-family:var(--serif);font-size:19px;font-weight:400}.cta span{display:block;font-size:12px;opacity:.85;margin-top:3px}
+  .stat{margin:6px 14px;background:#fff;border-radius:18px;padding:12px 14px}
+  .stat b{font-family:var(--serif);font-weight:400;font-size:16px;display:block}.stat span{font-size:12px;color:var(--muted)}
+  .seg{display:flex;gap:6px;padding:4px 14px 8px}.seg i{font-style:normal;font-size:12px;padding:6px 12px;border-radius:14px;background:#EFEADA;color:#52705A}.seg i.on{background:var(--deep);color:#fff}
+  .row2{margin:6px 14px;background:#fff;border-radius:18px;padding:11px 12px;display:flex;align-items:center;gap:12px}
+  .row2 .e{width:42px;height:42px;border-radius:13px;background:#EEF2E6;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .row2 .m{flex:1}.row2 b{display:block;font-family:var(--serif);font-size:17px;font-weight:400}.row2 small{font-size:12px;color:var(--muted)}
+  .pill{font-size:11px;font-weight:600;padding:5px 10px;border-radius:12px}
+  .p1{background:#F8DDD6;color:#A4412F}.p2{background:#FBE9C4;color:#8A6012}.p3{background:#DDEBD6;color:var(--deep)}
+  .rc{margin:8px 14px;background:#fff;border-radius:22px;overflow:hidden}
+  .ri{height:100px;display:flex;align-items:center;justify-content:center;font-size:50px}
+  .rb{padding:10px 14px 12px}.rb b{font-family:var(--serif);font-size:19px;font-weight:400}.rb span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+  .bar{height:6px;border-radius:3px;background:var(--sage);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--deep)}
+  .cam{margin:6px 14px;height:225px;border-radius:24px;background:linear-gradient(160deg,#4b4b46,#262622);display:flex;align-items:center;justify-content:center;position:relative}
+  .frame{width:210px;height:70px;border:3px solid #fff;border-radius:14px;color:#fff;font-family:Menlo,monospace;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08)}
+  .found{margin:10px 14px 0;background:var(--sage);border-radius:18px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+  .found b{font-family:var(--serif);font-size:18px;font-weight:400}.found span{font-size:12px;color:#52705A;display:block}
+  .btn{margin:10px 14px 0;background:var(--deep);color:#fff;border-radius:18px;padding:13px;text-align:center;font-family:var(--serif);font-size:17px}
+  .btn.g{background:none;color:var(--deep);border:1.5px solid var(--deep)}
+</style>
+</head>
+<body>
+<h1>🌱 thyme left. — Design v3 (Sage &amp; Cream + serif)</h1>
+<p class="sub">Logo stays in the bold sans-serif. Titles, item names and greetings use the serif (Apple's built-in "New York" on iPhone). Pills, numbers and tab labels stay sans-serif for readability.</p>
+<div id="app" class="row"></div>
+<script>
+const I={home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+scan:'<svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/></svg>',
+pantry:'<svg viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM6 10h12M9 6v1.5M9 13v3"/></svg>',
+recipes:'<svg viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 1.5-7.7 4 4 0 0 1 7 0A4 4 0 1 1 17 14v5H7zM7 17h10"/></svg>',
+plus:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'};
+const tabs=a=>`<div class="tabbar">${[['home','Home'],['scan','Scan'],['pantry','Pantry'],['recipes','Recipes']].map(([k,l])=>`<div class="tab ${k===a?'on':''}">${I[k]}${l}</div>`).join('')}</div>`;
+const phone=(label,inner)=>`<div class="col"><div class="phone"><div class="notch"></div><div class="top"></div>${inner}</div><div class="lbl">${label}</div></div>`;
+const items=[['🥑','Avocado','Fridge · x2',1],['🍅','Tomatoes','Counter · x4',2],['🥛','Milk','Fridge · 1 L',3],['🥚','Eggs','Fridge · x6',12],['🍝','Pasta','Pantry · x2',120]];
+const when=d=>d===1?'1 day':d<30?d+' days':Math.round(d/30)+' months';
+const cls=d=>d<=1?'p1':d<=3?'p2':'p3';
+document.getElementById('app').innerHTML=[
+phone('Home',`<div class="logo"><h3>thyme left.</h3><span style="font-size:26px">🌱</span></div><div class="tag">Make good food go further.</div>
+ <div class="greet"><b>Good morning, chef!</b><span>You've got 3 ingredients to use soon.</span><div class="tiles">${items.slice(0,3).map(i=>`<div class="t"><div class="e">${i[0]}</div><b>${i[1]}</b><span>${when(i[3])}</span></div>`).join('')}</div></div>
+ <div class="cta"><b>✨ What can I cook?</b><span>Recipes using your existing ingredients</span></div>
+ <div class="stat"><b>Saved from the bin</b><span>12 items · about $34 this month</span></div>${tabs('home')}`),
+phone('Scan',`<div class="logo"><div class="title" style="font-size:26px">Scan a date</div></div><div class="tag">Point at the expiry date on the pack</div>
+ <div class="cam"><div class="frame">BEST BEFORE 18/11/26</div></div>
+ <div class="found"><div><b>18 Nov 2026</b><span>Found · 3 days from now</span></div><span style="font-size:22px">✅</span></div>
+ <div class="btn">Use this date</div><div class="btn g">Type it instead</div>${tabs('scan')}`),
+phone('Pantry',`<div class="logo"><div class="title">Pantry</div><span style="color:var(--deep);margin-top:6px">${I.plus}</span></div>
+ <div class="seg"><i class="on">All</i><i>Fridge</i><i>Pantry</i><i>Freezer</i></div>
+ ${items.map(i=>`<div class="row2"><div class="e">${i[0]}</div><div class="m"><b>${i[1]}</b><small>${i[2]}</small></div><span class="pill ${cls(i[3])}">${when(i[3])}</span></div>`).join('')}${tabs('pantry')}`),
+phone('Recipes',`<div class="logo"><div class="title">Recipes</div></div><div class="tag">Using avocado, tomatoes &amp; milk first</div>
+ <div class="rc"><div class="ri" style="background:#F3E3C9">🥗</div><div class="rb"><b>Avocado Tomato Salad</b><span>20 min · Missing: lime</span><div class="bar"><i style="width:80%"></i></div></div></div>
+ <div class="rc"><div class="ri" style="background:#DDEBD6">🥣</div><div class="rb"><b>Creamy Tomato Soup</b><span>30 min · Missing: basil, garlic</span><div class="bar"><i style="width:55%"></i></div></div></div>${tabs('recipes')}`)
+].join('');
+</script>
+</body>
+</html>
