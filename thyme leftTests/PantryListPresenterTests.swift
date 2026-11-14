@@ -153,6 +153,21 @@ final class PantryListPresenterTests: XCTestCase {
         XCTAssertEqual(row.accessibilityText, "Milk, Fridge, quantity 2, expires tomorrow")
     }
 
+    func test_didLoad_carriesTheItemsPhotoNameIntoTheRow() async throws {
+        // Arrange
+        let (sut, view, _, _) = makeSUT()
+        let withPhoto = ExpiringItem(
+            item: PantryItem(name: "Milk", location: .fridge, expiryDate: Date(), photoFileName: "abc.jpg"),
+            daysRemaining: 3, status: .soon)
+
+        // Act
+        sut.didLoad([withPhoto, makeEntry("Pasta", days: 120, status: .fresh)])
+
+        // Assert
+        XCTAssertEqual(view.sections[0].rows.first?.photoFileName, "abc.jpg")
+        XCTAssertNil(view.sections[1].rows.first?.photoFileName)
+    }
+
     // MARK: Empty states
 
     func test_didLoad_withNoItems_offersToAddTheFirstItem() async {

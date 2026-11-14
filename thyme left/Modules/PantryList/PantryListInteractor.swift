@@ -12,17 +12,20 @@ final class PantryListInteractor: PantryListInteractorInput {
     private let settingsStore: SettingsStore
     private let dateProvider: DateProviding
     private let reminders: ReminderServicing
+    private let photoStore: PhotoStoring
     private let calendar: Calendar
 
     init(repository: PantryRepository,
          settingsStore: SettingsStore,
          dateProvider: DateProviding,
          reminders: ReminderServicing,
+         photoStore: PhotoStoring,
          calendar: Calendar = .current) {
         self.repository = repository
         self.settingsStore = settingsStore
         self.dateProvider = dateProvider
         self.reminders = reminders
+        self.photoStore = photoStore
         self.calendar = calendar
     }
 
@@ -50,7 +53,10 @@ final class PantryListInteractor: PantryListInteractorInput {
 
     func deleteItem(id: UUID) {
         do {
+            // Remember the photo's name first; after the item is gone we can't look it up.
+            let photoFileName = try repository.fetchAll().first { $0.id == id }?.photoFileName
             try repository.delete(id: id)
+            if let photoFileName { photoStore.deletePhoto(named: photoFileName) }
             reminders.reschedule() // the deleted item's reminder must go too
             output?.didDeleteItem()
         } catch {
