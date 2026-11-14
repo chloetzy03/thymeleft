@@ -1,0 +1,33 @@
+"thyme left/Modules/AddEditItem/View/AddEditItemViewController.swift"
+  s_7ae13adebac50a::t_9af4361daaef3c 15,21,70-78,106-119,133,202-207,246
+"thyme left/Modules/AddEditItem/AddEditItemPresenter.swift"
+  s_7ae13adebac50a::t_9af4361daaef3c 27-28,35-36,43,45,53,55,68-70,80-81,97-99,101-103,107-114,121-130,148-167
+"thyme left/Modules/AddEditItem/AddEditItemRouter.swift"
+  s_7ae13adebac50a::t_9af4361daaef3c 25-26,30-31,34
+"thyme left/Modules/AddEditItem/AddEditItemContracts.swift"
+  s_7ae13adebac50a::t_9af4361daaef3c 16-17,32-33,43-44,54,59-61
+"thyme leftTests/AddEditItemPresenterTests.swift"
+  s_7ae13adebac50a::t_607f031bee859a 160,176
+  s_7ae13adebac50a::t_b1d579b4f72c9c 15,22,28-30,55-57,65,163,179,190,202,249-340
+"thyme left/Modules/AddEditItem/AddEditItemInteractor.swift"
+  s_7ae13adebac50a::t_9af4361daaef3c 11-12,14-17,20-21,47,53-63,66-79
+"thyme leftTests/AddEditItemInteractorTests.swift"
+  s_7ae13adebac50a::t_86e7ce9c8e05a7 11-12,16-17,34-44,46-49,52,148,174-249
+  s_7ae13adebac50a::t_b1d579b4f72c9c 64-65,80-81,92-93,106-107,119-120,132-133,164-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "edb201cd18fa9bccdaad161a1b709db33bd71dda",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
