@@ -5,11 +5,20 @@ import UIKit
 final class PantryListViewController: UIViewController, PantryListViewProtocol {
 
     var presenter: PantryListPresenterProtocol?
+    private let photoCache: PhotoImageCache
 
     private let chipBar = FilterChipBar()
     private let tableView = UITableView(frame: .zero, style: .plain)
     private let emptyStateView = EmptyStateView()
     private var sections: [PantrySectionViewModel] = []
+
+    init(photoCache: PhotoImageCache) {
+        self.photoCache = photoCache
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError("Not used - we build screens in code") }
 
     // MARK: Life of the screen
 
@@ -129,7 +138,7 @@ extension PantryListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PantryItemCell.reuseIdentifier, for: indexPath)
         if let itemCell = cell as? PantryItemCell {
-            itemCell.configure(with: sections[indexPath.section].rows[indexPath.row])
+            itemCell.configure(with: sections[indexPath.section].rows[indexPath.row], photoCache: photoCache)
         }
         return cell
     }

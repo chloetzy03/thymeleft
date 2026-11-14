@@ -24,7 +24,9 @@ final class RootTabBarController: UITabBarController {
             dateProvider: container.dateProvider,
             iconProvider: container.foodIconProvider,
             dateFormatter: container.dateFormatter,
-            reminders: container.reminders)
+            reminders: container.reminders,
+            photoStore: container.photoStore,
+            photoCache: container.photoCache)
 
         let settings = SettingsBuilder.build(
             settingsStore: container.settingsStore,

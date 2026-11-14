@@ -8,6 +8,7 @@ final class PantryItemCell: UITableViewCell {
     private let card = UIView()
     private let emojiTile = UIView()
     private let emojiLabel = UILabel()
+    private let photoView = UIImageView()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let badge = PillLabel()
@@ -23,7 +24,17 @@ final class PantryItemCell: UITableViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("Not used - we build screens in code") }
 
-    func configure(with row: PantryRowViewModel) {
+    func configure(with row: PantryRowViewModel, photoCache: PhotoImageCache) {
+        // Show the photo if there is one (and it loads); otherwise fall back to the emoji.
+        if let name = row.photoFileName, let image = photoCache.image(named: name) {
+            photoView.image = image
+            photoView.isHidden = false
+            emojiLabel.isHidden = true
+        } else {
+            photoView.image = nil
+            photoView.isHidden = true
+            emojiLabel.isHidden = false
+        }
         emojiLabel.text = row.emoji
         nameLabel.text = row.title
         subtitleLabel.text = row.subtitle
@@ -46,6 +57,12 @@ final class PantryItemCell: UITableViewCell {
         emojiLabel.font = .systemFont(ofSize: 24)
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         emojiTile.addSubview(emojiLabel)
+
+        photoView.contentMode = .scaleAspectFill
+        photoView.clipsToBounds = true
+        photoView.layer.cornerRadius = 13
+        photoView.translatesAutoresizingMaskIntoConstraints = false
+        emojiTile.addSubview(photoView)
 
         nameLabel.font = Theme.Typography.itemName.font
         nameLabel.textColor = Theme.Colors.ink
@@ -77,6 +94,10 @@ final class PantryItemCell: UITableViewCell {
 
             emojiTile.widthAnchor.constraint(equalToConstant: 44),
             emojiTile.heightAnchor.constraint(equalToConstant: 44),
+            photoView.topAnchor.constraint(equalTo: emojiTile.topAnchor),
+            photoView.bottomAnchor.constraint(equalTo: emojiTile.bottomAnchor),
+            photoView.leadingAnchor.constraint(equalTo: emojiTile.leadingAnchor),
+            photoView.trailingAnchor.constraint(equalTo: emojiTile.trailingAnchor),
             emojiLabel.centerXAnchor.constraint(equalTo: emojiTile.centerXAnchor),
             emojiLabel.centerYAnchor.constraint(equalTo: emojiTile.centerYAnchor),
 

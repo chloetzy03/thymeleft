@@ -262,3 +262,68 @@ Not yet verified: seeing a reminder actually appear at its time on a real iPhone
 6. Where would you add a new setting (say "quiet days")? List the files you would touch, in order.
 
 ---
+
+## Testing notes, part 2: why the full run is slow, and what we do about it
+
+Measured on the last full run: 113 unit tests took about **1 second**; 12 UI tests took about **200 seconds**. A full run is about 9 minutes, because each UI test launches the whole app, and every run also builds the app and the tests and starts a simulator copy.
+
+Our routine from now on:
+| When | What we run |
+|---|---|
+| While building a feature | Build, plus only the unit tests for the files we touched (`-only-testing:`) |
+| Before merging a milestone | All unit tests, plus the UI tests for screens we changed |
+| Big changes / before a release | The full suite |
+
+We also merged two UI tests that repeated the same setup (one app launch saved each).
+
+---
+
+## Milestone 4 – Item photos (`feature/item-photos`)
+
+### What you can do now
+Tap the tile next to the name in the Add/Edit form to **take a photo**, **choose one from the library**, or **remove** it. The photo appears in the form and on the pantry row; with no photo you still get the emoji.
+
+### The big idea: a photo is a FILE, and the item remembers only its NAME
+Databases are bad at big blobs, so each photo is a small JPEG file in the app's private folder, and `PantryItem.photoFileName` stores just the name (e.g. `3F2A....jpg`). Everything about files hides behind a `PhotoStoring` job description, like the other services.
+
+### The new pieces
+| Part | File | Job in plain words |
+|---|---|---|
+| Entity | `PhotoChange` | What the user did in the form: keep / replace with this picture / remove |
+| Service | `JPEGThumbnailer` | Shrinks a big photo to about 600 px, turns sideways phone photos upright, never enlarges small ones |
+| Service | `PhotoStoring` + `FileSystemPhotoStore` | Save (returns a fresh file name), load, delete. Also `InMemoryPhotoStore` for tests |
+| Common | `PhotoImageCache` | Remembers loaded pictures so scrolling the list doesn't re-read files |
+| Changed | Add/Edit module | Photo tile, action sheet, camera + library pickers, and the safe save/cleanup rules |
+| Changed | Pantry list | Rows show the photo (or emoji); deleting an item deletes its photo |
+
+### Concepts in plain words
+- **Save the new thing first, delete the old thing last.** On save we store the new picture, then save the item, and only then delete the old picture. If anything fails midway, nothing is lost and no stray file is left (there are tests for both failure cases).
+- **Nothing is saved until Save is tapped.** Picking a photo only changes the form (kept in the Presenter). Cancel leaves no files behind.
+- **A fresh file name every time** (a UUID) means a replaced photo can never show a stale cached copy.
+- **Path safety.** A file name is reduced to its last part, so a damaged name like `../../secret` can't escape the Photos folder. There is a test for that.
+- **Privacy by design.** The library picker runs outside the app and only hands over what the user taps, so no photo-library permission is needed. Only the camera needs permission, with a plain explanation (`NSCameraUsageDescription` in Info.plist), and a "Camera is off - Open Settings" alert if it was refused.
+- **Optional columns upgrade smoothly.** `photoFileName` is optional in the database, so items saved before photos existed still load.
+- **Real-world check beat my assumption.** I assumed the simulator has no camera and wrote a test saying "Take photo" is absent. The iOS 26 simulator does report a camera, so the test failed and I fixed the TEST, not the app.
+
+### Verified
+151 tests pass, no crash reports. I also tested it for real in the simulator: opened an item, chose "Choose from library", picked a picture in the real iOS photo picker, saved, and saw the photo on the pantry row.
+Not yet tested: taking a photo with a real camera on a real iPhone (the simulator can't show a real scene).
+
+### Commit messages used
+- `feat: add photo fields to the item entity and storage record`
+- `feat: add photo store and JPEG thumbnailer with tests`
+- `feat: add photo picking to the add/edit form`
+- `feat: show item photos in the pantry list and delete them with the item`
+- `test: add UI test for the photo tile and trim overlapping UI tests`
+- `docs: add milestone 4 notes`
+
+### Check your understanding
+1. Why store a file NAME in the database instead of the photo itself?
+2. In what order do we save a replaced photo, and why is that order safe if something fails?
+3. What happens to the photo file when you delete an item? Which part of VIPER does it?
+4. Why doesn't the library picker need a permission, but the camera does?
+5. Why does every saved photo get a brand-new file name?
+6. If you wanted to also keep a bigger photo for a future detail screen, which files would you touch?
+
+---
+

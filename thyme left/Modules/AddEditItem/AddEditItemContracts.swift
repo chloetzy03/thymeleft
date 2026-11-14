@@ -3,6 +3,16 @@ import Foundation
 // The "who may ask whom" rulebook for the Add / Edit screen.
 // (Same pattern as the Pantry screen: View -> Presenter -> Interactor, answers come back.)
 
+/// What the user can do with the item's photo.
+enum PhotoOption: Equatable {
+    case takePhoto, chooseFromLibrary, removePhoto
+}
+
+/// Where a new photo comes from.
+enum PhotoSource: Equatable {
+    case camera, library
+}
+
 /// Everything the form needs to draw itself the first time.
 struct AddEditFormViewModel: Equatable {
     let title: String
@@ -15,6 +25,8 @@ struct AddEditFormViewModel: Equatable {
     let selectedLocationIndex: Int
     let reminderTitles: [String]
     let selectedReminderIndex: Int
+    /// The item's current photo, or nil to show the emoji.
+    let photoData: Data?
     let expiryDate: Date
     let quickDateTitles: [String]
 }
@@ -25,6 +37,10 @@ struct AddEditFormViewModel: Equatable {
 protocol AddEditItemViewProtocol: AnyObject {
     func showForm(_ form: AddEditFormViewModel)
     func showEmoji(_ emoji: String)
+    /// `nil` goes back to showing the emoji.
+    func showPhoto(_ data: Data?)
+    func showPhotoOptions(_ options: [PhotoOption])
+    func presentPhotoPicker(_ source: PhotoSource)
     func showExpiryDate(_ date: Date)
     /// `nil` clears the message.
     func showNameError(_ message: String?)
@@ -40,6 +56,9 @@ protocol AddEditItemPresenterProtocol: AnyObject {
     func viewDidLoad()
     func nameChanged(_ text: String)
     func didSelectQuickDate(at index: Int)
+    func didTapPhoto()
+    func didSelectPhotoOption(_ option: PhotoOption)
+    func didPickPhoto(_ data: Data)
     func didTapSave(name: String, quantity: Int, locationIndex: Int, reminderIndex: Int, expiryDate: Date)
     func didRespondToReminderPrimer(allow: Bool)
     func didTapCancel()

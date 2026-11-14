@@ -65,47 +65,33 @@ final class ReminderAndSettingsUITests: XCTestCase {
         XCTAssertFalse(app.alerts["Get reminders?"].exists)
     }
 
-    func test_choosingNeverForAnItem_skipsTheExplainer() {
+    func test_reminderChoices_spellOutTheDefault_andNeverSkipsTheExplainer() {
         // Arrange
         openForm()
-        app.buttons["Reminder"].tap()
-        app.buttons["Never"].tap()
 
-        // Act
+        // Act + Assert (1): the menu spells out what "default" means right now
+        app.buttons["Reminder"].tap()
+        XCTAssertTrue(app.buttons["Default (1 day before)"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["1 week before"].exists)
+
+        // Act (2): choose Never and save
+        app.buttons["Never"].tap()
         fillAndSave(name: "Salt")
 
-        // Assert
+        // Assert (2): no explainer, because no reminder would be sent for this item
         XCTAssertTrue(row(containing: "Salt").waitForExistence(timeout: 5))
         XCTAssertFalse(app.alerts["Get reminders?"].exists)
     }
 
-    func test_theFormOffersTheDefaultReminderSpelledOut() {
-        // Arrange + Act
-        openForm()
-
-        // Assert
-        XCTAssertTrue(app.buttons["Reminder"].exists)
-        app.buttons["Reminder"].tap()
-        XCTAssertTrue(app.buttons["Default (1 day before)"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["1 week before"].exists)
-    }
-
     // MARK: Settings (the Me tab)
 
-    func test_meTab_showsTheSettings() {
-        // Act
-        app.tabBars.buttons["Me"].tap()
-
-        // Assert
-        XCTAssertTrue(app.staticTexts["Expiry reminders"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Date format"].exists)
-        XCTAssertTrue(app.staticTexts["Turns red"].exists)
-    }
-
-    func test_changingTheDateFormat_updatesThePreview() {
+    func test_meTab_showsTheSettings_andChangingTheDateFormatUpdatesThePreview() {
         // Arrange
         app.tabBars.buttons["Me"].tap()
-        XCTAssertTrue(app.buttons["Date format"].waitForExistence(timeout: 5))
+
+        // Assert: the main settings are there
+        XCTAssertTrue(app.staticTexts["Expiry reminders"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Turns red"].exists)
 
         // Act
         app.buttons["Date format"].tap()

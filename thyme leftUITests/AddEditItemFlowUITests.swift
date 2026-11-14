@@ -108,4 +108,20 @@ final class AddEditItemFlowUITests: XCTestCase {
         // Assert
         XCTAssertTrue(app.staticTexts["Nothing here yet"].waitForExistence(timeout: 5))
     }
+
+    func test_tappingThePhotoTile_offersLibraryAndCancel() {
+        // ("Take photo" is also offered when the device has a camera, so we don't check it here.)
+        // Arrange
+        app.buttons["Add item"].firstMatch.tap()
+        XCTAssertTrue(app.textFields["Item name"].waitForExistence(timeout: 5))
+
+        // Act
+        app.buttons["Item photo"].tap()
+
+        // Assert
+        XCTAssertTrue(app.buttons["Choose from library"].waitForExistence(timeout: 3))
+        XCTAssertFalse(app.buttons["Remove photo"].exists, "nothing to remove yet")
+        app.buttons["Cancel"].tap()
+        XCTAssertTrue(app.textFields["Item name"].exists, "cancelling the sheet keeps the form open")
+    }
 }

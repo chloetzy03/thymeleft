@@ -105,6 +105,7 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
         return PantryRowViewModel(
             id: item.id,
             emoji: iconProvider.emoji(for: item.name),
+            photoFileName: item.photoFileName,
             title: item.name,
             subtitle: "\(item.location.displayName) · x\(item.quantity) · \(dateFormatter.string(from: item.expiryDate))",
             badgeText: badge,

@@ -14,6 +14,8 @@ import Foundation
 struct PantryRowViewModel: Equatable {
     let id: UUID
     let emoji: String
+    /// When set, the row shows this photo instead of the emoji.
+    let photoFileName: String?
     let title: String
     let subtitle: String
     let badgeText: String

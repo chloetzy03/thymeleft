@@ -25,12 +25,20 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Add / edit item manually (emoji preview, quick dates, validation) | 2 | Done |
 | Expiry reminders (local notifications), per-item override, friendly permission explainer | 3 | Done |
 | Settings in the Me tab: reminder time/days, date format, red/amber thresholds | 3 | Done |
-| Scan expiry date with camera | 4 | Planned |
-| Recipe suggestions (TheMealDB) | 5 | Planned |
-| Polish: icon, empty states, tests, accessibility | 6 | Planned |
+| Item photos (camera or library) instead of emoji | 4 | Done |
+| Scan expiry date with camera | 5 | Planned |
+| Recipe suggestions (TheMealDB) | 6 | Planned |
+| Home tab (greeting, use-soon tiles, saved-from-the-bin) | 7 | Planned |
+| Polish: icon, mascot, privacy policy, accessibility audit, TestFlight | 8 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
+
+## Photos (how they behave)
+- Tap the tile in the Add/Edit form: take a photo, choose from the library, or remove it. No photo = the emoji (auto-guessed from the name).
+- Photos are shrunk to about 600 px and stored privately on the phone (never uploaded). The library picker shows only what the user selects, so no photo-library permission is needed. The camera asks permission in plain language.
+- Replacing, removing or deleting an item also deletes the old photo file, so storage never fills with leftovers.
+- Selling point: "Know what it looks like, at a glance. Photos never leave your phone."
 
 ## Reminders (how they behave)
 - Default: 1 day before at 9:00 AM; both editable in Me. Each item can override (Same day / 1-3 days / 1 week / Never).
@@ -53,7 +61,7 @@ NoWaste, Pantry Check, Fridgely, Cooklist, Kitchen Pal. Related: Too Good To Go,
 ## App Store checklist
 - [ ] Apple Developer Program membership (~US$99/year)
 - [ ] Check name availability / trademark for "thyme left"
-- [ ] Camera usage description (plain-language reason)
+- [x] Camera usage description (plain-language reason)
 - [x] Notification permission shown at a sensible moment (not on first launch)
 - [ ] Privacy policy URL (can be a GitHub Pages page)
 - [ ] Privacy manifest (`PrivacyInfo.xcprivacy`) and App Privacy answers

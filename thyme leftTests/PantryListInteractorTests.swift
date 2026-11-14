@@ -34,13 +34,15 @@ final class PantryListInteractorTests: XCTestCase {
     }
 
     /// Builds the Interactor under test, plus its pretend neighbours.
-    private func makeSUT(items: [PantryItem], settings: AppSettings = AppSettings())
+    private func makeSUT(items: [PantryItem], settings: AppSettings = AppSettings(),
+                         photoStore: InMemoryPhotoStore? = nil)
         -> (sut: PantryListInteractor, output: InteractorOutputSpy, reminders: ReminderServiceSpy) {
         let reminders = ReminderServiceSpy()
         let sut = PantryListInteractor(repository: InMemoryPantryRepository(items: items),
                                        settingsStore: InMemorySettingsStore(settings: settings),
                                        dateProvider: FixedDateProvider(now: today),
                                        reminders: reminders,
+                                       photoStore: photoStore ?? InMemoryPhotoStore(),
                                        calendar: calendar)
         let output = InteractorOutputSpy()
         sut.output = output
@@ -117,6 +119,20 @@ final class PantryListInteractorTests: XCTestCase {
         // Assert
         XCTAssertEqual(output.deleteCount, 1)
         XCTAssertTrue(output.loaded.isEmpty)
+    }
+
+    func test_deleteItem_alsoDeletesItsPhotoFile() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let name = try photos.savePhoto(Data([1, 2, 3]))
+        let withPhoto = PantryItem(name: "Milk", location: .fridge, expiryDate: today, photoFileName: name)
+        let (sut, _, _) = makeSUT(items: [withPhoto], photoStore: photos)
+
+        // Act
+        sut.deleteItem(id: withPhoto.id)
+
+        // Assert
+        XCTAssertTrue(photos.photos.isEmpty)
     }
 
     func test_deleteItem_replansReminders() async {

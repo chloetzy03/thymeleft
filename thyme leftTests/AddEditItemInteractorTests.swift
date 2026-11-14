@@ -37,19 +37,23 @@ final class AddEditItemInteractorTests: XCTestCase {
         let repository: PantryRepository
         let settings: InMemorySettingsStore
         let reminders: ReminderServiceSpy
+        let photos: InMemoryPhotoStore
     }
 
     private func makeSUT(repository: PantryRepository? = nil,
                          settings: AppSettings = AppSettings(),
-                         permission: NotificationPermission = .authorized) -> SUT {
+                         permission: NotificationPermission = .authorized,
+                         photos: InMemoryPhotoStore? = nil) -> SUT {
         let repository = repository ?? InMemoryPantryRepository()
         let store = InMemorySettingsStore(settings: settings)
         let reminders = ReminderServiceSpy(permission: permission)
+        let photos = photos ?? InMemoryPhotoStore()
         let sut = AddEditItemInteractor(repository: repository, dateProvider: FixedDateProvider(now: now),
-                                        settingsStore: store, reminders: reminders)
+                                        settingsStore: store, reminders: reminders, photoStore: photos)
         let output = OutputSpy()
         sut.output = output
-        return SUT(sut: sut, output: output, repository: repository, settings: store, reminders: reminders)
+        return SUT(sut: sut, output: output, repository: repository, settings: store,
+                   reminders: reminders, photos: photos)
     }
 
     private func makeDraft(name: String = "Milk", quantity: Int = 1) -> PantryItemDraft {
@@ -246,5 +250,108 @@ final class AddEditItemInteractorTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(made.reminders.requestCount, 1)
+    }
+
+    // MARK: Photos
+
+    private let tinyPicture = Data([0xFF, 0xD8, 0xFF, 0xD9]) // stands in for a picture; the fake store doesn't look inside
+
+    func test_save_withANewPhoto_storesItAndRemembersTheFileName() async throws {
+        // Arrange
+        let made = makeSUT()
+        var draft = makeDraft()
+        draft.photo = .replace(tinyPicture)
+
+        // Act
+        made.sut.save(draft, replacing: nil)
+
+        // Assert
+        let saved = try XCTUnwrap(try made.repository.fetchAll().first)
+        let fileName = try XCTUnwrap(saved.photoFileName)
+        XCTAssertEqual(made.photos.photoData(named: fileName), tinyPicture)
+    }
+
+    func test_save_replacingAPhoto_deletesTheOldFileOnceSaved() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let oldName = try photos.savePhoto(tinyPicture)
+        let original = PantryItem(name: "Milk", location: .fridge, expiryDate: now, photoFileName: oldName)
+        let made = makeSUT(repository: InMemoryPantryRepository(items: [original]), photos: photos)
+        var draft = makeDraft()
+        draft.photo = .replace(Data([1, 2, 3]))
+
+        // Act
+        made.sut.save(draft, replacing: original)
+
+        // Assert
+        let newName = try XCTUnwrap(try made.repository.fetchAll().first?.photoFileName)
+        XCTAssertNotEqual(newName, oldName)
+        XCTAssertNil(photos.photoData(named: oldName), "the old picture should be gone")
+        XCTAssertNotNil(photos.photoData(named: newName))
+        XCTAssertEqual(photos.photos.count, 1, "no leftover files")
+    }
+
+    func test_save_removingAPhoto_deletesTheFileAndClearsTheName() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let oldName = try photos.savePhoto(tinyPicture)
+        let original = PantryItem(name: "Milk", location: .fridge, expiryDate: now, photoFileName: oldName)
+        let made = makeSUT(repository: InMemoryPantryRepository(items: [original]), photos: photos)
+        var draft = makeDraft()
+        draft.photo = .remove
+
+        // Act
+        made.sut.save(draft, replacing: original)
+
+        // Assert
+        XCTAssertNil(try made.repository.fetchAll().first?.photoFileName)
+        XCTAssertTrue(photos.photos.isEmpty)
+    }
+
+    func test_save_keepingThePhoto_leavesItUntouched() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let name = try photos.savePhoto(tinyPicture)
+        let original = PantryItem(name: "Milk", location: .fridge, expiryDate: now, photoFileName: name)
+        let made = makeSUT(repository: InMemoryPantryRepository(items: [original]), photos: photos)
+
+        // Act
+        made.sut.save(makeDraft(name: "Oat milk"), replacing: original) // photo defaults to .keep
+
+        // Assert
+        XCTAssertEqual(try made.repository.fetchAll().first?.photoFileName, name)
+        XCTAssertNotNil(photos.photoData(named: name))
+    }
+
+    func test_save_whenThePhotoCannotBeStored_failsAndSavesNothing() async throws {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        photos.shouldFailToSave = true
+        let made = makeSUT(photos: photos)
+        var draft = makeDraft()
+        draft.photo = .replace(tinyPicture)
+
+        // Act
+        made.sut.save(draft, replacing: nil)
+
+        // Assert
+        XCTAssertEqual(made.output.failureCount, 1)
+        XCTAssertEqual(made.output.saveCount, 0)
+        XCTAssertTrue(try made.repository.fetchAll().isEmpty)
+    }
+
+    func test_save_whenTheItemCannotBeSaved_cleansUpTheNewPhotoFile() async {
+        // Arrange
+        let photos = InMemoryPhotoStore()
+        let made = makeSUT(repository: FailingRepository(), photos: photos)
+        var draft = makeDraft()
+        draft.photo = .replace(tinyPicture)
+
+        // Act
+        made.sut.save(draft, replacing: nil)
+
+        // Assert
+        XCTAssertEqual(made.output.failureCount, 1)
+        XCTAssertTrue(photos.photos.isEmpty, "the new picture must not be left behind")
     }
 }

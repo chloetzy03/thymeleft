@@ -14,15 +14,18 @@ final class PantryItemRecord {
     var createdAt: Date
     /// See `ReminderPreference.storedValue`. The default (-2) lets older saved items upgrade smoothly.
     var reminderStoredValue: Int = -2
+    /// Optional, so items saved before photos existed upgrade smoothly.
+    var photoFileName: String?
 
     init(id: UUID, name: String, quantity: Int, locationRawValue: String, expiryDate: Date,
-         reminderStoredValue: Int, createdAt: Date) {
+         reminderStoredValue: Int, photoFileName: String?, createdAt: Date) {
         self.id = id
         self.name = name
         self.quantity = quantity
         self.locationRawValue = locationRawValue
         self.expiryDate = expiryDate
         self.reminderStoredValue = reminderStoredValue
+        self.photoFileName = photoFileName
         self.createdAt = createdAt
     }
 
@@ -30,7 +33,7 @@ final class PantryItemRecord {
         self.init(id: item.id, name: item.name, quantity: item.quantity,
                   locationRawValue: item.location.rawValue,
                   expiryDate: item.expiryDate, reminderStoredValue: item.reminder.storedValue,
-                  createdAt: item.createdAt)
+                  photoFileName: item.photoFileName, createdAt: item.createdAt)
     }
 
     func update(from item: PantryItem) {
@@ -39,6 +42,7 @@ final class PantryItemRecord {
         locationRawValue = item.location.rawValue
         expiryDate = item.expiryDate
         reminderStoredValue = item.reminder.storedValue
+        photoFileName = item.photoFileName
     }
 
     /// Converts back to the plain `PantryItem` the app uses.
@@ -46,6 +50,6 @@ final class PantryItemRecord {
         PantryItem(id: id, name: name, quantity: quantity,
                    location: StorageLocation(rawValue: locationRawValue) ?? .pantry,
                    expiryDate: expiryDate, reminder: ReminderPreference(storedValue: reminderStoredValue),
-                   createdAt: createdAt)
+                   photoFileName: photoFileName, createdAt: createdAt)
     }
 }

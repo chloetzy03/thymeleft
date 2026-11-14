@@ -42,16 +42,19 @@ enum PantryListBuilder {
                       dateProvider: DateProviding,
                       iconProvider: FoodIconProviding,
                       dateFormatter: ExpiryDateFormatter,
-                      reminders: ReminderServicing) -> UIViewController {
-        let view = PantryListViewController()
+                      reminders: ReminderServicing,
+                      photoStore: PhotoStoring,
+                      photoCache: PhotoImageCache) -> UIViewController {
+        let view = PantryListViewController(photoCache: photoCache)
         let router = PantryListRouter { existing, onSaved in
             AddEditItemBuilder.build(existing: existing, repository: repository,
                                      dateProvider: dateProvider, iconProvider: iconProvider,
                                      settingsStore: settingsStore, reminders: reminders,
-                                     onSaved: onSaved)
+                                     photoStore: photoStore, onSaved: onSaved)
         }
         let interactor = PantryListInteractor(repository: repository, settingsStore: settingsStore,
-                                           dateProvider: dateProvider, reminders: reminders)
+                                           dateProvider: dateProvider, reminders: reminders,
+                                           photoStore: photoStore)
         let presenter = PantryListPresenter(view: view, interactor: interactor, router: router,
                                           iconProvider: iconProvider, dateFormatter: dateFormatter)
 

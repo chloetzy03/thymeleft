@@ -13,6 +13,8 @@ final class AppContainer {
     let settingsStore: SettingsStore
     let reminders: ReminderServicing
     let dateFormatter: ExpiryDateFormatter
+    let photoStore: PhotoStoring
+    let photoCache: PhotoImageCache
     let dateProvider: DateProviding
     let foodIconProvider: FoodIconProviding
 
@@ -61,5 +63,10 @@ final class AppContainer {
         reminders = ReminderService(repository: repository, settingsStore: settingsStore,
                                     scheduler: scheduler, dateProvider: dateProvider)
         dateFormatter = ExpiryDateFormatter(settingsStore: settingsStore)
+
+        // Photos live as small files on the phone (in memory only for UI tests).
+        let photoStore: PhotoStoring = isUITesting ? InMemoryPhotoStore() : FileSystemPhotoStore()
+        self.photoStore = photoStore
+        photoCache = PhotoImageCache(photoStore: photoStore)
     }
 }
