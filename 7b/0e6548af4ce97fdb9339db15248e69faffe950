@@ -1,0 +1,23 @@
+"thyme left/Services/Pantry/PantryItemRecord.swift"
+  s_7ae13adebac50a::t_9115f460ab30f2 17-18,21,28,36,45,53
+"thyme left/Entities/PantryItem.swift"
+  s_7ae13adebac50a::t_9115f460ab30f2 13-14,23,31
+"thyme left/Entities/PantryItemDraft.swift"
+  s_7ae13adebac50a::t_9115f460ab30f2 12-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7b0e6548af4ce97fdb9339db15248e69faffe950",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
