@@ -1,0 +1,65 @@
+"thyme leftUITests/HomeFlowUITests.swift"
+  s_7ae13adebac50a::t_163f0c9e071fef 98-137
+"thyme left/Modules/PantryList/PantryListPresenter.swift"
+  s_7ae13adebac50a::t_2abf91e3227bd8 104-106,112,116
+"thyme leftTests/PantryListInteractorTests.swift"
+  s_7ae13adebac50a::t_dc84f255dc9ec2 185-197
+"thyme left/Modules/AddEditItem/AddEditItemContracts.swift"
+  s_7ae13adebac50a::t_32daf048fc884b 32-35,51-52,67-68
+"thyme left/Modules/AddEditItem/AddEditItemInteractor.swift"
+  s_7ae13adebac50a::t_32daf048fc884b 44-49,74-75
+"thyme leftTests/HomeTests.swift"
+  s_7ae13adebac50a::t_dc84f255dc9ec2 102-117,309-340
+  s_7ae13adebac50a::t_8b82d7c3142cdf 341
+"thyme left/Services/Pantry/PantryItemRecord.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 19-21,24-25,33-34,42-43,53-54,61-62
+"thyme leftTests/PantryListPresenterTests.swift"
+  s_7ae13adebac50a::t_efd0f6dd87a207 156-187
+"thyme left/Entities/PantryItem.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 12-14,25-26,35-36
+"thyme left/Entities/DateType.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 1-16
+"thyme left/Modules/Home/HomePresenter.swift"
+  s_7ae13adebac50a::t_2abf91e3227bd8 83,91
+"thyme left/Common/ExpiryTextFormatter.swift"
+  s_7ae13adebac50a::t_2abf91e3227bd8 32-58
+"thyme left/Modules/PantryList/PantryListInteractor.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 65-66
+"thyme left/Entities/PantryItemDraft.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 11-12,28-29,37
+"thyme left/Entities/ItemOutcome.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 18-19,21,26
+"thyme left/Modules/AddEditItem/AddEditItemPresenter.swift"
+  s_7ae13adebac50a::t_32daf048fc884b 31-32,42-43,59,74-76,105-108,131-140,170-179,183-184,225-226,236-253
+  s_7ae13adebac50a::t_9b41b5f66d0a8e 254
+"thyme left/Modules/AddEditItem/View/AddEditItemViewController.swift"
+  s_7ae13adebac50a::t_defe31c7b27beb 22-24,88-95,196-203,345-370,416-418
+"thyme left/Services/Outcomes/OutcomeRepository.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 38,40,45,49,64
+"thyme left/Modules/Settings/View/SettingsViewController.swift"
+  s_7ae13adebac50a::t_0378ae236c1ceb 167
+"thyme left/Modules/Home/HomeInteractor.swift"
+  s_7ae13adebac50a::t_dbc2035815c517 51,53-56,63
+"thyme leftTests/AddEditItemPresenterTests.swift"
+  s_7ae13adebac50a::t_3b71950c4fa91c 14,25,85,242-321,337-339
+"thyme leftTests/AddEditItemInteractorTests.swift"
+  s_7ae13adebac50a::t_dc84f255dc9ec2 147-191
+"thyme leftTests/SmallHelpersTests.swift"
+  s_7ae13adebac50a::t_dc84f255dc9ec2 41-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4934ea8cd8812dd56ae5c39e515573c9fbf61b48",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
