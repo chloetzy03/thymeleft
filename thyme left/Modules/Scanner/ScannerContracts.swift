@@ -9,6 +9,8 @@ struct ScanFoundViewModel: Equatable {
     let sourceText: String      // the line we read: "EXP 18/11/26"
     /// Set when day and month could be swapped, e.g. "Read as 3 Apr? Tap for 4 Mar".
     let swapText: String?
+    /// Set when the pack showed no day, e.g. "No day found, so we used the last day of the month."
+    var guessNote: String? = nil
 }
 
 // MARK: - View (the waiter)

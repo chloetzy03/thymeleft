@@ -280,6 +280,25 @@ final class ScannerPresenterTests: XCTestCase {
         XCTAssertEqual(router.results.last?.date, april3)
     }
 
+    func test_whenTheDayWasGuessed_theCardSaysSo() async {
+        // Arrange
+        let (sut, view, _, _) = makeSUT()
+
+        // Act: a month-only date, like "NOV 2027"
+        sut.didFind(ScannedExpiryDate(date: TestCalendar.date(2026, 11, 30), sourceText: "EXP NOV 2026",
+                                      alternative: nil, dayWasGuessed: true))
+
+        // Assert
+        XCTAssertEqual(view.found.last?.guessNote,
+                       "We couldn't see a day on the pack, so we used the last day of the month. You can change it on the next screen.")
+    }
+
+    func test_whenTheDayWasRead_thereIsNoGuessNote() async {
+        let (sut, view, _, _) = makeSUT()
+        sut.didFind(found(18))
+        XCTAssertNil(view.found.last?.guessNote)
+    }
+
     func test_swapping_withNoAlternative_doesNothing() async {
         // Arrange
         let (sut, view, _, _) = makeSUT()

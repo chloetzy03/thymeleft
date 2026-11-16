@@ -2,7 +2,7 @@ import UIKit
 
 /// The bottom bar with four tabs: Home, Scan, Pantry, Recipes.
 /// (Translation: the "front door" of the app. Each tab opens one screen.)
-final class RootTabBarController: UITabBarController, UITabBarControllerDelegate {
+final class RootTabBarController: UITabBarController {
 
     private let container: AppContainer
     private var symbols: [String: String] = [:] // tab title -> icon name
@@ -18,11 +18,9 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
     private static let homeIndex = 0
     private static let pantryIndex = 2
     private static let recipesIndex = 3
-    private static let scanIndex = 1
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        delegate = self
 
         let pantry = PantryListBuilder.build(
             repository: container.pantryRepository,
@@ -54,6 +52,14 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
             cache: container.recipeCache,
             imageLoader: container.imageLoader)
 
+        let scanner = ScannerBuilder.build(
+            settingsStore: container.settingsStore,
+            dateFormatter: container.dateFormatter,
+            dateProvider: container.dateProvider,
+            recognizer: container.textRecognizer,
+            isPopUp: false,
+            onResult: { [weak self] result in self?.presentNewItem(prefilledWith: result) })
+
         let settings = SettingsBuilder.build(
             settingsStore: container.settingsStore,
             reminders: container.reminders,
@@ -63,17 +69,17 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
         viewControllers = [
             makeTab(title: "Home", symbol: "house",
                     content: home),
-            makeTab(title: "Scan", symbol: "viewfinder",
-                    // Never shown: tapping Scan opens the scanner instead (see `shouldSelect` below).
-                    content: UIViewController()),
+            // The Scan tab IS the camera screen (no pop-up). Once a date is found, a new item
+            // opens with the date (and photo, if kept) already filled in.
+            makeTab(title: "Scan", symbol: "viewfinder", content: scanner),
             // The pantry sits inside a navigation controller: it gives us the big title on top
             // and lets us push other screens (like "Add item") on top of it.
             makeTab(title: "Pantry", symbol: "refrigerator",
-                    content: UINavigationController(rootViewController: pantry)),
+                    content: ThemedNavigationController(rootViewController: pantry)),
             makeTab(title: "Recipes", symbol: "fork.knife",
-                    content: UINavigationController(rootViewController: recipes)),
+                    content: ThemedNavigationController(rootViewController: recipes)),
             makeTab(title: "Me", symbol: "person.crop.circle",
-                    content: UINavigationController(rootViewController: settings))
+                    content: ThemedNavigationController(rootViewController: settings))
         ]
         // Real users start on Home. UI tests start on Pantry (where most of them begin)
         // unless they ask for Home with `-uiTestingStartOnHome`.
@@ -85,22 +91,8 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
         // When the phone switches between light and dark mode, repaint the icons.
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
             self.refreshIcons()
+            self.styleTabBar() // label colours are fixed when set, so repaint them too
         }
-    }
-
-    /// Tapping "Scan" doesn't switch tabs. It opens the scanner; once a date is found, a new item
-    /// opens with that date (and photo, if kept) already filled in.
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        guard viewControllers?.firstIndex(of: viewController) == Self.scanIndex else { return true }
-
-        let scanner = ScannerBuilder.build(
-            settingsStore: container.settingsStore,
-            dateFormatter: container.dateFormatter,
-            dateProvider: container.dateProvider,
-            recognizer: container.textRecognizer,
-            onResult: { [weak self] result in self?.presentNewItem(prefilledWith: result) })
-        present(UINavigationController(rootViewController: scanner), animated: true)
-        return false
     }
 
     private func presentNewItem(prefilledWith result: ScanResult) {
@@ -116,7 +108,7 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
             recognizer: container.textRecognizer,
             prefill: result,
             onSaved: { [weak self] in self?.showPantryAfterSaving() })
-        present(UINavigationController(rootViewController: form), animated: true)
+        present(ThemedNavigationController(rootViewController: form), animated: true)
     }
 
     /// A sheet opened over the Pantry doesn't make it "appear" again, so tell it to reload explicitly.
@@ -152,24 +144,26 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
 
     /// Paints the tab bar in our cream-and-green colours.
     private func styleTabBar() {
+        let muted = Theme.Colors.muted.resolvedColor(with: traitCollection)
+        let brand = Theme.Colors.brand.resolvedColor(with: traitCollection)
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = Theme.Colors.background
-        appearance.shadowColor = Theme.Colors.divider
+        appearance.backgroundColor = Theme.Colors.background.resolvedColor(with: traitCollection)
+        appearance.shadowColor = Theme.Colors.divider.resolvedColor(with: traitCollection)
 
         // The bar has three layouts (phone, landscape, iPad); colour them all the same.
         for item in [appearance.stackedLayoutAppearance,
                      appearance.inlineLayoutAppearance,
                      appearance.compactInlineLayoutAppearance] {
-            item.normal.iconColor = Theme.Colors.muted
-            item.normal.titleTextAttributes = [.foregroundColor: Theme.Colors.muted]
-            item.selected.iconColor = Theme.Colors.brand
-            item.selected.titleTextAttributes = [.foregroundColor: Theme.Colors.brand]
+            item.normal.iconColor = muted
+            item.normal.titleTextAttributes = [.foregroundColor: muted]
+            item.selected.iconColor = brand
+            item.selected.titleTextAttributes = [.foregroundColor: brand]
         }
 
         // iOS 26's new tab bar also needs these two for icon colours.
-        tabBar.tintColor = Theme.Colors.brand
-        tabBar.unselectedItemTintColor = Theme.Colors.muted
+        tabBar.tintColor = brand
+        tabBar.unselectedItemTintColor = muted
 
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
