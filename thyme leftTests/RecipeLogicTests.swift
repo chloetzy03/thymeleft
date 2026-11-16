@@ -125,6 +125,45 @@ final class RecipeRankerTests: XCTestCase {
         XCTAssertEqual(result.map(\.recipe.name), ["B", "A"])
     }
 
+    func test_rank_twoItemsWithTheSameName_countOnce() throws {
+        // Arrange: two cartons of milk
+        let pantry = [Fixtures.entry("Milk", days: 1), Fixtures.entry("milk", days: 5)]
+        let recipe = Fixtures.recipe("1", "Pudding", ingredients: ["Milk"])
+
+        // Act
+        let match = try XCTUnwrap(ranker.rank(recipes: [recipe], pantry: pantry, mode: .useItUpFirst).first)
+
+        // Assert: listed once, and only the carton that expires first adds urgency
+        XCTAssertEqual(match.usedItemNames, ["Milk"])
+        XCTAssertEqual(match.urgencyScore, 0.5, accuracy: 0.001)
+    }
+
+    func test_rank_useItUpFirst_prefersASmallShopOverAHugeOneForSimilarRescue() {
+        // Arrange: both use the avocado due today; one needs 12 more things
+        let pantry = [Fixtures.entry("Avocado", days: 0)]
+        let salad = Fixtures.recipe("1", "Salad", ingredients: ["Avocado", "Lime", "Salt"])
+        let tacos = Fixtures.recipe("2", "Tacos", ingredients: ["Avocado"] + (1...12).map { "Thing\($0)" })
+
+        // Act
+        let result = ranker.rank(recipes: [tacos, salad], pantry: pantry, mode: .useItUpFirst)
+
+        // Assert
+        XCTAssertEqual(result.map(\.recipe.name), ["Salad", "Tacos"])
+    }
+
+    func test_rank_aHugeShop_doesNotHideARecipeThatRescuesFarMore() {
+        // Arrange: one big-shop recipe uses FIVE expiring items; the small one uses one
+        let pantry = ["Milk", "Eggs", "Spinach", "Cheese", "Ham"].map { Fixtures.entry($0, days: 0) }
+        let big = Fixtures.recipe("1", "Big Bake", ingredients: ["Milk", "Eggs", "Spinach", "Cheese", "Ham", "A", "B", "C"])
+        let small = Fixtures.recipe("2", "Small", ingredients: ["Milk"])
+
+        // Act
+        let result = ranker.rank(recipes: [small, big], pantry: pantry, mode: .useItUpFirst)
+
+        // Assert
+        XCTAssertEqual(result.map(\.recipe.name), ["Big Bake", "Small"])
+    }
+
     func test_rank_tiesAreSortedAlphabetically() {
         // Arrange
         let pantry = [Fixtures.entry("Milk", days: 3)]

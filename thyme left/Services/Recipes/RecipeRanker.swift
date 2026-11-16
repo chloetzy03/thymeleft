@@ -12,7 +12,8 @@ struct RecipeRanker {
             .sorted { lhs, rhs in
                 switch mode {
                 case .useItUpFirst:
-                    if lhs.urgencyScore != rhs.urgencyScore { return lhs.urgencyScore > rhs.urgencyScore }
+                    // Rescuing food matters most, but a recipe needing a big shop is worth less.
+                    if lhs.rescueScore != rhs.rescueScore { return lhs.rescueScore > rhs.rescueScore }
                     if lhs.missingIngredients.count != rhs.missingIngredients.count {
                         return lhs.missingIngredients.count < rhs.missingIngredients.count
                     }
@@ -31,11 +32,14 @@ struct RecipeRanker {
 
     /// nil when the recipe uses nothing from your pantry.
     private func match(_ recipe: Recipe, pantry: [ExpiringItem]) -> RecipeMatch? {
+        // Two cartons of milk are one "Milk" to a recipe. The pantry is soonest-first,
+        // so the first one we meet is the one that expires first.
         var used: [ExpiringItem] = []
+        var usedNames = Set<String>()
         for entry in pantry where recipe.ingredients.contains(where: {
             matcher.matches(pantryName: entry.item.name, recipeIngredient: $0.name)
         }) {
-            used.append(entry)
+            if usedNames.insert(entry.item.name.lowercased()).inserted { used.append(entry) }
         }
         guard !used.isEmpty else { return nil }
 

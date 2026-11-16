@@ -50,6 +50,12 @@ struct RecipeMatch: Equatable {
     /// Higher = rescues more food that is about to go off.
     let urgencyScore: Double
 
+    /// Urgency, reduced by how much you'd still have to buy. Used by "Use up first".
+    /// Each missing ingredient takes about 15% off, so 12 missing is worth about a third.
+    var rescueScore: Double {
+        urgencyScore / (1 + 0.15 * Double(missingIngredients.count))
+    }
+
     struct IngredientAvailability: Equatable {
         let ingredient: RecipeIngredient
         let have: Bool
