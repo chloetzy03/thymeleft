@@ -1,0 +1,29 @@
+"thyme left/Modules/Scanner/ScannerInteractor.swift"
+  s_7ae13adebac50a::t_7696953de078ea 1-66
+"thyme left/Modules/Scanner/ScannerPresenter.swift"
+  s_7ae13adebac50a::t_7696953de078ea 1-114
+"thyme left/Modules/Scanner/ScannerRouter.swift"
+  s_7ae13adebac50a::t_7696953de078ea 1-45
+"thyme left/Modules/Scanner/View/ScannerViewController.swift"
+  s_7ae13adebac50a::t_a833018bb2791a 1-273
+"thyme left/Modules/Scanner/ScannerContracts.swift"
+  s_7ae13adebac50a::t_7696953de078ea 1-59
+"thyme leftTests/ScannerTests.swift"
+  s_7ae13adebac50a::t_0749a2267c2379 1-339
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d4867759ad429ae90a1b6028747a1c349c0e41b8",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
