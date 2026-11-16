@@ -1,0 +1,26 @@
+"thyme leftUITests/HomeFlowUITests.swift"
+  s_7ae13adebac50a::t_b451eb0fc3a158 138-169
+"thyme leftUITests/RecipesFlowUITests.swift"
+  s_7ae13adebac50a::t_b451eb0fc3a158 55-73,76-95
+  s_7ae13adebac50a::t_ed2ac616a0fc98 74-75
+"thyme leftTests/HomeAndSearchTests.swift"
+  s_7ae13adebac50a::t_85134dcc2fa5c4 34,43,49,61,69,109,122,136,145,157,166,409,418,428,441,453,463,473,482,492
+  s_7ae13adebac50a::t_47d6382ae74f4b 204-205
+  s_7ae13adebac50a::t_d019e2c5119a68 1-33,35-42,44-48,50-60,62-68,70-108,110-121,123-135,137-144,146-156,158-165,167-203,206-408,410-417,419-427,429-440,442-452,454-462,464-472,474-481,483-491,493-500
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "626ec5d4c5e9000e588a7f41962437c959c14d8b",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
