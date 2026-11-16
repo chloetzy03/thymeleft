@@ -16,6 +16,7 @@ final class RootTabBarController: UITabBarController {
     required init?(coder: NSCoder) { fatalError("Not used - we build screens in code") }
 
     private static let homeIndex = 0
+    private static let scanIndex = 1
     private static let pantryIndex = 2
     private static let recipesIndex = 3
 
@@ -41,8 +42,11 @@ final class RootTabBarController: UITabBarController {
             dateProvider: container.dateProvider,
             iconProvider: container.foodIconProvider,
             photoCache: container.photoCache,
+            recipeCache: container.recipeCache,
             selectRecipes: { [weak self] in self?.selectedIndex = Self.recipesIndex },
-            selectPantry: { [weak self] in self?.selectedIndex = Self.pantryIndex })
+            selectPantry: { [weak self] in self?.selectedIndex = Self.pantryIndex },
+            selectScan: { [weak self] in self?.selectedIndex = Self.scanIndex },
+            addItem: { [weak self] in self?.presentNewItem(prefilledWith: nil) })
 
         let recipes = RecipesBuilder.build(
             repository: container.pantryRepository,
@@ -95,7 +99,8 @@ final class RootTabBarController: UITabBarController {
         }
     }
 
-    private func presentNewItem(prefilledWith result: ScanResult) {
+    /// `result` is a scanned date and photo to fill the form with, or nil for an empty form.
+    private func presentNewItem(prefilledWith result: ScanResult?) {
         let form = AddEditItemBuilder.build(
             existing: nil,
             repository: container.pantryRepository,

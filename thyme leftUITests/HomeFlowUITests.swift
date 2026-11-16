@@ -135,6 +135,38 @@ final class HomeFlowUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Use by")).firstMatch.exists)
     }
 
+    func test_shortcuts_openTheFormAndTheScanner() {
+        // Act: Add item shortcut
+        app.buttons["Add an item"].tap()
+
+        // Assert
+        XCTAssertTrue(app.textFields["Item name"].waitForExistence(timeout: 10))
+        app.buttons["Cancel"].tap()
+
+        // Act: Scan shortcut
+        XCTAssertTrue(app.buttons["Scan a date"].waitForExistence(timeout: 10))
+        app.buttons["Scan a date"].tap()
+
+        // Assert: we are on the Scan tab (no camera in the simulator, so the photo fallback shows)
+        XCTAssertTrue(app.buttons["Choose a photo of the date"].waitForExistence(timeout: 10))
+    }
+
+    func test_thisWeekStrip_showsOnceThereIsFood_andOpensThePantry() {
+        // Arrange
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "This week")).firstMatch.exists)
+        addItemExpiringTomorrow("Milk")
+
+        // Act
+        app.tabBars.buttons["Home"].tap()
+        let week = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "This week")).firstMatch
+
+        // Assert
+        XCTAssertTrue(week.waitForExistence(timeout: 10))
+        XCTAssertTrue(week.label.contains("1 item runs out in the next 7 days"), week.label)
+        week.tap()
+        XCTAssertTrue(app.buttons["Add item"].firstMatch.waitForExistence(timeout: 10), "opens the Pantry")
+    }
+
     func test_threwAway_andDelete_doNotCountAsSaved() {
         // Arrange
         addItemExpiringTomorrow("Milk")

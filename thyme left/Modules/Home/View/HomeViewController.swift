@@ -14,6 +14,16 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
     private let tilesStack = UIStackView()
     private let cookButton = UIButton(type: .system)
     private let addFirstButton = UIButton(type: .system)
+    private let addRow = UIStackView()
+    private let weekCard = UIControl()
+    private let weekTitleLabel = UILabel()
+    private let weekSubtitleLabel = UILabel()
+    private let weekDaysStack = UIStackView()
+    private let weekFootnoteLabel = UILabel()
+    private let ideaCard = UIControl()
+    private let ideaCaptionLabel = UILabel()
+    private let ideaTitleLabel = UILabel()
+    private let ideaSubtitleLabel = UILabel()
     private let savedCard = UIView()
     private let savedTitleLabel = UILabel()
     private let savedTextLabel = UILabel()
@@ -51,6 +61,9 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         savedTitleLabel.text = home.savedTitle
         savedTextLabel.text = home.savedText
 
+        showWeek(home.week)
+        showIdea(home.idea)
+
         tilesStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for tile in home.tiles { tilesStack.addArrangedSubview(makeTile(tile)) }
         tilesStack.isHidden = home.tiles.isEmpty
@@ -64,6 +77,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         config?.attributedSubtitle = subtitle
         cookButton.configuration = config
 
+        addRow.isHidden = (home.addFirstTitle == nil) // otherwise its empty space is still reserved
         addFirstButton.isHidden = (home.addFirstTitle == nil)
         if let text = home.addFirstTitle {
             var addConfig = addFirstButton.configuration
@@ -74,7 +88,159 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         }
     }
 
+    private func showWeek(_ week: HomeWeekViewModel?) {
+        weekCard.isHidden = (week == nil)
+        guard let week else { return }
+        weekTitleLabel.text = week.title
+        weekSubtitleLabel.text = week.subtitle
+        weekFootnoteLabel.text = week.footnote
+        weekFootnoteLabel.isHidden = (week.footnote == nil)
+        weekCard.accessibilityLabel = week.accessibilityText
+
+        weekDaysStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        for day in week.days {
+            let bubble = UILabel()
+            bubble.text = day.countText
+            bubble.font = Theme.Typography.itemName.font
+            bubble.textAlignment = .center
+            bubble.textColor = day.count == 0 ? Theme.Colors.muted : day.status.badgeTextColor
+            bubble.backgroundColor = day.count == 0 ? Theme.Colors.chip : day.status.badgeBackgroundColor
+            bubble.layer.cornerRadius = 18
+            bubble.clipsToBounds = true
+            bubble.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                bubble.widthAnchor.constraint(equalToConstant: 36),
+                bubble.heightAnchor.constraint(equalToConstant: 36)
+            ])
+
+            let label = UILabel()
+            label.text = day.label
+            label.font = Theme.Typography.pill.font
+            label.textColor = Theme.Colors.muted
+            label.adjustsFontSizeToFitWidth = true
+            label.minimumScaleFactor = 0.7
+            label.textAlignment = .center
+
+            let column = UIStackView(arrangedSubviews: [bubble, label])
+            column.axis = .vertical
+            column.alignment = .center
+            column.spacing = 4
+            weekDaysStack.addArrangedSubview(column)
+        }
+    }
+
+    private func showIdea(_ idea: HomeIdeaViewModel?) {
+        ideaCard.isHidden = (idea == nil)
+        guard let idea else { return }
+        ideaCaptionLabel.text = idea.caption.uppercased()
+        ideaTitleLabel.text = idea.title
+        ideaSubtitleLabel.text = idea.subtitle
+        ideaCard.accessibilityLabel = idea.accessibilityText
+    }
+
     // MARK: Pieces
+
+    /// Two big friendly shortcuts under the greeting: scan a date, or type an item in.
+    private func makeQuickActions() -> UIView {
+        func button(title: String, symbol: String, label: String, action: @escaping () -> Void) -> UIButton {
+            var config = UIButton.Configuration.filled()
+            config.baseBackgroundColor = Theme.Colors.card
+            config.baseForegroundColor = Theme.Colors.brand
+            config.image = UIImage(systemName: symbol)
+            config.imagePlacement = .top
+            config.imagePadding = 6
+            config.cornerStyle = .large
+            config.contentInsets = NSDirectionalEdgeInsets(top: 14, leading: 8, bottom: 14, trailing: 8)
+            var attributed = AttributedString(title)
+            attributed.font = Theme.Typography.chip.font
+            config.attributedTitle = attributed
+            let button = UIButton(configuration: config)
+            button.accessibilityLabel = label
+            button.addAction(UIAction { _ in action() }, for: .touchUpInside)
+            return button
+        }
+        let scan = button(title: "Scan a date", symbol: "viewfinder", label: "Scan a date") { [weak self] in
+            self?.presenter?.didTapScan()
+        }
+        let add = button(title: "Add item", symbol: "plus.circle", label: "Add an item") { [weak self] in
+            self?.presenter?.didTapAdd()
+        }
+        let row = UIStackView(arrangedSubviews: [scan, add])
+        row.distribution = .fillEqually
+        row.spacing = 12
+        return row
+    }
+
+    private func buildWeekCard() {
+        weekCard.backgroundColor = Theme.Colors.card
+        weekCard.layer.cornerRadius = 20
+        weekCard.isAccessibilityElement = true
+        weekCard.accessibilityTraits = .button
+        weekCard.accessibilityHint = "Opens your pantry"
+        weekCard.addAction(UIAction { [weak self] _ in self?.presenter?.didTapWeek() }, for: .touchUpInside)
+
+        weekTitleLabel.font = Theme.Typography.itemName.font
+        weekTitleLabel.textColor = Theme.Colors.ink
+        weekSubtitleLabel.font = Theme.Typography.caption.font
+        weekSubtitleLabel.textColor = Theme.Colors.muted
+        weekFootnoteLabel.font = Theme.Typography.caption.font
+        weekFootnoteLabel.textColor = Theme.Colors.urgentText
+        for label in [weekTitleLabel, weekSubtitleLabel, weekFootnoteLabel] {
+            label.numberOfLines = 0
+            label.adjustsFontForContentSizeCategory = true
+        }
+        weekDaysStack.axis = .horizontal
+        weekDaysStack.distribution = .fillEqually
+
+        let stack = UIStackView(arrangedSubviews: [weekTitleLabel, weekSubtitleLabel, weekDaysStack, weekFootnoteLabel])
+        stack.axis = .vertical
+        stack.spacing = 6
+        stack.setCustomSpacing(12, after: weekSubtitleLabel)
+        stack.setCustomSpacing(10, after: weekDaysStack)
+        stack.isUserInteractionEnabled = false // taps go to the card itself
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        weekCard.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: weekCard.topAnchor, constant: 16),
+            stack.bottomAnchor.constraint(equalTo: weekCard.bottomAnchor, constant: -16),
+            stack.leadingAnchor.constraint(equalTo: weekCard.leadingAnchor, constant: 16),
+            stack.trailingAnchor.constraint(equalTo: weekCard.trailingAnchor, constant: -16)
+        ])
+        weekCard.isHidden = true
+    }
+
+    private func buildIdeaCard() {
+        ideaCard.backgroundColor = Theme.Colors.sage
+        ideaCard.layer.cornerRadius = 20
+        ideaCard.isAccessibilityElement = true
+        ideaCard.accessibilityTraits = .button
+        ideaCard.accessibilityHint = "Opens recipe ideas"
+        ideaCard.addAction(UIAction { [weak self] _ in self?.presenter?.didTapIdea() }, for: .touchUpInside)
+
+        ideaCaptionLabel.font = Theme.Typography.pill.font
+        ideaCaptionLabel.textColor = Theme.Colors.muted
+        ideaTitleLabel.font = Theme.Typography.sectionTitle.font
+        ideaTitleLabel.textColor = Theme.Colors.ink
+        ideaSubtitleLabel.font = Theme.Typography.body.font
+        ideaSubtitleLabel.textColor = Theme.Colors.ink
+        for label in [ideaCaptionLabel, ideaTitleLabel, ideaSubtitleLabel] {
+            label.numberOfLines = 0
+            label.adjustsFontForContentSizeCategory = true
+        }
+        let stack = UIStackView(arrangedSubviews: [ideaCaptionLabel, ideaTitleLabel, ideaSubtitleLabel])
+        stack.axis = .vertical
+        stack.spacing = 4
+        stack.isUserInteractionEnabled = false
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        ideaCard.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: ideaCard.topAnchor, constant: 16),
+            stack.bottomAnchor.constraint(equalTo: ideaCard.bottomAnchor, constant: -16),
+            stack.leadingAnchor.constraint(equalTo: ideaCard.leadingAnchor, constant: 16),
+            stack.trailingAnchor.constraint(equalTo: ideaCard.trailingAnchor, constant: -16)
+        ])
+        ideaCard.isHidden = true
+    }
 
     private func makeTile(_ tile: HomeTileViewModel) -> UIView {
         let card = UIControl()
@@ -184,7 +350,9 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         addFirstButton.isHidden = true
         addFirstButton.addAction(UIAction { [weak self] _ in self?.presenter?.didTapAddFirst() }, for: .touchUpInside)
 
-        let addRow = UIStackView(arrangedSubviews: [addFirstButton, UIView()])
+        addRow.addArrangedSubview(addFirstButton)
+        addRow.addArrangedSubview(UIView())
+        addRow.isHidden = true
         let greetingStack = UIStackView(arrangedSubviews: [greetingLabel, summaryLabel, tilesStack, addRow])
         greetingStack.axis = .vertical
         greetingStack.spacing = 10
@@ -232,7 +400,10 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
             savedStack.trailingAnchor.constraint(equalTo: savedCard.trailingAnchor, constant: -16)
         ])
 
-        let column = UIStackView(arrangedSubviews: [header, taglineLabel, greetingCard, cookButton, savedCard])
+        buildWeekCard()
+        buildIdeaCard()
+        let column = UIStackView(arrangedSubviews: [header, taglineLabel, greetingCard, makeQuickActions(),
+                                                    weekCard, ideaCard, cookButton, savedCard])
         column.axis = .vertical
         column.spacing = 14
         column.setCustomSpacing(4, after: header)

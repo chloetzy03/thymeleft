@@ -30,8 +30,19 @@ struct RecipeRanker {
             }
     }
 
+    /// Compares EVERY recipe with your pantry (used for search, where the user chose the dish),
+    /// even recipes that use nothing you have. Order is kept as given.
+    func compareAll(recipes: [Recipe], pantry: [ExpiringItem]) -> [RecipeMatch] {
+        recipes.map { makeMatch($0, pantry: pantry) }
+    }
+
     /// nil when the recipe uses nothing from your pantry.
     private func match(_ recipe: Recipe, pantry: [ExpiringItem]) -> RecipeMatch? {
+        let result = makeMatch(recipe, pantry: pantry)
+        return result.usedItemNames.isEmpty ? nil : result
+    }
+
+    private func makeMatch(_ recipe: Recipe, pantry: [ExpiringItem]) -> RecipeMatch {
         // Two cartons of milk are one "Milk" to a recipe. The pantry is soonest-first,
         // so the first one we meet is the one that expires first.
         var used: [ExpiringItem] = []
@@ -41,7 +52,6 @@ struct RecipeRanker {
         }) {
             if usedNames.insert(entry.item.name.lowercased()).inserted { used.append(entry) }
         }
-        guard !used.isEmpty else { return nil }
 
         let availability = recipe.ingredients.map { ingredient in
             let have = matcher.isStaple(ingredient.name)

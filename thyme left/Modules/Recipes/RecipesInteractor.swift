@@ -56,6 +56,77 @@ final class RecipesInteractor: RecipesInteractorInput {
         deliver(sort: sort)
     }
 
+    // MARK: - Searching
+
+    func search(query: String) {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        loadTask?.cancel()
+        generation += 1
+        let myGeneration = generation
+        loadTask = Task { await runSearch(trimmed, generation: myGeneration) }
+    }
+
+    private func runSearch(_ query: String, generation myGeneration: Int) async {
+        // Search works even with an empty pantry; it just can't say "you have this" then.
+        let usable = usablePantry() ?? []
+        var recipes: [Recipe]
+        var offline = false
+        do {
+            recipes = try await searchOnline(query)
+            guard myGeneration == generation else { return }
+            cache.store(recipes)
+        } catch {
+            guard myGeneration == generation else { return }
+            // No internet: look through the recipes saved on the phone instead.
+            recipes = searchSaved(query)
+            offline = true
+            if recipes.isEmpty {
+                let isOffline = (error as? RecipeServiceError) == .offline
+                output?.didFailSearch(isOffline ? .offlineAndNothingSaved : .problem)
+                return
+            }
+        }
+        guard !recipes.isEmpty else { output?.didFindNoSearchResults(query: query); return }
+
+        // Recipes you can nearly make come first; ties keep the search engine's own order.
+        let matches = ranker.compareAll(recipes: recipes, pantry: usable)
+        let ordered = matches.enumerated()
+            .sorted { lhs, rhs in
+                lhs.element.missingIngredients.count != rhs.element.missingIngredients.count
+                    ? lhs.element.missingIngredients.count < rhs.element.missingIngredients.count
+                    : lhs.offset < rhs.offset
+            }
+            .map(\.element)
+        output?.didLoadSearch(matches: ordered, query: query, isOffline: offline)
+    }
+
+    /// Dish names first ("pasta" finds "Chicken Alfredo Pasta"), then dishes made WITH the word ("chicken").
+    private func searchOnline(_ query: String) async throws -> [Recipe] {
+        var results = try await service.searchRecipes(named: query)
+        var seen = Set(results.map(\.id))
+
+        // The ingredient lookup is a bonus: if it fails we still show the name matches.
+        if let known = try? await ingredientNames(),
+           let keyword = known.first(where: { $0.caseInsensitiveCompare(query) == .orderedSame })
+                ?? matcher.searchKeyword(for: query, knownIngredients: known),
+           let summaries = try? await service.recipeSummaries(withIngredient: keyword) {
+            let saved = Dictionary(cache.allRecipes().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+            for summary in summaries.prefix(Self.maxRecipes) where seen.insert(summary.id).inserted {
+                if let copy = saved[summary.id] { results.append(copy); continue }
+                if let full = try? await service.recipe(id: summary.id) { results.append(full) }
+            }
+        }
+        return results
+    }
+
+    private func searchSaved(_ query: String) -> [Recipe] {
+        cache.allRecipes().filter { recipe in
+            recipe.name.localizedCaseInsensitiveContains(query)
+                || recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(query) }
+        }
+    }
+
     // MARK: - The work
 
     private func run(sort: RecipeSortMode, generation myGeneration: Int) async {

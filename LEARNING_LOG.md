@@ -591,3 +591,32 @@ Not verified: the greeting text at your real local time zone on a physical phone
 5. What does "4.5:1 contrast" measure, and why does it matter?
 
 ---
+
+## Milestone 11 – Recipe search and a fuller Home (branch `feature/home-and-recipe-search`)
+
+**What we built (plain English)**
+- **Recipe search:** a search bar under the Recipes title. Type a dish ("pasta") or an ingredient ("chicken"). Results say "You have 3 of 7 ingredients" and what's missing. It waits for a pause in your typing, works with an empty pantry, and falls back to saved recipes when offline.
+- **Home is fuller:** two shortcuts (Scan a date / Add item), a **This week** strip (how many items run out each of the next 7 days), and **Tonight's idea** (the best saved recipe for your most urgent food). The empty gap inside the greeting card is gone.
+
+**Concepts**
+- *Debouncing*: don't search on every keystroke; wait ~0.4 s after typing stops, and cancel the older wait if you type again.
+- *Stale answers*: if a slow answer arrives after you've moved on, ignore it (a "generation" counter does this).
+- *Restoring state*: when you cancel a search, the Presenter remembers what the screen looked like and puts it back, with no network call.
+- *Reusing the pure logic*: `RecipeRanker.compareAll` is the same matching maths used for suggestions, now applied to search results.
+- *Where the "idea" comes from*: only recipes already saved on the phone, so Home loads instantly and works offline.
+- *Test gotcha again*: `@MainActor` XCTest methods must be `async`, or the test host crashes and unrelated tests "fail".
+
+**Commit messages used**
+- `feat: add recipe search (dish names and ingredients)`
+- `feat: add shortcuts, a This week strip and Tonight's idea to Home`
+- `test: cover search, week strip and idea (unit and UI)`
+- `docs: add app icon round 2 (light and dark)`
+
+### Check your understanding
+1. Why wait 0.4 s before searching instead of searching on every letter?
+2. A slow search finishes after you cleared the box. What stops it from replacing the suggestions?
+3. Why can search show recipes that use nothing in your pantry, when suggestions can't?
+4. Why does "Tonight's idea" use saved recipes instead of asking the internet?
+5. What happens to the This week strip when the pantry is empty, and why?
+
+---

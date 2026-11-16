@@ -52,6 +52,47 @@ final class RecipesFlowUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Open the original recipe"].exists)
     }
 
+    func test_searchingForADish_showsHowMuchYouAlreadyHave_andCancelBringsSuggestionsBack() {
+        // Arrange
+        launch()
+        addItem("Milk")
+        app.tabBars.buttons["Recipes"].tap()
+        XCTAssertTrue(recipeRow("Milk Pudding").waitForExistence(timeout: 15))
+
+        // Act: search for a dish that doesn't use anything we have
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 10))
+        search.tap()
+        search.typeText("omelette")
+
+        // Assert: found, with how much of it we already have (salt is assumed)
+        let omelette = recipeRow("Spinach Omelette")
+        XCTAssertTrue(omelette.waitForExistence(timeout: 15))
+        XCTAssertTrue(omelette.label.contains("You have 1 of 4 ingredients"), omelette.label)
+        XCTAssertFalse(app.segmentedControls["Order recipes by"].exists, "no sort switch for search results")
+
+        // Act: close the search (iOS 26 labels the search bar's cancel button "Close")
+        app.buttons["Close"].tap()
+
+        // Assert: the suggestions are back
+        XCTAssertTrue(recipeRow("Milk Pudding").waitForExistence(timeout: 10))
+    }
+
+    func test_searchWithNoMatches_saysSo() {
+        // Arrange
+        launch()
+        app.tabBars.buttons["Recipes"].tap()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 10))
+
+        // Act
+        search.tap()
+        search.typeText("zzzz")
+
+        // Assert
+        XCTAssertTrue(app.staticTexts["No recipes found"].waitForExistence(timeout: 15))
+    }
+
     func test_aRecipeWithoutASourceLink_hasNoOriginalRecipeButton() {
         // Arrange
         launch()
