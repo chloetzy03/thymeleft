@@ -31,8 +31,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     private let existingItem: PantryItem?
     /// Called after a successful save, so the previous screen can refresh itself.
     private let onSaved: () -> Void
-    /// The Scan tab opens a new item with the scanner already running (only once).
-    private var shouldOpenScannerOnAppear: Bool
+    /// A scan done BEFORE the form opened (from the Scan tab): its date and photo fill the new form.
+    private let prefill: ScanResult?
 
     /// What the user has decided about the photo so far (nothing is saved until they tap Save).
     private var photoChange: PhotoChange = .keep
@@ -52,7 +52,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
          existingItem: PantryItem?,
          formatter: ExpiryTextFormatter = ExpiryTextFormatter(),
          calendar: Calendar = .current,
-         startWithScanner: Bool = false,
+         prefill: ScanResult? = nil,
          onSaved: @escaping () -> Void) {
         self.view = view
         self.interactor = interactor
@@ -62,10 +62,11 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         self.settingsStore = settingsStore
         self.photoStore = photoStore
         self.existingItem = existingItem
-        self.hasPhoto = existingItem?.photoFileName != nil
+        self.hasPhoto = existingItem?.photoFileName != nil || prefill?.photoData != nil
+        self.photoChange = prefill?.photoData.map { .replace($0) } ?? .keep
         self.formatter = formatter
         self.calendar = calendar
-        self.shouldOpenScannerOnAppear = startWithScanner
+        self.prefill = prefill
         self.onSaved = onSaved
     }
 
@@ -91,15 +92,9 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
             selectedLocationIndex: locations.firstIndex(of: location) ?? 0,
             reminderTitles: reminderOptions.map(\.title),
             selectedReminderIndex: reminderOptions.firstIndex { $0.preference == reminder } ?? 0,
-            photoData: existingItem?.photoFileName.flatMap { photoStore.photoData(named: $0) },
-            expiryDate: existingItem?.expiryDate ?? defaultExpiry,
+            photoData: existingItem?.photoFileName.flatMap { photoStore.photoData(named: $0) } ?? prefill?.photoData,
+            expiryDate: existingItem?.expiryDate ?? prefill?.date ?? defaultExpiry,
             quickDateTitles: quickDates.map(\.title)))
-    }
-
-    func viewDidAppear() {
-        guard shouldOpenScannerOnAppear else { return }
-        shouldOpenScannerOnAppear = false
-        didTapScan()
     }
 
     func didTapScan() {

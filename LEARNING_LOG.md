@@ -382,3 +382,23 @@ Parser: 21 tests. Real Vision chain: 6 tests. Interactor/presenter: 20 tests. UI
 6. We use a fake text reader in UI tests. Why do we ALSO have a test with the real one?
 
 ---
+
+## Fix: the Scan tab stacked two sheets (`fix/scan-tab-opens-scanner-first`)
+
+**What you noticed:** tapping Scan opened the whole "Add item" sheet, then the scanner slid over it. Two sheets at once felt clunky.
+
+**Why it happened:** to save work I reused the form for the Scan tab: open the form, then immediately open the scanner on top. It worked, but it wasn't a good experience. A user who taps "Scan" wants to scan, not see a half-empty form first.
+
+**The fix:** Scan tab -> scanner only. When a date is found and accepted, the scanner closes and a NEW item opens with the date (and the pack photo, if kept) already filled in. Cancelling the scanner leaves nothing behind. The "Scan the date" button inside the form still opens the scanner over the form, which is natural there (you're already filling a form).
+
+**What changed in the code:** the form no longer has a "start with scanner" mode. It takes an optional `prefill` (a `ScanResult`) instead, which is simpler and more general. `RootTabBarController` now chains the two screens: scanner first, then form.
+
+**Lesson:** when you reuse something to save time, ask whether the user would notice the seam. You did. A testing note: unit tests passed before this change too, because they checked that the parts worked, not that the flow felt right. Only using the app caught it.
+
+### Check your understanding
+1. Why is "scanner first, then form" a better flow than "form first, then scanner"?
+2. What is `prefill`, and why is it more flexible than the old "start with scanner" flag?
+3. Our tests passed before the fix. What does that tell you about what tests can and can't catch?
+
+---
+

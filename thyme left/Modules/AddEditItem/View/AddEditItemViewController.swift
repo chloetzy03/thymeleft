@@ -44,8 +44,6 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        presenter?.viewDidAppear()
-        guard presentedViewController == nil else { return } // the scanner may be opening
         // New item? Pop the keyboard up so the user can start typing straight away.
         if nameField.text?.isEmpty ?? true {
             nameField.becomeFirstResponder()
