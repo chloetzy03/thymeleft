@@ -65,10 +65,22 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
         }
     }
 
-    /// Tapping "Scan" doesn't switch tabs. It opens a new item with the scanner already running.
+    /// Tapping "Scan" doesn't switch tabs. It opens the scanner; once a date is found, a new item
+    /// opens with that date (and photo, if kept) already filled in.
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         guard viewControllers?.firstIndex(of: viewController) == Self.scanIndex else { return true }
 
+        let scanner = ScannerBuilder.build(
+            settingsStore: container.settingsStore,
+            dateFormatter: container.dateFormatter,
+            dateProvider: container.dateProvider,
+            recognizer: container.textRecognizer,
+            onResult: { [weak self] result in self?.presentNewItem(prefilledWith: result) })
+        present(UINavigationController(rootViewController: scanner), animated: true)
+        return false
+    }
+
+    private func presentNewItem(prefilledWith result: ScanResult) {
         let form = AddEditItemBuilder.build(
             existing: nil,
             repository: container.pantryRepository,
@@ -79,10 +91,9 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
             photoStore: container.photoStore,
             dateFormatter: container.dateFormatter,
             recognizer: container.textRecognizer,
-            startWithScanner: true,
+            prefill: result,
             onSaved: { [weak self] in self?.showPantryAfterSaving() })
         present(UINavigationController(rootViewController: form), animated: true)
-        return false
     }
 
     /// A sheet opened over the Pantry doesn't make it "appear" again, so tell it to reload explicitly.

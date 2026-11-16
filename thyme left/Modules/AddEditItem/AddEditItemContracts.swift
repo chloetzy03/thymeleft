@@ -54,7 +54,6 @@ protocol AddEditItemViewProtocol: AnyObject {
 @MainActor
 protocol AddEditItemPresenterProtocol: AnyObject {
     func viewDidLoad()
-    func viewDidAppear()
     func didTapScan()
     func didScan(_ result: ScanResult)
     func nameChanged(_ text: String)

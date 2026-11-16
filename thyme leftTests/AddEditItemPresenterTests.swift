@@ -68,7 +68,7 @@ final class AddEditItemPresenterTests: XCTestCase {
     private func makeSUT(existing: PantryItem? = nil,
                          settings: AppSettings = AppSettings(),
                          photoStore: InMemoryPhotoStore? = nil,
-                         startWithScanner: Bool = false,
+                         prefill: ScanResult? = nil,
                          onSaved: @escaping () -> Void = {})
         -> (sut: AddEditItemPresenter, view: ViewSpy, interactor: InteractorSpy, router: RouterSpy) {
         let view = ViewSpy()
@@ -80,7 +80,7 @@ final class AddEditItemPresenterTests: XCTestCase {
                                        settingsStore: InMemorySettingsStore(settings: settings),
                                        photoStore: photoStore ?? InMemoryPhotoStore(),
                                        existingItem: existing, calendar: calendar,
-                                       startWithScanner: startWithScanner, onSaved: onSaved)
+                                       prefill: prefill, onSaved: onSaved)
         return (sut, view, interactor, router)
     }
 
@@ -503,26 +503,48 @@ final class AddEditItemPresenterTests: XCTestCase {
         XCTAssertEqual(interactor.savedDrafts.last?.photo, .replace(pack))
     }
 
-    func test_startingWithTheScanner_opensItOnceWhenTheFormAppears() async {
+    func test_prefill_fillsTheNewFormWithTheScannedDateAndPhoto() async throws {
         // Arrange
-        let (sut, _, _, router) = makeSUT(startWithScanner: true)
+        let expiry = calendar.date(byAdding: .day, value: 3, to: today)!
+        let pack = Data([4, 5, 6])
+        let (sut, view, interactor, _) = makeSUT(prefill: ScanResult(date: expiry, photoData: pack))
 
         // Act
-        sut.viewDidAppear()
-        sut.viewDidAppear() // e.g. coming back after the scanner closes
+        sut.viewDidLoad()
+        sut.didTapSave(name: "Yoghurt", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: expiry)
 
         // Assert
-        XCTAssertEqual(router.scannerOpenCount, 1)
+        let form = try XCTUnwrap(view.form)
+        XCTAssertEqual(form.expiryDate, expiry)
+        XCTAssertEqual(form.photoData, pack)
+        XCTAssertEqual(interactor.savedDrafts.last?.photo, .replace(pack))
     }
 
-    func test_normalForm_doesNotOpenTheScannerByItself() async {
+    func test_prefillWithoutAPhoto_onlySetsTheDate() async throws {
         // Arrange
-        let (sut, _, _, router) = makeSUT()
+        let expiry = calendar.date(byAdding: .day, value: 2, to: today)!
+        let (sut, view, interactor, _) = makeSUT(prefill: ScanResult(date: expiry, photoData: nil))
 
         // Act
-        sut.viewDidAppear()
+        sut.viewDidLoad()
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: expiry)
 
         // Assert
-        XCTAssertEqual(router.scannerOpenCount, 0)
+        XCTAssertEqual(view.form?.expiryDate, expiry)
+        XCTAssertNil(view.form?.photoData)
+        XCTAssertEqual(interactor.savedDrafts.last?.photo, .keep)
+    }
+
+    func test_prefill_photoCanStillBeRemovedBeforeSaving() async {
+        // Arrange
+        let (sut, _, interactor, _) = makeSUT(prefill: ScanResult(date: today, photoData: Data([1])))
+        sut.viewDidLoad()
+
+        // Act
+        sut.didSelectPhotoOption(.removePhoto)
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        // Assert: there was never a SAVED photo, so nothing to replace or remove
+        XCTAssertEqual(interactor.savedDrafts.last?.photo, .keep)
     }
 }
