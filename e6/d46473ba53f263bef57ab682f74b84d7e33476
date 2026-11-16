@@ -1,0 +1,28 @@
+"thyme left/Common/Theme/Theme+Appearance.swift"
+  s_7ae13adebac50a::t_87b30ed32fa44a 4,9-18,21,23-38,40-41,45
+"thyme left/Modules/Settings/View/SettingsViewController.swift"
+  s_7ae13adebac50a::t_f272fc2ca4eb73 29
+"thyme left/Common/Theme/Theme.swift"
+  s_7ae13adebac50a::t_2ce7e507a09721 9-14,16-18,21-26
+  s_7ae13adebac50a::t_f2bd6a13b174b9 15
+"thyme left/Modules/Recipes/View/RecipesViewController.swift"
+  s_7ae13adebac50a::t_2ff2a5ce664620 109-110,155-160
+  s_7ae13adebac50a::t_87b30ed32fa44a 77-78,146-150
+  s_7ae13adebac50a::t_4b311f7e386c87 151-152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e6d46473ba53f263bef57ab682f74b84d7e33476",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
