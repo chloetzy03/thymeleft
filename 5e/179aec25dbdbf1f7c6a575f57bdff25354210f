@@ -1,0 +1,34 @@
+"thyme left/Services/Recipes/RecipeRanker.swift"
+  s_7ae13adebac50a::t_c5d29596f616e7 33-38,41-45
+"thyme left/Services/Recipes/RecipeService.swift"
+  s_7ae13adebac50a::t_c5d29596f616e7 12-13,50-54,126,147-153
+  s_7ae13adebac50a::t_dd9e2bc79400b6 154
+"thyme left/Modules/Recipes/RecipesContracts.swift"
+  s_7ae13adebac50a::t_17b50244c7b53c 20-21,37-38,50-54,64-65,75-77
+"thyme left/Modules/Recipes/View/RecipesViewController.swift"
+  s_7ae13adebac50a::t_1781159657cc71 16-17,34,63,71-76,84-116,229-243
+  s_7ae13adebac50a::t_1c7c332f7b28bb 244
+"thyme leftTests/RecipesTests.swift"
+  s_7ae13adebac50a::t_d019e2c5119a68 24-26,254-255,263-264
+"thyme left/Modules/Recipes/RecipesInteractor.swift"
+  s_7ae13adebac50a::t_17b50244c7b53c 59-129
+"thyme left/Modules/Recipes/RecipesPresenter.swift"
+  s_7ae13adebac50a::t_f7e76fe440a27d 15-29,33,43-44,58-59,63-107,118,121-160,166-168,174-176,184-186,188-190,196-216
+  s_7ae13adebac50a::t_de7092c774f4bf 217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5e179aec25dbdbf1f7c6a575f57bdff25354210f",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
