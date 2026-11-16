@@ -1,0 +1,29 @@
+"thyme leftTests/RecipesTests.swift"
+  s_7ae13adebac50a::t_8b2c88ce650e39 211
+  s_7ae13adebac50a::t_36faaf079ae4a9 41-42
+  s_7ae13adebac50a::t_27943ca474efdd 210,212-215,221-223
+  s_7ae13adebac50a::t_337c3505796d5a 15-17,19,21-23
+  s_7ae13adebac50a::t_16e5974cdd2080 81-91
+  s_7ae13adebac50a::t_663c2a5b893b57 1-14,18,20,24-40,43-80,92-127,130-209,216-220,224-295,297-314,316-320,322-326,328-346,348-362,364-375,377-421,423-439,441-454,456-466,468-472,474-483,485-488
+  s_7ae13adebac50a::t_015655c75ff969 296,315,321,327,347,363,376,422,440,455,467,473,484
+  s_7ae13adebac50a::t_40732003764af3 128-129
+"thyme leftUITests/RecipesFlowUITests.swift"
+  s_7ae13adebac50a::t_e8393830aa3759 41
+  s_7ae13adebac50a::t_e4a1c835620414 1-40,42-109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "91ac1a4f40e834d072444cfc40e8ccdf854440c1",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
