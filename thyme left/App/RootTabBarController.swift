@@ -15,7 +15,9 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("Not used - we build screens in code") }
 
+    private static let homeIndex = 0
     private static let pantryIndex = 2
+    private static let recipesIndex = 3
     private static let scanIndex = 1
 
     override func viewDidLoad() {
@@ -31,7 +33,18 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
             reminders: container.reminders,
             photoStore: container.photoStore,
             photoCache: container.photoCache,
-            recognizer: container.textRecognizer)
+            recognizer: container.textRecognizer,
+            outcomes: container.outcomeRepository)
+
+        let home = HomeBuilder.build(
+            repository: container.pantryRepository,
+            outcomes: container.outcomeRepository,
+            settingsStore: container.settingsStore,
+            dateProvider: container.dateProvider,
+            iconProvider: container.foodIconProvider,
+            photoCache: container.photoCache,
+            selectRecipes: { [weak self] in self?.selectedIndex = Self.recipesIndex },
+            selectPantry: { [weak self] in self?.selectedIndex = Self.pantryIndex })
 
         let recipes = RecipesBuilder.build(
             repository: container.pantryRepository,
@@ -49,8 +62,7 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
 
         viewControllers = [
             makeTab(title: "Home", symbol: "house",
-                    content: PlaceholderViewController(
-                        title: "Home", message: "Your daily summary is coming in a later milestone.")),
+                    content: home),
             makeTab(title: "Scan", symbol: "viewfinder",
                     // Never shown: tapping Scan opens the scanner instead (see `shouldSelect` below).
                     content: UIViewController()),
@@ -63,7 +75,11 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
             makeTab(title: "Me", symbol: "person.crop.circle",
                     content: UINavigationController(rootViewController: settings))
         ]
-        selectedIndex = Self.pantryIndex // open on Pantry, the heart of the app
+        // Real users start on Home. UI tests start on Pantry (where most of them begin)
+        // unless they ask for Home with `-uiTestingStartOnHome`.
+        let args = ProcessInfo.processInfo.arguments
+        let startOnPantry = args.contains("-uiTesting") && !args.contains("-uiTestingStartOnHome")
+        selectedIndex = startOnPantry ? Self.pantryIndex : Self.homeIndex
         styleTabBar()
 
         // When the phone switches between light and dark mode, repaint the icons.

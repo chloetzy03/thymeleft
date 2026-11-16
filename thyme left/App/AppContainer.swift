@@ -10,6 +10,7 @@ import os
 final class AppContainer {
 
     let pantryRepository: PantryRepository
+    let outcomeRepository: OutcomeRepository
     let settingsStore: SettingsStore
     let reminders: ReminderServicing
     let dateFormatter: ExpiryDateFormatter
@@ -41,21 +42,26 @@ final class AppContainer {
         // Where the pantry is stored
         var container: ModelContainer?
         let repository: PantryRepository
+        let outcomes: OutcomeRepository
         if isUITesting {
             repository = InMemoryPantryRepository()
+            outcomes = InMemoryOutcomeRepository()
         } else {
             do {
-                let opened = try ModelContainer(for: PantryItemRecord.self)
+                let opened = try ModelContainer(for: PantryItemRecord.self, OutcomeRecord.self)
                 container = opened
                 repository = SwiftDataPantryRepository(context: opened.mainContext)
+                outcomes = SwiftDataOutcomeRepository(context: opened.mainContext)
             } catch {
                 // Safety net: if the database can't open, keep the app usable (items just won't be saved).
                 Self.logger.error("Could not open database: \(error.localizedDescription)")
                 repository = InMemoryPantryRepository()
+                outcomes = InMemoryOutcomeRepository()
             }
         }
         modelContainer = container
         pantryRepository = repository
+        outcomeRepository = outcomes
 
         // Settings and reminders
         let settingsStore: SettingsStore = isUITesting ? InMemorySettingsStore() : UserDefaultsSettingsStore()
