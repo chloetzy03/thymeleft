@@ -1,0 +1,22 @@
+"thyme leftTests/VisionTextRecognizerTests.swift"
+  s_7ae13adebac50a::t_a3f15901eb0a20 1-87
+"thyme left/Services/Scanning/TextRecognizing.swift"
+  s_7ae13adebac50a::t_78978c1a80abe8 57-69
+  s_7ae13adebac50a::t_deebe81f9a7cb3 1-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e77424b4dc11631b9d3cba8b1495e5ac2f48e652",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
