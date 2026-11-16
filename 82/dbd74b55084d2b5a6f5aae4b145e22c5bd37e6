@@ -1,0 +1,41 @@
+"thyme left/Modules/PantryList/PantryListRouter.swift"
+  s_7ae13adebac50a::t_db87a34ee2c926 47-48,54-55
+"thyme leftTests/AddEditItemPresenterTests.swift"
+  s_7ae13adebac50a::t_0749a2267c2379 46-52,71,82-83,464-527
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_71ab3188fe4b55 83,86-93
+  s_7ae13adebac50a::t_db87a34ee2c926 5,18-20,23,33-34,47-48,59,68-82,84-85
+  s_7ae13adebac50a::t_1371a528c16910 94
+"thyme left/Modules/AddEditItem/AddEditItemContracts.swift"
+  s_7ae13adebac50a::t_db87a34ee2c926 57-59,92
+"thyme left/Modules/AddEditItem/View/AddEditItemViewController.swift"
+  s_7ae13adebac50a::t_db87a34ee2c926 23,47-48,328-341,370
+"thyme left/App/AppContainer.swift"
+  s_7ae13adebac50a::t_78978c1a80abe8 72-77
+  s_7ae13adebac50a::t_db87a34ee2c926 18
+"thyme left/Modules/PantryList/View/PantryListViewController.swift"
+  s_7ae13adebac50a::t_71ab3188fe4b55 50-54
+"thyme left/Info.plist"
+  s_7ae13adebac50a::t_0749a2267c2379 6
+"thyme left/Modules/AddEditItem/AddEditItemPresenter.swift"
+  s_7ae13adebac50a::t_db87a34ee2c926 34-35,55,68,99-112
+  s_7ae13adebac50a::t_34e71af1ee353d 113
+"thyme left/Modules/AddEditItem/AddEditItemRouter.swift"
+  s_7ae13adebac50a::t_db87a34ee2c926 8-17,38-40,43-46,53-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "82dbd74b55084d2b5a6f5aae4b145e22c5bd37e6",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
