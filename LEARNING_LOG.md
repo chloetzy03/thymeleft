@@ -548,3 +548,46 @@ Not verified: the greeting text at your real local time zone on a physical phone
 5. Why do we avoid telling people that expired food is "safe"?
 
 ---
+
+## Milestone 8/9 – Real-phone fixes and accessibility (branch `fix/phone-testing-round-1`)
+
+**What the phone showed us, and what we did**
+| What you noticed | Cause | Fix |
+|---|---|---|
+| Scanner always said 30 Nov | The camera split "5 NOV 2027" into pieces, so we only saw "NOV 2027" and (by design) used the month's last day, and that later date also beat the real one | Join neighbouring text, read look-alike letters ("S" = 5), prefer a full date over a month-only one, and tell the user when the day was guessed |
+| "Keep photo" sometimes did nothing | We stopped the camera before asking it to take the picture, so taking it failed silently | Keep the camera running until the photo is taken; if it still fails, say so |
+| Recipes title / tab labels hard to see in dark mode | Text colours given to iOS in a "text attributes" box are fixed when set; they don't follow dark mode by themselves | Pick the colour for the current mode ourselves and redo it when the mode changes |
+| Dark mode green/black too harsh | Neon mint on near-black | New softer palette (warm grey-green, muted sage, cream text) |
+| Scan tab pop-up felt sudden | It opened a sheet on a tab | The Scan tab is now the camera screen itself, with a viewfinder frame, torch and photo buttons |
+| Camera icon cut off | The badge stuck out of the card | Smaller badge fully inside the tile |
+| Past dates allowed | By design (old packs) | Kept, plus a gentle "This date has already passed" note |
+| Price keyboard has no letters or minus | Intentional: a price is a number, never negative | Added a Done bar above the number pad |
+| "Me" header | Looked odd as a screen title | Header says "Settings" (tab stays "Me") |
+
+**Accessibility work (Milestone 9)**
+- Contrast checked with the WCAG formula; the light-mode "quiet text" colour failed (3.2:1) so it was darkened to pass 4.5:1.
+- Form rows stack label above control at the biggest text sizes; chip bars and wrapping labels grow instead of cutting text off.
+- VoiceOver: icon-only buttons have labels, decorative things are hidden, headings are marked, error messages are announced.
+
+**Concepts**
+- *Where a bug really lives*: the "30 Nov" was a chain (camera split text, tie-break rule, no visible hint), so we fixed each link.
+- *Don't fail silently*: if keeping the photo fails, tell the user.
+- *Dark mode and fixed colours*: anything handed to iOS as a plain colour value must be re-picked when the mode changes.
+- *`title` vs `navigationItem.title`*: setting `title` also renames the tab.
+
+**Commit messages used**
+- `fix: read dates split across lines and tell the user when the day was guessed`
+- `feat: make the Scan tab the camera screen (no pop-up)`
+- `fix: keep the pack photo reliably`
+- `fix: dark-mode text colours and softer dark palette`
+- `fix: form polish (camera badge, past-date note, price Done button, Settings title)`
+- `feat: accessibility pass (contrast, large text, wrapping)`
+
+### Check your understanding
+1. Why did two different packs both show 30 Nov? Name the two things that combined.
+2. Why must the camera still be running when we take the photo?
+3. Why does a dark-mode colour sometimes stay light-mode in a text-attributes box?
+4. Why do we allow past dates but still show a note?
+5. What does "4.5:1 contrast" measure, and why does it matter?
+
+---
