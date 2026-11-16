@@ -156,6 +156,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         taglineLabel.font = Theme.Typography.body.font
         taglineLabel.textColor = Theme.Colors.muted
         taglineLabel.adjustsFontForContentSizeCategory = true
+        taglineLabel.numberOfLines = 0
 
         // Greeting card with the "use soon" tiles
         greetingCard.backgroundColor = Theme.Colors.sage

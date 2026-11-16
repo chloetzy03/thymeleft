@@ -106,6 +106,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
             dateTypeTitles: DateType.allCases.map(\.displayName),
             selectedDateTypeIndex: DateType.allCases.firstIndex(of: dateType) ?? 0,
             priceText: priceText))
+        updatePastDateNote(for: existingItem?.expiryDate ?? prefill?.date ?? defaultExpiry)
     }
 
     func didTapScan() {
@@ -114,6 +115,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
 
     func didScan(_ result: ScanResult) {
         view?.showExpiryDate(result.date)
+        updatePastDateNote(for: result.date)
         if let photo = result.photoData { didPickPhoto(photo) } // the user chose to keep the pack photo
     }
 
@@ -126,6 +128,10 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         guard quickDates.indices.contains(index),
               let date = calendar.date(byAdding: quickDates[index].offset, to: dateProvider.now) else { return }
         view?.showExpiryDate(date)
+    }
+
+    func didChangeExpiryDate(_ date: Date) {
+        updatePastDateNote(for: date)
     }
 
     func didSelectDateType(at index: Int) {
@@ -232,6 +238,12 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     }
 
     // MARK: Helpers
+
+    /// Past dates are allowed (you might find an old pack), but we say so, so it isn't a surprise.
+    private func updatePastDateNote(for date: Date) {
+        let isPast = calendar.startOfDay(for: date) < calendar.startOfDay(for: dateProvider.now)
+        view?.showPastDateNote(isPast ? "This date has already passed." : nil)
+    }
 
     /// Turns "3,50" or "3.50" (whatever the phone's region uses) into a number. Nil if it isn't one.
     private static func parsePrice(_ text: String, locale: Locale) -> Double? {

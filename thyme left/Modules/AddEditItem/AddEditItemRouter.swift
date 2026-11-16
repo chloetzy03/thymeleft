@@ -12,7 +12,7 @@ final class AddEditItemRouter: AddEditItemRouterProtocol {
     }
 
     func showScanner(onResult: @escaping (ScanResult) -> Void) {
-        let navigation = UINavigationController(rootViewController: makeScanner(onResult))
+        let navigation = ThemedNavigationController(rootViewController: makeScanner(onResult))
         viewController?.present(navigation, animated: true)
     }
 

@@ -46,6 +46,8 @@ protocol AddEditItemViewProtocol: AnyObject {
     func showPhotoOptions(_ options: [PhotoOption])
     func presentPhotoPicker(_ source: PhotoSource)
     func showExpiryDate(_ date: Date)
+    /// A gentle note when the chosen date is already in the past. `nil` clears it.
+    func showPastDateNote(_ message: String?)
     /// `nil` clears the message.
     func showNameError(_ message: String?)
     /// `nil` clears the message.
@@ -64,6 +66,7 @@ protocol AddEditItemPresenterProtocol: AnyObject {
     func didScan(_ result: ScanResult)
     func nameChanged(_ text: String)
     func didSelectQuickDate(at index: Int)
+    func didChangeExpiryDate(_ date: Date)
     func didSelectDateType(at index: Int)
     func didChangePrice(_ text: String)
     func didTapPhoto()

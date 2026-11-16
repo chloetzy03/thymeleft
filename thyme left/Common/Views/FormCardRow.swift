@@ -23,6 +23,16 @@ final class FormCardRow: UIView {
         row.axis = .horizontal
         row.alignment = .center
         row.spacing = 12
+        // With the biggest text sizes there isn't room side by side, so stack the label above the control.
+        let arrange = { (row: UIStackView, category: UIContentSizeCategory) in
+            let big = category.isAccessibilityCategory
+            row.axis = big ? .vertical : .horizontal
+            row.alignment = big ? .leading : .center
+        }
+        arrange(row, traitCollection.preferredContentSizeCategory)
+        registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) { (self: Self, _) in
+            arrange(row, self.traitCollection.preferredContentSizeCategory)
+        }
         row.translatesAutoresizingMaskIntoConstraints = false
         addSubview(row)
 

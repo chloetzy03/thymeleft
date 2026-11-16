@@ -19,6 +19,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
     private let reminderButton = UIButton(type: .system)
     private let datePicker = UIDatePicker()
     private let quickDateBar = FilterChipBar()
+    private let pastDateLabel = UILabel()
     private let dateTypeControl = UISegmentedControl()
     private let priceField = UITextField()
     private let priceErrorLabel = UILabel()
@@ -184,6 +185,11 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         datePicker.setDate(date, animated: true)
     }
 
+    func showPastDateNote(_ message: String?) {
+        pastDateLabel.text = message
+        pastDateLabel.isHidden = (message == nil)
+    }
+
     func showNameError(_ message: String?) {
         nameErrorLabel.text = message
         nameErrorLabel.isHidden = (message == nil)
@@ -259,11 +265,14 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         emojiTile.addSubview(photoImageView)
 
         // A small camera badge hints that the tile can be tapped.
-        let badge = UIImageView(image: UIImage(systemName: "camera.fill"))
+        // Kept small and fully INSIDE the tile, so the card around it can't cut it off.
+        let badge = UIImageView(image: UIImage(systemName: "camera.fill",
+                                               withConfiguration: UIImage.SymbolConfiguration(pointSize: 9, weight: .bold)))
         badge.tintColor = Theme.Colors.onBrand
         badge.contentMode = .center
         badge.backgroundColor = Theme.Colors.brand
-        badge.layer.cornerRadius = 12
+        badge.layer.cornerRadius = 10
+        badge.isAccessibilityElement = false // the tile itself is the button
         badge.translatesAutoresizingMaskIntoConstraints = false
         emojiTile.addSubview(badge)
         NSLayoutConstraint.activate([
@@ -271,10 +280,10 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             photoImageView.bottomAnchor.constraint(equalTo: emojiTile.bottomAnchor),
             photoImageView.leadingAnchor.constraint(equalTo: emojiTile.leadingAnchor),
             photoImageView.trailingAnchor.constraint(equalTo: emojiTile.trailingAnchor),
-            badge.widthAnchor.constraint(equalToConstant: 24),
-            badge.heightAnchor.constraint(equalToConstant: 24),
-            badge.trailingAnchor.constraint(equalTo: emojiTile.trailingAnchor, constant: 6),
-            badge.bottomAnchor.constraint(equalTo: emojiTile.bottomAnchor, constant: 6)
+            badge.widthAnchor.constraint(equalToConstant: 20),
+            badge.heightAnchor.constraint(equalToConstant: 20),
+            badge.trailingAnchor.constraint(equalTo: emojiTile.trailingAnchor, constant: -4),
+            badge.bottomAnchor.constraint(equalTo: emojiTile.bottomAnchor, constant: -4)
         ])
 
         emojiTile.accessibilityLabel = "Item photo"
@@ -339,6 +348,15 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         datePicker.preferredDatePickerStyle = .compact
         datePicker.tintColor = Theme.Colors.brand
         datePicker.accessibilityLabel = "Expiry date"
+        datePicker.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.didChangeExpiryDate(self.datePicker.date)
+        }, for: .valueChanged)
+        pastDateLabel.font = Theme.Typography.caption.font
+        pastDateLabel.textColor = Theme.Colors.urgentText
+        pastDateLabel.adjustsFontForContentSizeCategory = true
+        pastDateLabel.numberOfLines = 0
+        pastDateLabel.isHidden = true
 
         quickDateBar.onSelect = { [weak self] index in self?.presenter?.didSelectQuickDate(at: index) }
 
@@ -358,6 +376,14 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         priceField.textColor = Theme.Colors.ink
         priceField.accessibilityLabel = "Price"
         priceField.accessibilityIdentifier = "priceField"
+        // The number pad has no "Done" key, so we add a small bar above it.
+        let keyboardBar = UIToolbar()
+        keyboardBar.items = [
+            UIBarButtonItem(systemItem: .flexibleSpace),
+            UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.priceField.resignFirstResponder() })
+        ]
+        keyboardBar.sizeToFit()
+        priceField.inputAccessoryView = keyboardBar
         priceField.widthAnchor.constraint(greaterThanOrEqualToConstant: 90).isActive = true
         priceField.addAction(UIAction { [weak self] _ in
             self?.presenter?.didChangePrice(self?.priceField.text ?? "")
@@ -412,6 +438,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             padded(FormCardRow(title: "Where is it kept?", control: locationButton)),
             padded(scanButton),
             padded(FormCardRow(title: "Expires", control: datePicker)),
+            padded(pastDateLabel),
             quickDateBar, // already has its own side margins
             padded(FormCardRow(title: "Date type", control: dateTypeControl)),
             padded(FormCardRow(title: "Price (optional)", control: priceField)),
@@ -441,7 +468,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             nameRow.leadingAnchor.constraint(equalTo: nameCard.leadingAnchor, constant: 14),
             nameRow.trailingAnchor.constraint(equalTo: nameCard.trailingAnchor, constant: -14),
 
-            quickDateBar.heightAnchor.constraint(equalToConstant: 48),
+            quickDateBar.heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
 
             // The scroll area ends where the keyboard begins, so nothing hides behind it.
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
