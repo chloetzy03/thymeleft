@@ -20,6 +20,10 @@ struct SettingsViewModel: Equatable {
     let selectedUrgentIndex: Int
     let soonTitles: [String]
     let selectedSoonIndex: Int
+
+    let showMoneySaved: Bool
+    let itemValueTitles: [String]
+    let selectedItemValueIndex: Int
 }
 
 // MARK: - View (the waiter)
@@ -41,6 +45,8 @@ protocol SettingsPresenterProtocol: AnyObject {
     func didSelectDateFormat(at index: Int)
     func didSelectUrgent(at index: Int)
     func didSelectSoon(at index: Int)
+    func didChangeShowMoneySaved(isOn: Bool)
+    func didSelectItemValue(at index: Int)
     func didTapOpenSystemSettings()
 }
 
