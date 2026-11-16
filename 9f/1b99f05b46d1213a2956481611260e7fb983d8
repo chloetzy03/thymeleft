@@ -1,0 +1,47 @@
+"thyme left/Modules/RecipeDetail/View/RecipeDetailViewController.swift"
+  s_7ae13adebac50a::t_10481463904691 1-176
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_10481463904691 36-43,62
+"thyme left/Modules/RecipeDetail/RecipeDetailContracts.swift"
+  s_7ae13adebac50a::t_10481463904691 1-37
+"thyme left/Services/Recipes/RemoteImageLoading.swift"
+  s_7ae13adebac50a::t_e092a330c19bfb 1-35
+"thyme left/Modules/Recipes/View/RecipesViewController.swift"
+  s_7ae13adebac50a::t_10481463904691 1-171
+"thyme left/Modules/Recipes/RecipesContracts.swift"
+  s_7ae13adebac50a::t_e092a330c19bfb 1-71
+"thyme left/App/AppContainer.swift"
+  s_7ae13adebac50a::t_10481463904691 19-21,75-87
+"thyme left/Modules/Recipes/RecipesRouter.swift"
+  s_7ae13adebac50a::t_10481463904691 1-39
+"thyme left/Modules/Recipes/RecipesPresenter.swift"
+  s_7ae13adebac50a::t_e092a330c19bfb 1-111
+"thyme left/Modules/Recipes/RecipesInteractor.swift"
+  s_7ae13adebac50a::t_e092a330c19bfb 1-150,157-159
+  s_7ae13adebac50a::t_16e5974cdd2080 151-156
+"thyme left/Modules/Recipes/View/RecipeCell.swift"
+  s_7ae13adebac50a::t_10481463904691 1-106
+"thyme left/Services/Recipes/RecipeService.swift"
+  s_7ae13adebac50a::t_663c2a5b893b57 116-118,134,140
+  s_7ae13adebac50a::t_e092a330c19bfb 146-170
+"thyme left/Modules/RecipeDetail/RecipeDetailRouter.swift"
+  s_7ae13adebac50a::t_10481463904691 1-23
+"thyme left/Modules/RecipeDetail/RecipeDetailPresenter.swift"
+  s_7ae13adebac50a::t_10481463904691 1-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9f1b99f05b46d1213a2956481611260e7fb983d8",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
