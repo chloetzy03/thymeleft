@@ -1,0 +1,33 @@
+"thyme leftTests/MealDBRecipeServiceTests.swift"
+  s_7ae13adebac50a::t_8ef26640fa96b7 1-130
+"thyme leftTests/RecipeLogicTests.swift"
+  s_7ae13adebac50a::t_8ef26640fa96b7 1-217
+"thyme left/Services/Recipes/IngredientMatcher.swift"
+  s_7ae13adebac50a::t_6852f499c9261d 1-68
+"thyme left/Services/Recipes/RecipeCache.swift"
+  s_7ae13adebac50a::t_6852f499c9261d 1-50
+"thyme left/Entities/Recipe.swift"
+  s_7ae13adebac50a::t_6852f499c9261d 1-57
+"thyme left/Services/Recipes/RecipeService.swift"
+  s_7ae13adebac50a::t_6852f499c9261d 1-140
+"thyme leftTests/TestSupport.swift"
+  s_7ae13adebac50a::t_8ef26640fa96b7 49-63
+"thyme left/Services/Recipes/RecipeRanker.swift"
+  s_7ae13adebac50a::t_6852f499c9261d 1-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6bcfc2af88b563e3378a3ed840c27854faf0500e",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
