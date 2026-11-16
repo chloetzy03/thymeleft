@@ -1,0 +1,21 @@
+LEARNING_LOG.md
+  s_7ae13adebac50a::t_b59095f55a3fa1 464-522
+docs/PRODUCT_NOTES.md
+  s_7ae13adebac50a::t_fd3aed5e2e9864 31,37-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "61e8168a4ff961083a2a122c8494e2d8b9dde4e9",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
