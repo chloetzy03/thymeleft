@@ -113,6 +113,9 @@ final class StubRecipeService: RecipeService {
     var summariesByIngredient: [String: [RecipeSummary]]
     var recipes: [String: Recipe]
     var error: RecipeServiceError?
+    /// What was asked, so tests can check we only searched what we should.
+    private(set) var searchedIngredients: [String] = []
+    private(set) var fetchedRecipeIDs: [String] = []
 
     init(known: [String] = [], summariesByIngredient: [String: [RecipeSummary]] = [:],
          recipes: [String: Recipe] = [:], error: RecipeServiceError? = nil) {
@@ -128,13 +131,40 @@ final class StubRecipeService: RecipeService {
     }
 
     func recipeSummaries(withIngredient name: String) async throws -> [RecipeSummary] {
+        searchedIngredients.append(name)
         if let error { throw error }
         return summariesByIngredient[name] ?? []
     }
 
     func recipe(id: String) async throws -> Recipe {
+        fetchedRecipeIDs.append(id)
         if let error { throw error }
         guard let recipe = recipes[id] else { throw RecipeServiceError.notFound }
         return recipe
+    }
+}
+
+extension StubRecipeService {
+    /// Fixed sample recipes for UI tests (Spinach, Eggs and Milk are the foods it knows).
+    static func uiTestingSample(error: RecipeServiceError? = nil) -> StubRecipeService {
+        func recipe(_ id: String, _ name: String, _ ingredients: [(String, String)], source: String?) -> Recipe {
+            Recipe(id: id, name: name, category: "Breakfast", area: "French",
+                   instructions: "STEP 1\nWhisk everything together.\nSTEP 2\nCook gently and serve warm.",
+                   imageURL: nil, sourceURL: source.flatMap(URL.init(string:)), videoURL: nil,
+                   ingredients: ingredients.map { RecipeIngredient(name: $0.0, measure: $0.1) })
+        }
+        let omelette = recipe("1", "Spinach Omelette",
+                              [("Spinach", "1 bag"), ("Eggs", "3"), ("Cheese", "50g"), ("Salt", "1 pinch")],
+                              source: "https://example.com/omelette")
+        let pudding = recipe("2", "Milk Pudding", [("Milk", "500ml"), ("Sugar", "50g")], source: nil)
+        return StubRecipeService(
+            known: ["Milk", "Spinach", "Eggs"],
+            summariesByIngredient: [
+                "Spinach": [RecipeSummary(id: "1", name: omelette.name)],
+                "Eggs": [RecipeSummary(id: "1", name: omelette.name)],
+                "Milk": [RecipeSummary(id: "2", name: pudding.name)]
+            ],
+            recipes: ["1": omelette, "2": pudding],
+            error: error)
     }
 }

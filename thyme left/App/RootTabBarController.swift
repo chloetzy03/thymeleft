@@ -33,6 +33,14 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
             photoCache: container.photoCache,
             recognizer: container.textRecognizer)
 
+        let recipes = RecipesBuilder.build(
+            repository: container.pantryRepository,
+            settingsStore: container.settingsStore,
+            dateProvider: container.dateProvider,
+            service: container.recipeService,
+            cache: container.recipeCache,
+            imageLoader: container.imageLoader)
+
         let settings = SettingsBuilder.build(
             settingsStore: container.settingsStore,
             reminders: container.reminders,
@@ -51,8 +59,7 @@ final class RootTabBarController: UITabBarController, UITabBarControllerDelegate
             makeTab(title: "Pantry", symbol: "refrigerator",
                     content: UINavigationController(rootViewController: pantry)),
             makeTab(title: "Recipes", symbol: "fork.knife",
-                    content: PlaceholderViewController(
-                        title: "Recipes", message: "Recipe ideas arrive in a later milestone.")),
+                    content: UINavigationController(rootViewController: recipes)),
             makeTab(title: "Me", symbol: "person.crop.circle",
                     content: UINavigationController(rootViewController: settings))
         ]
