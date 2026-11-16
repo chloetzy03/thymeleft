@@ -145,9 +145,11 @@ final class HomePresenterTests: XCTestCase {
     }
 
     private final class RouterSpy: HomeRouterProtocol {
-        var recipesCount = 0, pantryCount = 0
+        var recipesCount = 0, pantryCount = 0, scanCount = 0, addCount = 0
         func showRecipes() { recipesCount += 1 }
         func showPantry() { pantryCount += 1 }
+        func showScan() { scanCount += 1 }
+        func showAddItem() { addCount += 1 }
     }
 
     private func makeSUT(hour: Int = 9) -> (sut: HomePresenter, view: ViewSpy, interactor: InteractorSpy, router: RouterSpy) {

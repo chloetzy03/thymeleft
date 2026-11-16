@@ -37,6 +37,10 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
     func didTapCook() { router.showRecipes() }
     func didTapTile(id: UUID) { router.showPantry() }
     func didTapAddFirst() { router.showPantry() }
+    func didTapScan() { router.showScan() }
+    func didTapAdd() { router.showAddItem() }
+    func didTapWeek() { router.showPantry() }
+    func didTapIdea() { router.showRecipes() }
 
     // MARK: From the Interactor
 
@@ -49,6 +53,8 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
             cookTitle: "✨ What can I cook?",
             cookSubtitle: "Recipes using your existing ingredients",
             addFirstTitle: snapshot.pantryCount == 0 ? "Add your first item" : nil,
+            week: snapshot.pantryCount == 0 ? nil : weekModel(for: snapshot),
+            idea: snapshot.recipeIdea.map(ideaModel(for:)),
             savedTitle: "Saved from the bin",
             savedText: savedText(for: snapshot)))
     }
@@ -89,6 +95,44 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
             badgeText: badge,
             status: entry.status,
             accessibilityText: "\(entry.item.name), \(textFormatter.spokenText(daysRemaining: entry.daysRemaining, dateType: entry.item.dateType))")
+    }
+
+    /// "Today", then short weekday names; empty days show a quiet dot.
+    private func weekModel(for snapshot: HomeSnapshot) -> HomeWeekViewModel {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.setLocalizedDateFormatFromTemplate("EEE")
+
+        let days = snapshot.week.enumerated().map { index, day -> HomeWeekDayViewModel in
+            HomeWeekDayViewModel(label: index == 0 ? "Today" : formatter.string(from: day.date),
+                                 countText: day.count == 0 ? "\u{00B7}" : "\(day.count)",
+                                 count: day.count,
+                                 status: day.count == 0 ? .fresh : day.status)
+        }
+        let total = snapshot.week.reduce(0) { $0 + $1.count }
+        let subtitle: String
+        switch total {
+        case 0: subtitle = "Nothing runs out in the next 7 days."
+        case 1: subtitle = "1 item runs out in the next 7 days."
+        default: subtitle = "\(total) items run out in the next 7 days."
+        }
+        var footnote: String?
+        if snapshot.pastCount == 1 { footnote = "1 item is already past its date." }
+        if snapshot.pastCount > 1 { footnote = "\(snapshot.pastCount) items are already past their date." }
+
+        let spoken = days.map { $0.count == 0 ? "\($0.label), none" : "\($0.label), \($0.count)" }.joined(separator: ". ")
+        return HomeWeekViewModel(title: "This week", subtitle: subtitle, days: days, footnote: footnote,
+                                 accessibilityText: "This week. \(subtitle) \(spoken). \(footnote ?? "")")
+    }
+
+    private func ideaModel(for idea: HomeRecipeIdea) -> HomeIdeaViewModel {
+        let uses = idea.usedItemNames.prefix(3).joined(separator: ", ")
+        var subtitle = "Uses \(uses)"
+        if idea.missingCount == 0 { subtitle += " · you have everything" }
+        else { subtitle += " · \(idea.missingCount) more to find" }
+        return HomeIdeaViewModel(caption: "Tonight's idea", title: idea.name, subtitle: subtitle,
+                                 accessibilityText: "Tonight's idea: \(idea.name). \(subtitle)")
     }
 
     private func savedText(for snapshot: HomeSnapshot) -> String {
