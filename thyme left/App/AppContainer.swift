@@ -16,6 +16,9 @@ final class AppContainer {
     let photoStore: PhotoStoring
     let photoCache: PhotoImageCache
     let textRecognizer: TextRecognizing
+    let recipeService: RecipeService
+    let recipeCache: RecipeCaching
+    let imageLoader: RemoteImageLoading
     let dateProvider: DateProviding
     let foodIconProvider: FoodIconProviding
 
@@ -69,6 +72,19 @@ final class AppContainer {
         let photoStore: PhotoStoring = isUITesting ? InMemoryPhotoStore() : FileSystemPhotoStore()
         self.photoStore = photoStore
         photoCache = PhotoImageCache(photoStore: photoStore)
+        // Recipes: the real TheMealDB service, or fixed sample recipes for UI tests.
+        // `-uiTestingRecipesOffline` makes the sample service act like there's no internet.
+        if isUITesting {
+            recipeService = StubRecipeService.uiTestingSample(
+                error: arguments.contains("-uiTestingRecipesOffline") ? .offline : nil)
+            recipeCache = InMemoryRecipeCache()
+            imageLoader = NoImageLoader()
+        } else {
+            recipeService = MealDBRecipeService()
+            recipeCache = FileSystemRecipeCache()
+            imageLoader = URLSessionImageLoader()
+        }
+
         // UI tests can pass `-uiTestingScanText "line one|line two"` to fake what the camera reads.
         if isUITesting, let flag = arguments.firstIndex(of: "-uiTestingScanText"), arguments.indices.contains(flag + 1) {
             textRecognizer = StubTextRecognizer(lines: arguments[flag + 1].components(separatedBy: "|"))
