@@ -15,6 +15,7 @@ final class AppContainer {
     let dateFormatter: ExpiryDateFormatter
     let photoStore: PhotoStoring
     let photoCache: PhotoImageCache
+    let textRecognizer: TextRecognizing
     let dateProvider: DateProviding
     let foodIconProvider: FoodIconProviding
 
@@ -68,5 +69,11 @@ final class AppContainer {
         let photoStore: PhotoStoring = isUITesting ? InMemoryPhotoStore() : FileSystemPhotoStore()
         self.photoStore = photoStore
         photoCache = PhotoImageCache(photoStore: photoStore)
+        // UI tests can pass `-uiTestingScanText "line one|line two"` to fake what the camera reads.
+        if isUITesting, let flag = arguments.firstIndex(of: "-uiTestingScanText"), arguments.indices.contains(flag + 1) {
+            textRecognizer = StubTextRecognizer(lines: arguments[flag + 1].components(separatedBy: "|"))
+        } else {
+            textRecognizer = VisionTextRecognizer()
+        }
     }
 }

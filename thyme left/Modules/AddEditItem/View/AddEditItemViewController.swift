@@ -20,6 +20,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
     private let datePicker = UIDatePicker()
     private let quickDateBar = FilterChipBar()
     private let saveButton = UIButton(type: .system)
+    private let scanButton = UIButton(type: .system)
 
     private var selectedLocationIndex = 0
     private var selectedReminderIndex = 0
@@ -43,6 +44,8 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        presenter?.viewDidAppear()
+        guard presentedViewController == nil else { return } // the scanner may be opening
         // New item? Pop the keyboard up so the user can start typing straight away.
         if nameField.text?.isEmpty ?? true {
             nameField.becomeFirstResponder()
@@ -322,6 +325,20 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
         quickDateBar.onSelect = { [weak self] index in self?.presenter?.didSelectQuickDate(at: index) }
 
+        // --- Scan the date from the pack
+        var scanConfig = UIButton.Configuration.tinted()
+        scanConfig.baseBackgroundColor = Theme.Colors.brand
+        scanConfig.baseForegroundColor = Theme.Colors.brand
+        scanConfig.image = UIImage(systemName: "viewfinder")
+        scanConfig.imagePadding = 8
+        scanConfig.cornerStyle = .large
+        var scanTitle = AttributedString("Scan the date on the pack")
+        scanTitle.font = Theme.Typography.button.font
+        scanConfig.attributedTitle = scanTitle
+        scanButton.configuration = scanConfig
+        scanButton.accessibilityLabel = "Scan date"
+        scanButton.addAction(UIAction { [weak self] _ in self?.presenter?.didTapScan() }, for: .touchUpInside)
+
         // --- Save button
         var saveConfig = UIButton.Configuration.filled()
         saveConfig.baseBackgroundColor = Theme.Colors.brand
@@ -350,6 +367,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             padded(nameErrorLabel),
             padded(FormCardRow(title: "Quantity", control: quantityControl)),
             padded(FormCardRow(title: "Where is it kept?", control: locationButton)),
+            padded(scanButton),
             padded(FormCardRow(title: "Expires", control: datePicker)),
             quickDateBar, // already has its own side margins
             padded(FormCardRow(title: "Remind me", control: reminderButton)),

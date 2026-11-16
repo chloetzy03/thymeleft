@@ -2,7 +2,7 @@ import UIKit
 
 /// The bottom bar with four tabs: Home, Scan, Pantry, Recipes.
 /// (Translation: the "front door" of the app. Each tab opens one screen.)
-final class RootTabBarController: UITabBarController {
+final class RootTabBarController: UITabBarController, UITabBarControllerDelegate {
 
     private let container: AppContainer
     private var symbols: [String: String] = [:] // tab title -> icon name
@@ -15,8 +15,12 @@ final class RootTabBarController: UITabBarController {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("Not used - we build screens in code") }
 
+    private static let pantryIndex = 2
+    private static let scanIndex = 1
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        delegate = self
 
         let pantry = PantryListBuilder.build(
             repository: container.pantryRepository,
@@ -26,7 +30,8 @@ final class RootTabBarController: UITabBarController {
             dateFormatter: container.dateFormatter,
             reminders: container.reminders,
             photoStore: container.photoStore,
-            photoCache: container.photoCache)
+            photoCache: container.photoCache,
+            recognizer: container.textRecognizer)
 
         let settings = SettingsBuilder.build(
             settingsStore: container.settingsStore,
@@ -39,8 +44,8 @@ final class RootTabBarController: UITabBarController {
                     content: PlaceholderViewController(
                         title: "Home", message: "Your daily summary is coming in a later milestone.")),
             makeTab(title: "Scan", symbol: "viewfinder",
-                    content: PlaceholderViewController(
-                        title: "Scan", message: "Date scanning arrives in a later milestone.")),
+                    // Never shown: tapping Scan opens the scanner instead (see `shouldSelect` below).
+                    content: UIViewController()),
             // The pantry sits inside a navigation controller: it gives us the big title on top
             // and lets us push other screens (like "Add item") on top of it.
             makeTab(title: "Pantry", symbol: "refrigerator",
@@ -51,13 +56,40 @@ final class RootTabBarController: UITabBarController {
             makeTab(title: "Me", symbol: "person.crop.circle",
                     content: UINavigationController(rootViewController: settings))
         ]
-        selectedIndex = 2 // open on Pantry, the heart of the app
+        selectedIndex = Self.pantryIndex // open on Pantry, the heart of the app
         styleTabBar()
 
         // When the phone switches between light and dark mode, repaint the icons.
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
             self.refreshIcons()
         }
+    }
+
+    /// Tapping "Scan" doesn't switch tabs. It opens a new item with the scanner already running.
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        guard viewControllers?.firstIndex(of: viewController) == Self.scanIndex else { return true }
+
+        let form = AddEditItemBuilder.build(
+            existing: nil,
+            repository: container.pantryRepository,
+            dateProvider: container.dateProvider,
+            iconProvider: container.foodIconProvider,
+            settingsStore: container.settingsStore,
+            reminders: container.reminders,
+            photoStore: container.photoStore,
+            dateFormatter: container.dateFormatter,
+            recognizer: container.textRecognizer,
+            startWithScanner: true,
+            onSaved: { [weak self] in self?.showPantryAfterSaving() })
+        present(UINavigationController(rootViewController: form), animated: true)
+        return false
+    }
+
+    /// A sheet opened over the Pantry doesn't make it "appear" again, so tell it to reload explicitly.
+    private func showPantryAfterSaving() {
+        selectedIndex = Self.pantryIndex
+        let navigation = viewControllers?[Self.pantryIndex] as? UINavigationController
+        (navigation?.viewControllers.first as? PantryListViewController)?.reload()
     }
 
     private func makeTab(title: String, symbol: String, content: UIViewController) -> UIViewController {

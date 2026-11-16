@@ -54,6 +54,9 @@ protocol AddEditItemViewProtocol: AnyObject {
 @MainActor
 protocol AddEditItemPresenterProtocol: AnyObject {
     func viewDidLoad()
+    func viewDidAppear()
+    func didTapScan()
+    func didScan(_ result: ScanResult)
     func nameChanged(_ text: String)
     func didSelectQuickDate(at index: Int)
     func didTapPhoto()
@@ -86,5 +89,6 @@ protocol AddEditItemInteractorOutput: AnyObject {
 
 @MainActor
 protocol AddEditItemRouterProtocol: AnyObject {
+    func showScanner(onResult: @escaping (ScanResult) -> Void)
     func close()
 }
