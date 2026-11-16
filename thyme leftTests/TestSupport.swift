@@ -46,3 +46,18 @@ enum TestCalendar {
         utc.date(from: DateComponents(year: year, month: month, day: day, hour: hour, minute: minute))!
     }
 }
+
+enum RecipeFixtures {
+    static func recipe(_ id: String, _ name: String, ingredients: [String], source: String? = nil) -> Recipe {
+        Recipe(id: id, name: name, category: "Side", area: "Italian", instructions: "Step one.\nStep two.",
+               imageURL: URL(string: "https://example.com/\(id).jpg"),
+               sourceURL: source.flatMap(URL.init(string:)), videoURL: nil,
+               ingredients: ingredients.map { RecipeIngredient(name: $0, measure: "1") })
+    }
+
+    /// A pantry entry with a countdown.
+    static func entry(_ name: String, days: Int) -> ExpiringItem {
+        ExpiringItem(item: PantryItem(name: name, location: .fridge, expiryDate: Date()),
+                     daysRemaining: days, status: days < 0 ? .expired : (days <= 1 ? .urgent : (days <= 5 ? .soon : .fresh)))
+    }
+}

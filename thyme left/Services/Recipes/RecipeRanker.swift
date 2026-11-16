@@ -1,0 +1,56 @@
+import Foundation
+
+/// Compares recipes with your pantry and orders them. Pure maths, no network.
+struct RecipeRanker {
+
+    private let matcher = IngredientMatcher()
+
+    /// - Parameter pantry: your usable (not expired) items, soonest-to-expire first.
+    func rank(recipes: [Recipe], pantry: [ExpiringItem], mode: RecipeSortMode) -> [RecipeMatch] {
+        recipes
+            .compactMap { match($0, pantry: pantry) }
+            .sorted { lhs, rhs in
+                switch mode {
+                case .useItUpFirst:
+                    if lhs.urgencyScore != rhs.urgencyScore { return lhs.urgencyScore > rhs.urgencyScore }
+                    if lhs.missingIngredients.count != rhs.missingIngredients.count {
+                        return lhs.missingIngredients.count < rhs.missingIngredients.count
+                    }
+                case .bestMatch:
+                    if lhs.missingIngredients.count != rhs.missingIngredients.count {
+                        return lhs.missingIngredients.count < rhs.missingIngredients.count
+                    }
+                    if lhs.usedItemNames.count != rhs.usedItemNames.count {
+                        return lhs.usedItemNames.count > rhs.usedItemNames.count
+                    }
+                    if lhs.urgencyScore != rhs.urgencyScore { return lhs.urgencyScore > rhs.urgencyScore }
+                }
+                return lhs.recipe.name.localizedCaseInsensitiveCompare(rhs.recipe.name) == .orderedAscending
+            }
+    }
+
+    /// nil when the recipe uses nothing from your pantry.
+    private func match(_ recipe: Recipe, pantry: [ExpiringItem]) -> RecipeMatch? {
+        var used: [ExpiringItem] = []
+        for entry in pantry where recipe.ingredients.contains(where: {
+            matcher.matches(pantryName: entry.item.name, recipeIngredient: $0.name)
+        }) {
+            used.append(entry)
+        }
+        guard !used.isEmpty else { return nil }
+
+        let availability = recipe.ingredients.map { ingredient in
+            let have = matcher.isStaple(ingredient.name)
+                || pantry.contains { matcher.matches(pantryName: $0.item.name, recipeIngredient: ingredient.name) }
+            return RecipeMatch.IngredientAvailability(ingredient: ingredient, have: have)
+        }
+        // An item due today is worth 1.0, tomorrow 0.5, in 2 days 0.33, and so on.
+        let urgency = used.reduce(0.0) { $0 + 1.0 / Double(1 + max($1.daysRemaining, 0)) }
+
+        return RecipeMatch(recipe: recipe,
+                           usedItemNames: used.map(\.item.name),
+                           missingIngredients: availability.filter { !$0.have }.map(\.ingredient.name),
+                           ingredientAvailability: availability,
+                           urgencyScore: urgency)
+    }
+}
