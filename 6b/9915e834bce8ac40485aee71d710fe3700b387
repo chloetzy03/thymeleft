@@ -1,0 +1,21 @@
+docs/design/app-icons.html
+  s_7ae13adebac50a::t_92d3ec0d0ac41b 1-74
+docs/PRODUCT_NOTES.md
+  s_7ae13adebac50a::t_5b42f40fa2f0b1 33,35-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b9915e834bce8ac40485aee71d710fe3700b387",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
