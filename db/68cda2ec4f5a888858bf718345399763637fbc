@@ -1,0 +1,22 @@
+"thyme leftTests/ExpiryDateParserTests.swift"
+  s_7ae13adebac50a::t_dd05f29368c2aa 1-202
+"thyme left/Services/Scanning/ExpiryDateParser.swift"
+  s_7ae13adebac50a::t_2c617274988753 1-164,169-222
+  s_7ae13adebac50a::t_c3e2dbd5d989ae 165-168
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "db68cda2ec4f5a888858bf718345399763637fbc",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
