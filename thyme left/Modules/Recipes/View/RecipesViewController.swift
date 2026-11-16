@@ -13,6 +13,8 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
     private let attributionLabel = UILabel()
     private let spinner = UIActivityIndicatorView(style: .large)
     private let messageView = EmptyStateView()
+    private let statusLabel = UILabel()
+    private let searchController = UISearchController(searchResultsController: nil)
     private var rows: [RecipeRowViewModel] = []
 
     init(imageLoader: RemoteImageLoading) {
@@ -29,6 +31,7 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         title = "Recipes"
         navigationController?.navigationBar.prefersLargeTitles = true
         buildLayout()
+        buildSearch()
         presenter?.viewDidLoad()
     }
 
@@ -57,6 +60,7 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         rows = screen.rows
         rescueLabel.text = screen.rescueSummary
         rescueLabel.isHidden = (screen.rescueSummary == nil)
+        segmented.isHidden = !screen.showsSortControl
         bannerLabel.text = screen.banner
         bannerLabel.isHidden = (screen.banner == nil)
         sizeHeader()
@@ -64,11 +68,50 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         tableView.reloadData()
     }
 
+    func showSearchStatus(_ text: String?) {
+        statusLabel.text = text
+        statusLabel.isHidden = (text == nil)
+        if let text { UIAccessibility.post(notification: .announcement, argument: text) }
+    }
+
     func showMessage(emoji: String, title: String, message: String, buttonTitle: String?) {
         spinner.stopAnimating()
         tableView.isHidden = true
         messageView.configure(emoji: emoji, title: title, message: message, buttonTitle: buttonTitle)
         messageView.isHidden = false
+    }
+
+    // MARK: Search
+
+    /// The search bar sits under the big title, like in Apple's own apps.
+    private func buildSearch() {
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        searchController.searchBar.placeholder = "Search dishes or ingredients"
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.returnKeyType = .search
+        searchController.searchBar.tintColor = Theme.Colors.brand
+        searchController.searchBar.accessibilityIdentifier = "Search recipes"
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.preferredSearchBarPlacement = .stacked
+        definesPresentationContext = true
+
+        statusLabel.font = Theme.Typography.body.font
+        statusLabel.textColor = Theme.Colors.muted
+        statusLabel.adjustsFontForContentSizeCategory = true
+        statusLabel.textAlignment = .center
+        statusLabel.numberOfLines = 0
+        statusLabel.isHidden = true
+        statusLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(statusLabel)
+        NSLayoutConstraint.activate([
+            statusLabel.topAnchor.constraint(equalTo: spinner.bottomAnchor, constant: 12),
+            statusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            statusLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+        ])
     }
 
     // MARK: Layout
@@ -181,5 +224,21 @@ extension RecipesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         presenter?.didSelectRecipe(id: rows[indexPath.row].id)
+    }
+}
+
+extension RecipesViewController: UISearchResultsUpdating, UISearchBarDelegate {
+
+    func updateSearchResults(for searchController: UISearchController) {
+        presenter?.didChangeSearchText(searchController.searchBar.text ?? "")
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        presenter?.didSubmitSearch(searchBar.text ?? "")
+        searchBar.resignFirstResponder()
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        presenter?.didCancelSearch()
     }
 }

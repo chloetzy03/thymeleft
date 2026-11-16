@@ -9,6 +9,8 @@ protocol RecipeService: AnyObject {
     /// Recipes that use this ONE ingredient.
     func recipeSummaries(withIngredient name: String) async throws -> [RecipeSummary]
     func recipe(id: String) async throws -> Recipe
+    /// Full recipes whose NAME contains these words, e.g. "pasta" or "chicken curry".
+    func searchRecipes(named query: String) async throws -> [Recipe]
 }
 
 enum RecipeServiceError: Error, Equatable {
@@ -43,6 +45,11 @@ final class MealDBRecipeService: RecipeService {
             guard let id = meal["idMeal"] ?? nil, let title = meal["strMeal"] ?? nil else { return nil }
             return RecipeSummary(id: id, name: title)
         }
+    }
+
+    func searchRecipes(named query: String) async throws -> [Recipe] {
+        let meals = try await fetchMeals(path: "search.php", query: [URLQueryItem(name: "s", value: query)])
+        return meals.compactMap(Self.recipe(from:))
     }
 
     func recipe(id: String) async throws -> Recipe {
@@ -116,6 +123,7 @@ final class StubRecipeService: RecipeService {
     /// What was asked, so tests can check we only searched what we should.
     private(set) var searchedIngredients: [String] = []
     private(set) var fetchedRecipeIDs: [String] = []
+    private(set) var searchedNames: [String] = []
 
     init(known: [String] = [], summariesByIngredient: [String: [RecipeSummary]] = [:],
          recipes: [String: Recipe] = [:], error: RecipeServiceError? = nil) {
@@ -134,6 +142,14 @@ final class StubRecipeService: RecipeService {
         searchedIngredients.append(name)
         if let error { throw error }
         return summariesByIngredient[name] ?? []
+    }
+
+    func searchRecipes(named query: String) async throws -> [Recipe] {
+        searchedNames.append(query)
+        if let error { throw error }
+        return recipes.values
+            .filter { $0.name.localizedCaseInsensitiveContains(query) }
+            .sorted { $0.name < $1.name }
     }
 
     func recipe(id: String) async throws -> Recipe {

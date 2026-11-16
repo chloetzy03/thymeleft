@@ -21,6 +21,9 @@ final class RecipesInteractorTests: XCTestCase {
         func didFindNoPantryItems() { noPantry += 1; signal() }
         func didFindNoRecipes() { noRecipes += 1; signal() }
         func didFail(_ failure: RecipesFailure) { failures.append(failure); signal() }
+        func didLoadSearch(matches: [RecipeMatch], query: String, isOffline: Bool) {}
+        func didFindNoSearchResults(query: String) {}
+        func didFailSearch(_ failure: RecipesFailure) {}
     }
 
     private struct Fixture {
@@ -248,6 +251,8 @@ final class RecipesPresenterTests: XCTestCase {
         func showMessage(emoji: String, title: String, message: String, buttonTitle: String?) {
             self.message = (emoji, title, message, buttonTitle); screen = nil
         }
+        var statuses: [String?] = []
+        func showSearchStatus(_ text: String?) { statuses.append(text) }
     }
 
     private final class InteractorSpy: RecipesInteractorInput {
@@ -255,6 +260,8 @@ final class RecipesPresenterTests: XCTestCase {
         var sorts: [RecipeSortMode] = []
         func loadRecipes(sort: RecipeSortMode) { loads.append(sort) }
         func changeSort(_ sort: RecipeSortMode) { sorts.append(sort) }
+        var searches: [String] = []
+        func search(query: String) { searches.append(query) }
     }
 
     private final class RouterSpy: RecipesRouterProtocol {
