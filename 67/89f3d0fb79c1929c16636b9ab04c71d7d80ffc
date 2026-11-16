@@ -1,0 +1,43 @@
+"thyme left/Modules/AddEditItem/View/AddEditItemViewController.swift"
+  s_7ae13adebac50a::t_358deecff931d7 22,188-192,351-359,441
+  s_7ae13adebac50a::t_f2bd6a13b174b9 471
+  s_7ae13adebac50a::t_235257befc0a74 268-270,274-275,283-286,379-386
+"thyme left/Modules/AddEditItem/AddEditItemContracts.swift"
+  s_7ae13adebac50a::t_358deecff931d7 49-50,69
+"thyme left/Common/Views/FormCardRow.swift"
+  s_7ae13adebac50a::t_f2bd6a13b174b9 26-35
+"thyme left/Modules/PantryList/View/PantryItemCell.swift"
+  s_7ae13adebac50a::t_2ff2a5ce664620 73
+"thyme left/Modules/AddEditItem/AddEditItemRouter.swift"
+  s_7ae13adebac50a::t_87b30ed32fa44a 15
+"thyme left/Modules/PantryList/PantryListRouter.swift"
+  s_7ae13adebac50a::t_87b30ed32fa44a 30
+"thyme leftTests/AddEditItemPresenterTests.swift"
+  s_7ae13adebac50a::t_358deecff931d7 15,26,324-352
+  s_7ae13adebac50a::t_8641a9d0883119 353
+"thyme left/Modules/Home/View/HomeViewController.swift"
+  s_7ae13adebac50a::t_60b7ab1023e215 159
+"thyme left/Common/Views/FilterChipBar.swift"
+  s_7ae13adebac50a::t_f2bd6a13b174b9 35-37
+"thyme left/Modules/PantryList/View/PantryListViewController.swift"
+  s_7ae13adebac50a::t_f2bd6a13b174b9 118
+"thyme left/Modules/AddEditItem/AddEditItemPresenter.swift"
+  s_7ae13adebac50a::t_358deecff931d7 109,118,133-136,242-246
+  s_7ae13adebac50a::t_20c12b61fc6aab 247
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6789f3d0fb79c1929c16636b9ab04c71d7d80ffc",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
