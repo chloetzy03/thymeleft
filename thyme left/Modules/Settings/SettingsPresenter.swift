@@ -11,6 +11,7 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
     private let dateProvider: DateProviding
     private let formatter: ExpiryTextFormatter
     private let calendar: Calendar
+    private let locale: Locale
 
     /// The latest settings we were told about. Each change copies these, edits one thing,
     /// and sends the whole bundle back to the Interactor.
@@ -23,7 +24,8 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
          dateFormatter: ExpiryDateFormatter,
          dateProvider: DateProviding,
          formatter: ExpiryTextFormatter = ExpiryTextFormatter(),
-         calendar: Calendar = .current) {
+         calendar: Calendar = .current,
+         locale: Locale = .current) {
         self.view = view
         self.interactor = interactor
         self.router = router
@@ -31,6 +33,7 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
         self.dateProvider = dateProvider
         self.formatter = formatter
         self.calendar = calendar
+        self.locale = locale
     }
 
     // MARK: Things the View tells us
@@ -70,6 +73,15 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
         change { $0.soonDays = SettingsChoices.soonDays[index] }
     }
 
+    func didChangeShowMoneySaved(isOn: Bool) {
+        change { $0.showMoneySaved = isOn }
+    }
+
+    func didSelectItemValue(at index: Int) {
+        guard SettingsChoices.itemValues.indices.contains(index) else { return }
+        change { $0.averageItemValue = SettingsChoices.itemValues[index] }
+    }
+
     func didTapOpenSystemSettings() {
         router.openSystemSettings()
     }
@@ -107,7 +119,10 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
             urgentTitles: SettingsChoices.urgentDays.map(urgentTitle),
             selectedUrgentIndex: SettingsChoices.urgentDays.firstIndex(of: settings.urgentDays) ?? 1,
             soonTitles: SettingsChoices.soonDays.map { "\($0) days or less" },
-            selectedSoonIndex: SettingsChoices.soonDays.firstIndex(of: settings.soonDays) ?? 1)
+            selectedSoonIndex: SettingsChoices.soonDays.firstIndex(of: settings.soonDays) ?? 1,
+            showMoneySaved: settings.showMoneySaved,
+            itemValueTitles: SettingsChoices.itemValues.map { MoneyFormatter.string($0, locale: locale) },
+            selectedItemValueIndex: SettingsChoices.itemValues.firstIndex(of: settings.averageItemValue) ?? 2)
     }
 
     private func urgentTitle(days: Int) -> String {

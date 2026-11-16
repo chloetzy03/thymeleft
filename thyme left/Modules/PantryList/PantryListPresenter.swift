@@ -62,8 +62,8 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
         router.showEditItem(entry.item, onSaved: { [weak self] in self?.refreshRequested() })
     }
 
-    func didDeleteRow(id: UUID) {
-        interactor.deleteItem(id: id)
+    func didFinishRow(id: UUID, as outcome: ItemOutcome) {
+        interactor.finishItem(id: id, as: outcome)
     }
 
     // MARK: Things the Interactor tells us

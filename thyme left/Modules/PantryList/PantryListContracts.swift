@@ -55,7 +55,8 @@ protocol PantryListPresenterProtocol: AnyObject {
     func didSelectFilter(at index: Int)
     func didTapAdd()
     func didSelectRow(id: UUID)
-    func didDeleteRow(id: UUID)
+    /// The user swiped a row and chose what happened to the food.
+    func didFinishRow(id: UUID, as outcome: ItemOutcome)
 }
 
 // MARK: - Interactor (the chef: the real logic)
@@ -64,7 +65,7 @@ protocol PantryListPresenterProtocol: AnyObject {
 protocol PantryListInteractorInput: AnyObject {
     /// `nil` means "every location".
     func loadItems(in location: StorageLocation?)
-    func deleteItem(id: UUID)
+    func finishItem(id: UUID, as outcome: ItemOutcome)
 }
 
 @MainActor

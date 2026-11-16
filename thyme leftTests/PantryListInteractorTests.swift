@@ -35,7 +35,8 @@ final class PantryListInteractorTests: XCTestCase {
 
     /// Builds the Interactor under test, plus its pretend neighbours.
     private func makeSUT(items: [PantryItem], settings: AppSettings = AppSettings(),
-                         photoStore: InMemoryPhotoStore? = nil)
+                         photoStore: InMemoryPhotoStore? = nil,
+                         outcomes: InMemoryOutcomeRepository? = nil)
         -> (sut: PantryListInteractor, output: InteractorOutputSpy, reminders: ReminderServiceSpy) {
         let reminders = ReminderServiceSpy()
         let sut = PantryListInteractor(repository: InMemoryPantryRepository(items: items),
@@ -43,6 +44,7 @@ final class PantryListInteractorTests: XCTestCase {
                                        dateProvider: FixedDateProvider(now: today),
                                        reminders: reminders,
                                        photoStore: photoStore ?? InMemoryPhotoStore(),
+                                       outcomes: outcomes ?? InMemoryOutcomeRepository(),
                                        calendar: calendar)
         let output = InteractorOutputSpy()
         sut.output = output
@@ -113,7 +115,7 @@ final class PantryListInteractorTests: XCTestCase {
         let (sut, output, _) = makeSUT(items: [milk])
 
         // Act
-        sut.deleteItem(id: milk.id)
+        sut.finishItem(id: milk.id, as: .removed)
         sut.loadItems(in: nil)
 
         // Assert
@@ -129,7 +131,7 @@ final class PantryListInteractorTests: XCTestCase {
         let (sut, _, _) = makeSUT(items: [withPhoto], photoStore: photos)
 
         // Act
-        sut.deleteItem(id: withPhoto.id)
+        sut.finishItem(id: withPhoto.id, as: .removed)
 
         // Assert
         XCTAssertTrue(photos.photos.isEmpty)
@@ -141,7 +143,7 @@ final class PantryListInteractorTests: XCTestCase {
         let (sut, _, reminders) = makeSUT(items: [milk])
 
         // Act
-        sut.deleteItem(id: milk.id)
+        sut.finishItem(id: milk.id, as: .removed)
 
         // Assert
         XCTAssertEqual(reminders.rescheduleCount, 1)
@@ -158,5 +160,68 @@ final class PantryListInteractorTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(try XCTUnwrap(output.loaded.first).status, .urgent)
+    }
+
+    // MARK: Outcomes (used / threw away / delete)
+
+    func test_finishItem_used_recordsHistoryAndRemovesTheItem() async throws {
+        // Arrange
+        let milk = makeItem("Milk", daysFromToday: 2)
+        let history = InMemoryOutcomeRepository()
+        let (sut, output, _) = makeSUT(items: [milk], outcomes: history)
+
+        // Act
+        sut.finishItem(id: milk.id, as: .used)
+        sut.loadItems(in: nil)
+
+        // Assert
+        let entry = try XCTUnwrap(try history.fetchAll().first)
+        XCTAssertEqual(entry.itemName, "Milk")
+        XCTAssertEqual(entry.outcome, .used)
+        XCTAssertEqual(entry.date, today)
+        XCTAssertTrue(output.loaded.isEmpty)
+    }
+
+    func test_finishItem_threwAway_recordsItAsWasted() async throws {
+        // Arrange
+        let milk = makeItem("Milk", daysFromToday: -1)
+        let history = InMemoryOutcomeRepository()
+        let (sut, _, _) = makeSUT(items: [milk], outcomes: history)
+
+        // Act
+        sut.finishItem(id: milk.id, as: .wasted)
+
+        // Assert
+        XCTAssertEqual(try history.fetchAll().map(\.outcome), [.wasted])
+    }
+
+    func test_finishItem_plainDelete_recordsNothing() async throws {
+        // Arrange
+        let milk = makeItem("Milk", daysFromToday: 2)
+        let history = InMemoryOutcomeRepository()
+        let (sut, output, _) = makeSUT(items: [milk], outcomes: history)
+
+        // Act
+        sut.finishItem(id: milk.id, as: .removed)
+
+        // Assert
+        XCTAssertTrue(try history.fetchAll().isEmpty)
+        XCTAssertEqual(output.deleteCount, 1)
+    }
+
+    func test_finishItem_whenHistoryCannotBeSaved_keepsTheItem() async throws {
+        // Arrange
+        let milk = makeItem("Milk", daysFromToday: 2)
+        let history = InMemoryOutcomeRepository()
+        history.shouldFailToRecord = true
+        let (sut, output, _) = makeSUT(items: [milk], outcomes: history)
+
+        // Act
+        sut.finishItem(id: milk.id, as: .used)
+        sut.loadItems(in: nil)
+
+        // Assert: nothing vanishes without a record
+        XCTAssertEqual(output.failureCount, 1)
+        XCTAssertEqual(output.loaded.map(\.item.name), ["Milk"])
     }
 }

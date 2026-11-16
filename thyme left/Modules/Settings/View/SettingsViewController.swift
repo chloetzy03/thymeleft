@@ -12,11 +12,14 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
     private let datePreviewLabel = UILabel()
     private let urgentButton = UIButton(type: .system)
     private let soonButton = UIButton(type: .system)
+    private let moneySwitch = UISwitch()
+    private let itemValueButton = UIButton(type: .system)
     private let bannerCard = UIView()
     private var bannerRow = UIView() // the banner plus its margins; hidden as one piece
     private let bannerLabel = UILabel()
 
     private var reminderRows: [UIView] = []
+    private let savingsNote = UILabel()
 
     // MARK: Life of the screen
 
@@ -62,6 +65,14 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
                       selected: settings.selectedSoonIndex) { [weak self] in
             self?.presenter?.didSelectSoon(at: $0)
         }
+
+        moneySwitch.setOn(settings.showMoneySaved, animated: false)
+        configureMenu(itemValueButton, titles: settings.itemValueTitles,
+                      selected: settings.selectedItemValueIndex) { [weak self] in
+            self?.presenter?.didSelectItemValue(at: $0)
+        }
+        itemValueButton.isEnabled = settings.showMoneySaved
+        itemValueButton.superview?.superview?.alpha = settings.showMoneySaved ? 1 : 0.4
 
         // Grey out the reminder choices while notifications are off. Disabling the controls
         // (not just dimming them) also tells VoiceOver they are unavailable.
@@ -140,10 +151,24 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
             self.presenter?.didChangeReminderTime(self.reminderTimePicker.date)
         }, for: .valueChanged)
 
+        moneySwitch.onTintColor = Theme.Colors.brand
+        moneySwitch.accessibilityLabel = "Show money saved"
+        moneySwitch.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.didChangeShowMoneySaved(isOn: self.moneySwitch.isOn)
+        }, for: .valueChanged)
+        itemValueButton.accessibilityLabel = "Average item value"
+
         defaultReminderButton.accessibilityLabel = "Default reminder"
         dateFormatButton.accessibilityLabel = "Date format"
         urgentButton.accessibilityLabel = "Red when"
         soonButton.accessibilityLabel = "Amber when"
+
+        savingsNote.text = "An estimate: items you've used up this month \u{00D7} this value. It stays on your phone."
+        savingsNote.font = Theme.Typography.caption.font
+        savingsNote.textColor = Theme.Colors.muted
+        savingsNote.numberOfLines = 0
+        savingsNote.adjustsFontForContentSizeCategory = true
 
         datePreviewLabel.font = Theme.Typography.caption.font
         datePreviewLabel.textColor = Theme.Colors.muted
@@ -197,7 +222,11 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
             pad(datePreviewLabel),
             sectionHeader("COLOURS"),
             card(FormCardRow(title: "Turns red", control: urgentButton)),
-            card(FormCardRow(title: "Turns amber", control: soonButton))
+            card(FormCardRow(title: "Turns amber", control: soonButton)),
+            sectionHeader("SAVINGS"),
+            card(FormCardRow(title: "Show money saved", control: moneySwitch)),
+            card(FormCardRow(title: "Average item value", control: itemValueButton)),
+            pad(savingsNote)
         ])
         column.axis = .vertical
         column.spacing = 10

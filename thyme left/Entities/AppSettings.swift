@@ -32,6 +32,10 @@ struct AppSettings: Equatable, Codable {
     var soonDays = 5
     /// We only show our friendly "Get reminders?" explainer once, so we never nag.
     var hasSeenReminderPrimer = false
+    /// Show an estimate of money saved on the Home tab.
+    var showMoneySaved = true
+    /// What one used-up item is worth, as a rough guess (in your own currency).
+    var averageItemValue = 3.0
 
     init() {}
 
@@ -48,6 +52,8 @@ struct AppSettings: Equatable, Codable {
         urgentDays = try values.decodeIfPresent(Int.self, forKey: .urgentDays) ?? defaults.urgentDays
         soonDays = try values.decodeIfPresent(Int.self, forKey: .soonDays) ?? defaults.soonDays
         hasSeenReminderPrimer = try values.decodeIfPresent(Bool.self, forKey: .hasSeenReminderPrimer) ?? defaults.hasSeenReminderPrimer
+        showMoneySaved = try values.decodeIfPresent(Bool.self, forKey: .showMoneySaved) ?? defaults.showMoneySaved
+        averageItemValue = try values.decodeIfPresent(Double.self, forKey: .averageItemValue) ?? defaults.averageItemValue
     }
 
     /// The red/amber/green rule built from these settings.
@@ -61,4 +67,5 @@ enum SettingsChoices {
     static let reminderDaysBefore = [0, 1, 2, 3, 7]
     static let urgentDays = [0, 1, 2, 3]
     static let soonDays = [3, 5, 7, 10]
+    static let itemValues: [Double] = [1, 2, 3, 5, 10]
 }

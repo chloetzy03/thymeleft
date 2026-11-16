@@ -13,6 +13,7 @@ final class PantryListInteractor: PantryListInteractorInput {
     private let dateProvider: DateProviding
     private let reminders: ReminderServicing
     private let photoStore: PhotoStoring
+    private let outcomes: OutcomeRepository
     private let calendar: Calendar
 
     init(repository: PantryRepository,
@@ -20,12 +21,14 @@ final class PantryListInteractor: PantryListInteractorInput {
          dateProvider: DateProviding,
          reminders: ReminderServicing,
          photoStore: PhotoStoring,
+         outcomes: OutcomeRepository,
          calendar: Calendar = .current) {
         self.repository = repository
         self.settingsStore = settingsStore
         self.dateProvider = dateProvider
         self.reminders = reminders
         self.photoStore = photoStore
+        self.outcomes = outcomes
         self.calendar = calendar
     }
 
@@ -51,13 +54,19 @@ final class PantryListInteractor: PantryListInteractorInput {
         }
     }
 
-    func deleteItem(id: UUID) {
+    func finishItem(id: UUID, as outcome: ItemOutcome) {
         do {
-            // Remember the photo's name first; after the item is gone we can't look it up.
-            let photoFileName = try repository.fetchAll().first { $0.id == id }?.photoFileName
+            // Remember the item first; after it's gone we can't look it up.
+            let item = try repository.fetchAll().first { $0.id == id }
+
+            // History goes first: if it can't be saved we stop, so nothing disappears without a record.
+            // A plain Delete (outcome .removed) is not history: it counts as neither saved nor wasted.
+            if let item, outcome != .removed {
+                try outcomes.record(OutcomeEntry(itemName: item.name, outcome: outcome, date: dateProvider.now))
+            }
             try repository.delete(id: id)
-            if let photoFileName { photoStore.deletePhoto(named: photoFileName) }
-            reminders.reschedule() // the deleted item's reminder must go too
+            if let photoFileName = item?.photoFileName { photoStore.deletePhoto(named: photoFileName) }
+            reminders.reschedule() // the item's reminder must go too
             output?.didDeleteItem()
         } catch {
             output?.didFail(error)
