@@ -1,0 +1,33 @@
+"thyme left/Modules/Home/View/HomeViewController.swift"
+  s_7ae13adebac50a::t_0c0b993f265907 17-26,64-66,80,91-140,143-244,353-355,403-406
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_40a930d7851db7 19
+  s_7ae13adebac50a::t_c856a942b91df8 45,47-49,102-103
+"thyme leftTests/HomeTests.swift"
+  s_7ae13adebac50a::t_d019e2c5119a68 148,151-152
+"thyme left/Modules/Home/HomeInteractor.swift"
+  s_7ae13adebac50a::t_35658a5667d726 11-12,19-20,22,27,29,46,55-71,86-89
+"thyme left/Modules/Home/HomeRouter.swift"
+  s_7ae13adebac50a::t_35658a5667d726 9-10,12-13,16-17,22-23,36,38-40,42-43,45-46
+"thyme left/Modules/Home/HomeContracts.swift"
+  s_7ae13adebac50a::t_35658a5667d726 15-55,76-77,97-100,122-123
+"thyme left/Modules/Home/HomePresenter.swift"
+  s_7ae13adebac50a::t_35658a5667d726 40-43,56-57,100-136
+  s_7ae13adebac50a::t_fd3093d8f2311d 137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "220f938fccb656ff0003304e467d3450a840418b",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
