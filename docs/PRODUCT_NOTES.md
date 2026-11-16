@@ -26,13 +26,20 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Expiry reminders (local notifications), per-item override, friendly permission explainer | 3 | Done |
 | Settings in the Me tab: reminder time/days, date format, red/amber thresholds | 3 | Done |
 | Item photos (camera or library) instead of emoji | 4 | Done |
-| Scan expiry date with camera | 5 | Planned |
+| Scan expiry date (live camera, or a photo of the date), keep a pack photo | 5 | Done (live camera needs a real-iPhone check) |
 | Recipe suggestions (TheMealDB) | 6 | Planned |
 | Home tab (greeting, use-soon tiles, saved-from-the-bin) | 7 | Planned |
 | Polish: icon, mascot, privacy policy, accessibility audit, TestFlight | 8 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
+
+## Scanning (how it behaves)
+- Scan tab opens a new item with the scanner running; the Add/Edit form also has a "Scan the date on the pack" button.
+- Live camera uses Apple's built-in text scanner. The date must be seen twice in a row before it is trusted. No camera (or permission off)? Choose a photo of the date instead.
+- The user always confirms: the card shows the date, "Expires in N days", the line it was read from, and a one-tap swap when day/month are ambiguous (03/04/26). Optional "keep photo" saves the pack picture as the item's photo.
+- Understands EXP / BEST BEFORE / USE BY, month names, month-and-year only (= end of month), and ignores MFG/production dates. Fixes common misreads (O for 0, I for 1).
+- 100% on-device (Apple Vision), works offline, nothing uploaded.
 
 ## Photos (how they behave)
 - Tap the tile in the Add/Edit form: take a photo, choose from the library, or remove it. No photo = the emoji (auto-guessed from the name).

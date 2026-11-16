@@ -43,6 +43,13 @@ final class AddEditItemPresenterTests: XCTestCase {
 
     private final class RouterSpy: AddEditItemRouterProtocol {
         var closeCount = 0
+        var scannerOpenCount = 0
+        var scannerResultHandler: ((ScanResult) -> Void)?
+
+        func showScanner(onResult: @escaping (ScanResult) -> Void) {
+            scannerOpenCount += 1
+            scannerResultHandler = onResult
+        }
         func close() { closeCount += 1 }
     }
 
@@ -61,6 +68,7 @@ final class AddEditItemPresenterTests: XCTestCase {
     private func makeSUT(existing: PantryItem? = nil,
                          settings: AppSettings = AppSettings(),
                          photoStore: InMemoryPhotoStore? = nil,
+                         startWithScanner: Bool = false,
                          onSaved: @escaping () -> Void = {})
         -> (sut: AddEditItemPresenter, view: ViewSpy, interactor: InteractorSpy, router: RouterSpy) {
         let view = ViewSpy()
@@ -71,7 +79,8 @@ final class AddEditItemPresenterTests: XCTestCase {
                                        dateProvider: FixedDateProvider(now: today),
                                        settingsStore: InMemorySettingsStore(settings: settings),
                                        photoStore: photoStore ?? InMemoryPhotoStore(),
-                                       existingItem: existing, calendar: calendar, onSaved: onSaved)
+                                       existingItem: existing, calendar: calendar,
+                                       startWithScanner: startWithScanner, onSaved: onSaved)
         return (sut, view, interactor, router)
     }
 
@@ -451,5 +460,69 @@ final class AddEditItemPresenterTests: XCTestCase {
 
         // Assert: there was never a saved photo, so there is nothing to remove or replace
         XCTAssertEqual(interactor.savedDrafts.last?.photo, .keep)
+    }
+
+    // MARK: Scanning
+
+    func test_didTapScan_opensTheScanner() async {
+        // Arrange
+        let (sut, _, _, router) = makeSUT()
+
+        // Act
+        sut.didTapScan()
+
+        // Assert
+        XCTAssertEqual(router.scannerOpenCount, 1)
+    }
+
+    func test_whenTheScannerReturnsADate_theFormShowsIt() async {
+        // Arrange
+        let (sut, view, _, router) = makeSUT()
+        sut.didTapScan()
+
+        // Act: the scanner hands back a result
+        router.scannerResultHandler?(ScanResult(date: today, photoData: nil))
+
+        // Assert
+        XCTAssertEqual(view.expiryDate, today)
+        XCTAssertTrue(view.shownPhotos.isEmpty, "no photo was kept")
+    }
+
+    func test_whenTheScannerAlsoReturnsAPhoto_itBecomesTheItemsPhoto() async {
+        // Arrange
+        let (sut, view, interactor, _) = makeSUT()
+        sut.viewDidLoad()
+        let pack = Data([9, 9, 9])
+
+        // Act
+        sut.didScan(ScanResult(date: today, photoData: pack))
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        // Assert
+        XCTAssertEqual(view.shownPhotos.last ?? nil, pack)
+        XCTAssertEqual(interactor.savedDrafts.last?.photo, .replace(pack))
+    }
+
+    func test_startingWithTheScanner_opensItOnceWhenTheFormAppears() async {
+        // Arrange
+        let (sut, _, _, router) = makeSUT(startWithScanner: true)
+
+        // Act
+        sut.viewDidAppear()
+        sut.viewDidAppear() // e.g. coming back after the scanner closes
+
+        // Assert
+        XCTAssertEqual(router.scannerOpenCount, 1)
+    }
+
+    func test_normalForm_doesNotOpenTheScannerByItself() async {
+        // Arrange
+        let (sut, _, _, router) = makeSUT()
+
+        // Act
+        sut.viewDidAppear()
+
+        // Assert
+        XCTAssertEqual(router.scannerOpenCount, 0)
     }
 }

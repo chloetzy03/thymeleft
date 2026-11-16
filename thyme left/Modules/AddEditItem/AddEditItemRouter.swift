@@ -5,6 +5,16 @@ import UIKit
 final class AddEditItemRouter: AddEditItemRouterProtocol {
 
     weak var viewController: UIViewController?
+    private let makeScanner: (_ onResult: @escaping (ScanResult) -> Void) -> UIViewController
+
+    init(makeScanner: @escaping (_ onResult: @escaping (ScanResult) -> Void) -> UIViewController) {
+        self.makeScanner = makeScanner
+    }
+
+    func showScanner(onResult: @escaping (ScanResult) -> Void) {
+        let navigation = UINavigationController(rootViewController: makeScanner(onResult))
+        viewController?.present(navigation, animated: true)
+    }
 
     func close() {
         viewController?.dismiss(animated: true)
@@ -25,16 +35,23 @@ enum AddEditItemBuilder {
                       settingsStore: SettingsStore,
                       reminders: ReminderServicing,
                       photoStore: PhotoStoring,
+                      dateFormatter: ExpiryDateFormatter,
+                      recognizer: TextRecognizing,
+                      startWithScanner: Bool = false,
                       onSaved: @escaping () -> Void) -> UIViewController {
         let view = AddEditItemViewController()
-        let router = AddEditItemRouter()
+        let router = AddEditItemRouter { onResult in
+            ScannerBuilder.build(settingsStore: settingsStore, dateFormatter: dateFormatter,
+                                 dateProvider: dateProvider, recognizer: recognizer, onResult: onResult)
+        }
         let interactor = AddEditItemInteractor(repository: repository, dateProvider: dateProvider,
                                              settingsStore: settingsStore, reminders: reminders,
                                              photoStore: photoStore)
         let presenter = AddEditItemPresenter(view: view, interactor: interactor, router: router,
                                              iconProvider: iconProvider, dateProvider: dateProvider,
                                              settingsStore: settingsStore, photoStore: photoStore,
-                                             existingItem: existing, onSaved: onSaved)
+                                             existingItem: existing, startWithScanner: startWithScanner,
+                                             onSaved: onSaved)
         view.presenter = presenter
         interactor.output = presenter
         router.viewController = view

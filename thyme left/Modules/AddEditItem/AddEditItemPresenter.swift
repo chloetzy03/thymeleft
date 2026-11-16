@@ -31,6 +31,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     private let existingItem: PantryItem?
     /// Called after a successful save, so the previous screen can refresh itself.
     private let onSaved: () -> Void
+    /// The Scan tab opens a new item with the scanner already running (only once).
+    private var shouldOpenScannerOnAppear: Bool
 
     /// What the user has decided about the photo so far (nothing is saved until they tap Save).
     private var photoChange: PhotoChange = .keep
@@ -50,6 +52,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
          existingItem: PantryItem?,
          formatter: ExpiryTextFormatter = ExpiryTextFormatter(),
          calendar: Calendar = .current,
+         startWithScanner: Bool = false,
          onSaved: @escaping () -> Void) {
         self.view = view
         self.interactor = interactor
@@ -62,6 +65,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         self.hasPhoto = existingItem?.photoFileName != nil
         self.formatter = formatter
         self.calendar = calendar
+        self.shouldOpenScannerOnAppear = startWithScanner
         self.onSaved = onSaved
     }
 
@@ -90,6 +94,21 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
             photoData: existingItem?.photoFileName.flatMap { photoStore.photoData(named: $0) },
             expiryDate: existingItem?.expiryDate ?? defaultExpiry,
             quickDateTitles: quickDates.map(\.title)))
+    }
+
+    func viewDidAppear() {
+        guard shouldOpenScannerOnAppear else { return }
+        shouldOpenScannerOnAppear = false
+        didTapScan()
+    }
+
+    func didTapScan() {
+        router.showScanner { [weak self] result in self?.didScan(result) }
+    }
+
+    func didScan(_ result: ScanResult) {
+        view?.showExpiryDate(result.date)
+        if let photo = result.photoData { didPickPhoto(photo) } // the user chose to keep the pack photo
     }
 
     func nameChanged(_ text: String) {

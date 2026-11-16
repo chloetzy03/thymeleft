@@ -327,3 +327,58 @@ Not yet tested: taking a photo with a real camera on a real iPhone (the simulato
 
 ---
 
+## Milestone 5 – Scan the expiry date (`feature/scan-expiry`)
+
+### What you can do now
+Tap **Scan** (or "Scan the date on the pack" in the form). Point the camera at the printed date; a card shows what it found, with a countdown. Tap **Use this date** (or **Use date and keep photo**) and the form fills in. No camera? **Choose a photo of the date**.
+
+### How it works, in three steps
+1. **See:** Apple's `DataScannerViewController` (live camera) or `VisionTextRecognizer` (a picked photo) turns a picture into text lines.
+2. **Understand:** `ExpiryDateParser` finds the date in those lines. Pure logic, 21 tests, no camera needed.
+3. **Confirm:** the Scanner screen (a full VIPER module) shows the result; the user taps to accept. Nothing is filled in without a tap.
+
+### The new pieces
+| Part | File | Job in plain words |
+|---|---|---|
+| Entity | `ScannedExpiryDate`, `ScanResult` | A found date (plus the other day/month reading); what the scanner hands back |
+| Service | `ExpiryDateParser` | **The brain.** Reads messy text, picks the expiry date |
+| Service | `TextRecognizing` + `VisionTextRecognizer` | "Read the text in this picture" (Apple Vision). `StubTextRecognizer` is the pretend one for UI tests |
+| **Module** | `Modules/Scanner/` | View (camera + result card), Presenter, Interactor, Router, Builder |
+| Changed | Add/Edit module | "Scan" button, applies the scanned date and optional photo |
+| Changed | `RootTabBarController` | Scan tab opens a new item with the scanner (it never "selects" a tab) |
+
+### Concepts in plain words
+- **Parsing is mostly rules and edge cases.** Labels (EXP vs MFG), the closest label wins, a label on the line above applies only if that line has no date of its own, month-only dates mean end of month, impossible dates (31/02) and dates outside "a year ago to ten years ahead" are rejected as misreads.
+- **Ambiguity is shown, not hidden.** 03/04/26 follows your date-format setting, and the other reading is one tap away. Numbers above 12 can only be the day, so those have no alternative.
+- **Debouncing a flickery camera.** A live camera changes its mind every frame, so the Interactor needs the same date twice in a row (`sightingsNeeded`) before reporting. Retry resets it.
+- **OCR slips.** Cameras read "O" as "0" and "I" as "1". We fix those only next to digits, so month names like "OCT" stay intact (a test guards this).
+- **Fake the slow/real thing in tests, but also test the real thing once.** UI tests use a stub reader; `VisionTextRecognizerTests` draws a fake pack label and runs the REAL Vision reader plus the parser end to end.
+- **Choosing a photo is a fallback AND a testing tool.** The simulator has no live camera, so the same screen works from a photo.
+
+### Bugs found and fixed
+- **Pantry didn't refresh after saving from the Scan tab.** The form opens as a sheet over the Pantry tab, so the list never got a "will appear" signal. The UI test caught it; the tab bar now tells the list to reload.
+- UI test taps: iOS's photo picker reports thumbnails as "not hittable" while animating, so we tap their centre by position. Two screens had a "Cancel" button, so we name the one we mean.
+- A test run once hung before starting any test (the simulator was in a bad state). Fix: shut down and reboot the simulator, then rerun.
+
+### Verified
+Parser: 21 tests. Real Vision chain: 6 tests. Interactor/presenter: 20 tests. UI: 4 scanner flows (Scan tab to filled form to pantry row, swap day/month, no-date message, cancel).
+**Not verified: the live camera.** The simulator can't show a real scene, so please try it on your iPhone: Scan tab, point at a real pack, check the card, and tell me which packs it misreads (dot-matrix dates on cans and bottles are the hardest).
+
+### Commit messages used
+- `feat: add scanned date entities and day-first preference`
+- `feat: add expiry date parser with tests`
+- `feat: add text recognizer (Apple Vision) with tests`
+- `feat: add scanner screen (VIPER module) with tests`
+- `feat: add scan button to the form and open the scanner from the Scan tab`
+- `test: add scanner UI tests`
+- `docs: add milestone 5 notes`
+
+### Check your understanding
+1. Why does the parser live apart from the camera code? What does that let us do?
+2. Why must a date be seen twice before we show it?
+3. For "03/04/26", how does the app decide between 3 April and 4 March, and how can the user fix a wrong guess?
+4. Why does "MFG 18/05/26 EXP 18/11/26" give 18 Nov, and what if the label is on the line above?
+5. Why did saving from the Scan tab not update the list, and how did we fix it?
+6. We use a fake text reader in UI tests. Why do we ALSO have a test with the real one?
+
+---

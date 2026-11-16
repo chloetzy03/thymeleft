@@ -47,6 +47,11 @@ final class PantryListViewController: UIViewController, PantryListViewProtocol {
         presenter?.refreshRequested()
     }
 
+    /// Asks for fresh information. Used when something saved from outside this screen (like the Scan tab).
+    func reload() {
+        presenter?.refreshRequested()
+    }
+
     @objc private func appWillEnterForeground() {
         presenter?.refreshRequested()
     }

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>thyme left uses the camera so you can take a photo of your food or its packaging. Photos stay on your phone.</string>
+	<string>thyme left uses the camera to read expiry dates and to take photos of your food. Nothing leaves your phone.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
