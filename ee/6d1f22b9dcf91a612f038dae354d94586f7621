@@ -1,0 +1,27 @@
+"thyme left/Common/MoneyFormatter.swift"
+  s_7ae13adebac50a::t_40b0bc81b35eb0 1-13
+"thyme left/Modules/Settings/SettingsPresenter.swift"
+  s_7ae13adebac50a::t_40b0bc81b35eb0 14,27-28,36,76-84,122-125
+"thyme left/Modules/Settings/View/SettingsViewController.swift"
+  s_7ae13adebac50a::t_40b0bc81b35eb0 15-16,22,69-76,154-161,167-172,225-229
+"thyme left/Modules/Settings/SettingsContracts.swift"
+  s_7ae13adebac50a::t_40b0bc81b35eb0 23-26,48-49
+"thyme left/Entities/AppSettings.swift"
+  s_7ae13adebac50a::t_e0a8b19e7d3654 35-38,55-56,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ee6d1f22b9dcf91a612f038dae354d94586f7621",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
