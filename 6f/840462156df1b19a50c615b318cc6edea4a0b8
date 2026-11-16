@@ -1,0 +1,19 @@
+"thyme left/Entities/ScannedExpiryDate.swift"
+  s_7ae13adebac50a::t_9b9b8e24ac5e23 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6f840462156df1b19a50c615b318cc6edea4a0b8",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
