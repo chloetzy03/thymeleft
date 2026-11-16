@@ -1,0 +1,37 @@
+"thyme left/Modules/Scanner/ScannerContracts.swift"
+  s_7ae13adebac50a::t_a48ad9bff6d695 12-13
+"thyme left/Modules/Scanner/ScannerRouter.swift"
+  s_7ae13adebac50a::t_a48ad9bff6d695 9,11-14,19,25,38,40-41
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_111bd584f1607e 72-74
+  s_7ae13adebac50a::t_87b30ed32fa44a 78,80,82,94,111,147-148,151-152,158-161,165-166
+  s_7ae13adebac50a::t_7d7081ea104f03 5,55-61
+  s_7ae13adebac50a::t_42f84de4051b7a 62
+"thyme left/Common/Views/ViewfinderFrameView.swift"
+  s_7ae13adebac50a::t_36270eb67a1c0c 1-44
+"thyme left/Modules/Scanner/ScannerPresenter.swift"
+  s_7ae13adebac50a::t_a48ad9bff6d695 103-106
+"thyme leftTests/ScannerTests.swift"
+  s_7ae13adebac50a::t_15158da4a78789 283-301
+"thyme left/Modules/Scanner/View/ScannerViewController.swift"
+  s_7ae13adebac50a::t_36270eb67a1c0c 4,11-14,18-33,40,55-59,66-73,76-80,86,93,103-104,106,110-111,132,146,154-155,162-179,183-184,186-187,189-201,203,209,211,214-216,218-219,221-232,236-242
+  s_7ae13adebac50a::t_111bd584f1607e 281,283-287,289,303-305,308,319,327-354,356,358,367-373
+  s_7ae13adebac50a::t_f272fc2ca4eb73 54
+  s_7ae13adebac50a::t_f4ac800f61230a 243,374
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae07de0b903a54bba1e18d3264aab2588522e13f",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
