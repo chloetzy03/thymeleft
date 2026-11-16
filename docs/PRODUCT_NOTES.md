@@ -41,6 +41,10 @@ People who throw away groceries because they forgot the date, and want an easy a
 - Privacy: history is only names and dates, kept on the phone.
 - Selling point: "See the food you've rescued, not just the food you've lost."
 
+## Price and date type (how they behave)
+- Optional price per item; "Saved from the bin" adds the real prices of items you used, falling back to your average value for items without one.
+- Each item is "Best before" (quality) or "Use by" (safety). Past use-by: "Past use-by, do not eat". Past best-before: "Past date, check before eating". The app is a reminder tool, not a food-safety authority (say so on the website and App Store text).
+
 ## Recipes (how they behave)
 - The Recipes tab suggests dishes built from your food. "Use up first" favours recipes that rescue items closest to expiring (but a recipe needing a huge shop ranks lower); "Best match" favours the fewest missing ingredients.
 - Expired food is never suggested. Water, salt, pepper and oil are assumed to be in your kitchen.

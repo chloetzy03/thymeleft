@@ -520,3 +520,31 @@ Not verified: the greeting text at your real local time zone on a physical phone
 6. What does adding the new `OutcomeRecord` table mean for people who already have a pantry saved?
 
 ---
+
+## Milestone 7.5 – Price per item and "Best before" vs "Use by" (branch `feature/price-and-date-type`)
+
+**What we built (plain English)**
+- Each item can have an optional **price**. When you tap "Used it", the price is copied into the history entry, so "Saved from the bin" adds up real prices (items without a price count at your average value).
+- Each item has a **date type**: "Best before" (quality) or "Use by" (safety). Once the date passes, a Use-by item says "Past use-by" and VoiceOver says "Do not eat"; a Best-before item says "Past date" and "Check before eating". The app never says food is safe.
+
+**Concepts**
+- *Optional values* (`Double?`): `nil` means "not told", which is different from `0` (free).
+- *Defaults make upgrades safe*: new stored fields have default values, so pantries saved before this update still open.
+- *Snapshots in history*: the price is copied into the history entry at that moment, so editing or deleting the item later can't change past savings.
+- *Parsing by region*: "3,50" vs "3.50" is decided by `NumberFormatter` using the phone's locale, not by us.
+- *Validation lives in two places*: the Presenter rejects "abc" (not a number); the Interactor rejects negative or silly-big prices (a business rule).
+- *Overloads*: `badgeText(daysRemaining:dateType:)` sits beside the old one so old callers and tests keep working.
+
+**Commit messages used**
+- `feat: add optional price and best-before/use-by to items`
+- `test: cover price, date type and wording`
+- `docs: add milestone 7.5 notes`
+
+### Check your understanding
+1. Why is a price of `0` valid but `nil` means something different?
+2. Why copy the price into the history instead of looking the item up later?
+3. Why does the Presenter, not the Interactor, reject the text "abc"?
+4. What would happen to an old pantry if the new fields had no default values?
+5. Why do we avoid telling people that expired food is "safe"?
+
+---
