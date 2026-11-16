@@ -15,11 +15,14 @@ struct OutcomeEntry: Identifiable, Equatable {
     /// Only `.used` and `.wasted` are ever recorded.
     let outcome: ItemOutcome
     let date: Date
+    /// What the item cost, if the user told us at the time. Nil means "use the average".
+    let value: Double?
 
-    init(id: UUID = UUID(), itemName: String, outcome: ItemOutcome, date: Date) {
+    init(id: UUID = UUID(), itemName: String, outcome: ItemOutcome, date: Date, value: Double? = nil) {
         self.id = id
         self.itemName = itemName
         self.outcome = outcome
         self.date = date
+        self.value = value
     }
 }

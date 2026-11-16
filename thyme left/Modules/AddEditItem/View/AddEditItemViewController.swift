@@ -19,6 +19,9 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
     private let reminderButton = UIButton(type: .system)
     private let datePicker = UIDatePicker()
     private let quickDateBar = FilterChipBar()
+    private let dateTypeControl = UISegmentedControl()
+    private let priceField = UITextField()
+    private let priceErrorLabel = UILabel()
     private let saveButton = UIButton(type: .system)
     private let scanButton = UIButton(type: .system)
 
@@ -81,6 +84,14 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         })
         reminderButton.showsMenuAsPrimaryAction = true
         reminderButton.changesSelectionAsPrimaryAction = true
+
+        // "Best before" / "Use by": what the date on the pack means.
+        dateTypeControl.removeAllSegments()
+        for (index, title) in form.dateTypeTitles.enumerated() {
+            dateTypeControl.insertSegment(withTitle: title, at: index, animated: false)
+        }
+        dateTypeControl.selectedSegmentIndex = form.selectedDateTypeIndex
+        priceField.text = form.priceText
 
         datePicker.date = form.expiryDate
         quickDateBar.update(titles: form.quickDateTitles, selectedIndex: -1) // -1 = none highlighted
@@ -178,6 +189,14 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         nameErrorLabel.isHidden = (message == nil)
         if let message {
             // Tell VoiceOver users about the problem, too.
+            UIAccessibility.post(notification: .announcement, argument: message)
+        }
+    }
+
+    func showPriceError(_ message: String?) {
+        priceErrorLabel.text = message
+        priceErrorLabel.isHidden = (message == nil)
+        if let message {
             UIAccessibility.post(notification: .announcement, argument: message)
         }
     }
@@ -323,6 +342,32 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
         quickDateBar.onSelect = { [weak self] index in self?.presenter?.didSelectQuickDate(at: index) }
 
+        // --- What kind of date is it? (tell the Presenter whenever the choice changes)
+        dateTypeControl.accessibilityLabel = "Date type"
+        dateTypeControl.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.didSelectDateType(at: self.dateTypeControl.selectedSegmentIndex)
+        }, for: .valueChanged)
+
+        // --- Price (optional)
+        priceField.placeholder = "0.00"
+        priceField.keyboardType = .decimalPad
+        priceField.textAlignment = .right
+        priceField.font = Theme.Typography.itemName.font
+        priceField.adjustsFontForContentSizeCategory = true
+        priceField.textColor = Theme.Colors.ink
+        priceField.accessibilityLabel = "Price"
+        priceField.accessibilityIdentifier = "priceField"
+        priceField.widthAnchor.constraint(greaterThanOrEqualToConstant: 90).isActive = true
+        priceField.addAction(UIAction { [weak self] _ in
+            self?.presenter?.didChangePrice(self?.priceField.text ?? "")
+        }, for: .editingChanged)
+        priceErrorLabel.font = Theme.Typography.caption.font
+        priceErrorLabel.textColor = Theme.Colors.urgentText
+        priceErrorLabel.numberOfLines = 0
+        priceErrorLabel.adjustsFontForContentSizeCategory = true
+        priceErrorLabel.isHidden = true
+
         // --- Scan the date from the pack
         var scanConfig = UIButton.Configuration.tinted()
         scanConfig.baseBackgroundColor = Theme.Colors.brand
@@ -368,6 +413,9 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             padded(scanButton),
             padded(FormCardRow(title: "Expires", control: datePicker)),
             quickDateBar, // already has its own side margins
+            padded(FormCardRow(title: "Date type", control: dateTypeControl)),
+            padded(FormCardRow(title: "Price (optional)", control: priceField)),
+            padded(priceErrorLabel),
             padded(FormCardRow(title: "Remind me", control: reminderButton)),
             padded(saveButton)
         ])

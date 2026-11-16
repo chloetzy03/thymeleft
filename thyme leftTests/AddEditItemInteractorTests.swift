@@ -144,6 +144,51 @@ final class AddEditItemInteractorTests: XCTestCase {
         XCTAssertEqual(output.validationErrors, [.invalidQuantity, .invalidQuantity])
     }
 
+    func test_save_storesTheDateTypeAndPrice() async throws {
+        // Arrange
+        let made = makeSUT()
+        var draft = makeDraft(name: "Chicken")
+        draft.dateType = .useBy
+        draft.price = 6.5
+
+        // Act
+        made.sut.save(draft, replacing: nil)
+
+        // Assert
+        let saved = try XCTUnwrap(try made.repository.fetchAll().first)
+        XCTAssertEqual(saved.dateType, .useBy)
+        XCTAssertEqual(saved.price, 6.5)
+    }
+
+    func test_save_withAZeroPrice_isAccepted_butNegativeOrHugeOrNotANumberIsRejected() async throws {
+        // Arrange
+        let made = makeSUT()
+
+        // Act
+        for price in [0.0, -1.0, 100_001.0, .nan, .infinity] {
+            var draft = makeDraft()
+            draft.price = price
+            made.sut.save(draft, replacing: nil)
+        }
+
+        // Assert: only the free item (price 0) went through
+        XCTAssertEqual(made.output.saveCount, 1)
+        XCTAssertEqual(made.output.validationErrors, [.invalidPrice, .invalidPrice, .invalidPrice, .invalidPrice])
+    }
+
+    func test_save_whenEditing_canClearAPrice() async throws {
+        // Arrange
+        let original = PantryItem(name: "Milk", location: .fridge, expiryDate: now, price: 2)
+        let repository = InMemoryPantryRepository(items: [original])
+        let sut = makeSUT(repository: repository).sut
+
+        // Act: the draft has no price, which means "remove it"
+        sut.save(makeDraft(name: "Milk"), replacing: original)
+
+        // Assert
+        XCTAssertNil(try repository.fetchAll().first?.price)
+    }
+
     func test_save_whenEditing_keepsTheOriginalIdAndDateAdded() async throws {
         // Arrange
         let original = PantryItem(name: "Milk", quantity: 1, location: .fridge,

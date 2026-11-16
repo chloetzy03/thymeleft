@@ -41,6 +41,12 @@ final class AddEditItemInteractor: AddEditItemInteractorInput {
             return
         }
 
+        // A price is optional, but if given it must be a sensible amount (not negative, not silly-big).
+        if let price = draft.price, !(price.isFinite && (0...PantryItemRules.maxPrice).contains(price)) {
+            output?.didFailValidation(.invalidPrice)
+            return
+        }
+
         // Photo: save a new picture first (so a failure stops us before anything changes).
         var photoFileName = existing?.photoFileName
         var newPhotoFileName: String?
@@ -65,6 +71,8 @@ final class AddEditItemInteractor: AddEditItemInteractorInput {
                               quantity: draft.quantity,
                               location: draft.location,
                               expiryDate: draft.expiryDate,
+                              dateType: draft.dateType,
+                              price: draft.price,
                               reminder: draft.reminder,
                               photoFileName: photoFileName,
                               createdAt: existing?.createdAt ?? dateProvider.now)

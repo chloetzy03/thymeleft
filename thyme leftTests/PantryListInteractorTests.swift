@@ -182,6 +182,19 @@ final class PantryListInteractorTests: XCTestCase {
         XCTAssertTrue(output.loaded.isEmpty)
     }
 
+    func test_finishItem_used_rememberstheItemsPrice() async throws {
+        // Arrange
+        let steak = PantryItem(name: "Steak", location: .fridge, expiryDate: today, price: 12)
+        let history = InMemoryOutcomeRepository()
+        let (sut, _, _) = makeSUT(items: [steak], outcomes: history)
+
+        // Act
+        sut.finishItem(id: steak.id, as: .used)
+
+        // Assert
+        XCTAssertEqual(try history.fetchAll().first?.value, 12)
+    }
+
     func test_finishItem_threwAway_recordsItAsWasted() async throws {
         // Arrange
         let milk = makeItem("Milk", daysFromToday: -1)

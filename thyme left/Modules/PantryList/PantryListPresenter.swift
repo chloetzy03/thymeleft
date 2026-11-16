@@ -101,17 +101,19 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
 
     private func row(for entry: ExpiringItem) -> PantryRowViewModel {
         let item = entry.item
-        let badge = formatter.badgeText(daysRemaining: entry.daysRemaining)
+        let badge = formatter.badgeText(daysRemaining: entry.daysRemaining, dateType: item.dateType)
+        let dateText = dateFormatter.string(from: item.expiryDate)
+        let datePart = item.dateType == .useBy ? "Use by \(dateText)" : dateText
         return PantryRowViewModel(
             id: item.id,
             emoji: iconProvider.emoji(for: item.name),
             photoFileName: item.photoFileName,
             title: item.name,
-            subtitle: "\(item.location.displayName) · x\(item.quantity) · \(dateFormatter.string(from: item.expiryDate))",
+            subtitle: "\(item.location.displayName) · x\(item.quantity) · \(datePart)",
             badgeText: badge,
             status: entry.status,
             accessibilityText: "\(item.name), \(item.location.displayName), quantity \(item.quantity), "
-                + formatter.spokenText(daysRemaining: entry.daysRemaining)
+                + formatter.spokenText(daysRemaining: entry.daysRemaining, dateType: item.dateType)
         )
     }
 

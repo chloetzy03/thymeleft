@@ -164,7 +164,7 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
         urgentButton.accessibilityLabel = "Red when"
         soonButton.accessibilityLabel = "Amber when"
 
-        savingsNote.text = "An estimate: items you've used up this month \u{00D7} this value. It stays on your phone."
+        savingsNote.text = "An estimate. Items you've used up count at the price you entered, or at this value if you left the price blank. It stays on your phone."
         savingsNote.font = Theme.Typography.caption.font
         savingsNote.textColor = Theme.Colors.muted
         savingsNote.numberOfLines = 0

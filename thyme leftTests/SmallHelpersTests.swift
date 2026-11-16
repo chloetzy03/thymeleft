@@ -38,6 +38,33 @@ final class ExpiryTextFormatterTests: XCTestCase {
     }
 }
 
+final class ExpiryTextFormatterDateTypeTests: XCTestCase {
+
+    private let formatter = ExpiryTextFormatter()
+
+    func test_badgeText_afterTheDate_saysWhichKindOfDatePassed() {
+        XCTAssertEqual(formatter.badgeText(daysRemaining: -2, dateType: .bestBefore), "Past date")
+        XCTAssertEqual(formatter.badgeText(daysRemaining: -2, dateType: .useBy), "Past use-by")
+    }
+
+    func test_badgeText_beforeTheDate_isTheSameForBothKinds() {
+        XCTAssertEqual(formatter.badgeText(daysRemaining: 3, dateType: .useBy), "3 days")
+        XCTAssertEqual(formatter.badgeText(daysRemaining: 0, dateType: .bestBefore), "Today")
+    }
+
+    func test_spokenText_afterTheDate_givesAGentleHintForBestBeforeAndAWarningForUseBy() {
+        XCTAssertEqual(formatter.spokenText(daysRemaining: -3, dateType: .bestBefore),
+                       "past its best before date, 3 days ago. Check before eating")
+        XCTAssertEqual(formatter.spokenText(daysRemaining: -1, dateType: .useBy),
+                       "past its use by date, yesterday. Do not eat")
+    }
+
+    func test_spokenText_beforeTheDate_mentionsUseByOnlyWhenItIsOne() {
+        XCTAssertEqual(formatter.spokenText(daysRemaining: 1, dateType: .useBy), "use by tomorrow")
+        XCTAssertEqual(formatter.spokenText(daysRemaining: 4, dateType: .bestBefore), "expires in 4 days")
+    }
+}
+
 final class EmojiFoodIconProviderTests: XCTestCase {
 
     private let provider = EmojiFoodIconProvider()

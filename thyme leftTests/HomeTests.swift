@@ -99,6 +99,22 @@ final class HomeInteractorTests: XCTestCase {
         XCTAssertNil(withoutMoney.output.snapshots.first?.savedValue)
     }
 
+    func test_loadHome_countsEachItemAtItsOwnPrice_andOthersAtTheAverage() async throws {
+        // Arrange: two priced items and one without a price
+        var settings = AppSettings()
+        settings.averageItemValue = 5
+        let history = [OutcomeEntry(itemName: "Steak", outcome: .used, date: now, value: 12.5),
+                       OutcomeEntry(itemName: "Carrot", outcome: .used, date: now, value: 0.5),
+                       used(on: now)]
+        let made = makeSUT(history: history, settings: settings)
+
+        // Act
+        made.sut.loadHome()
+
+        // Assert: 12.5 + 0.5 + the 5 average
+        XCTAssertEqual(made.output.snapshots.first?.savedValue, 18)
+    }
+
     func test_loadHome_usesTheRedAmberThresholdsFromSettings() async throws {
         // Arrange: with a 10-day amber window, an item due in 8 days needs attention
         var settings = AppSettings()
@@ -288,6 +304,39 @@ final class OutcomeAndPersistenceTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(loaded, item)
+    }
+
+    func test_swiftDataOutcomes_rememberThePriceWhenThereIsOne() async throws {
+        // Arrange
+        let container = try makeContainer() // must stay alive while its context is used
+        let repository = SwiftDataOutcomeRepository(context: container.mainContext)
+        let priced = OutcomeEntry(itemName: "Steak", outcome: .used, date: TestCalendar.date(2026, 11, 1), value: 12.5)
+        let unpriced = OutcomeEntry(itemName: "Milk", outcome: .used, date: TestCalendar.date(2026, 11, 2))
+
+        // Act
+        try repository.record(priced)
+        try repository.record(unpriced)
+
+        // Assert
+        let loaded = try repository.fetchAll()
+        XCTAssertEqual(loaded.first?.value, 12.5)
+        XCTAssertNil(loaded.last?.value)
+    }
+
+    func test_swiftDataPantry_remembersDateTypeAndPrice() async throws {
+        // Arrange
+        let container = try makeContainer() // must stay alive while its context is used
+        let repository = SwiftDataPantryRepository(context: container.mainContext)
+        let item = PantryItem(name: "Chicken", location: .fridge, expiryDate: TestCalendar.date(2026, 11, 20),
+                              dateType: .useBy, price: 7.25)
+
+        // Act
+        try repository.save(item)
+
+        // Assert
+        let loaded = try XCTUnwrap(try repository.fetchAll().first)
+        XCTAssertEqual(loaded.dateType, .useBy)
+        XCTAssertEqual(loaded.price, 7.25)
     }
 
     func test_swiftDataPantry_updatesInsteadOfDuplicating_andDeletes() async throws {

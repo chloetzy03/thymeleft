@@ -29,6 +29,10 @@ struct AddEditFormViewModel: Equatable {
     let photoData: Data?
     let expiryDate: Date
     let quickDateTitles: [String]
+    let dateTypeTitles: [String]
+    let selectedDateTypeIndex: Int
+    /// The price as text for the field (empty when no price was given).
+    let priceText: String
 }
 
 // MARK: - View (the waiter)
@@ -44,6 +48,8 @@ protocol AddEditItemViewProtocol: AnyObject {
     func showExpiryDate(_ date: Date)
     /// `nil` clears the message.
     func showNameError(_ message: String?)
+    /// `nil` clears the message.
+    func showPriceError(_ message: String?)
     func showError(message: String)
     /// Our own friendly "Get reminders?" explanation, shown before iOS's pop-up.
     func showReminderPrimer()
@@ -58,6 +64,8 @@ protocol AddEditItemPresenterProtocol: AnyObject {
     func didScan(_ result: ScanResult)
     func nameChanged(_ text: String)
     func didSelectQuickDate(at index: Int)
+    func didSelectDateType(at index: Int)
+    func didChangePrice(_ text: String)
     func didTapPhoto()
     func didSelectPhotoOption(_ option: PhotoOption)
     func didPickPhoto(_ data: Data)

@@ -48,15 +48,18 @@ final class HomeInteractor: HomeInteractorInput {
             }
 
         // "This month" means the calendar month we are in right now.
-        let usedThisMonth = history.filter {
+        let usedEntries = history.filter {
             $0.outcome == .used && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
-        }.count
+        }
+        let usedThisMonth = usedEntries.count
+        // Each item counts at its own price when we know it, otherwise at the user's average.
+        let saved = usedEntries.reduce(0.0) { $0 + ($1.value ?? settings.averageItemValue) }
 
         output?.didLoad(HomeSnapshot(
             useSoon: Array(entries.prefix(Self.maxTiles)),
             attentionCount: entries.count,
             pantryCount: items.count,
             usedThisMonth: usedThisMonth,
-            savedValue: settings.showMoneySaved ? Double(usedThisMonth) * settings.averageItemValue : nil))
+            savedValue: settings.showMoneySaved ? saved : nil))
     }
 }

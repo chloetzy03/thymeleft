@@ -95,6 +95,46 @@ final class HomeFlowUITests: XCTestCase {
         XCTAssertTrue(staticText(beginningWith: "1 item used up this month").waitForExistence(timeout: 10))
     }
 
+    func test_aPricedItem_countsAtItsOwnPriceWhenUsed() {
+        // Arrange: a steak that cost 37 (far from the default average value)
+        app.tabBars.buttons["Pantry"].tap()
+        app.buttons["Add item"].firstMatch.tap()
+        XCTAssertTrue(app.textFields["Item name"].waitForExistence(timeout: 10))
+        app.textFields["Item name"].tap()
+        app.textFields["Item name"].typeText("Steak")
+        app.buttons["Tomorrow"].tap()
+        app.textFields["priceField"].tap()
+        app.textFields["priceField"].typeText("37")
+        app.buttons["Add to pantry"].tap()
+        XCTAssertTrue(row("Steak").waitForExistence(timeout: 10))
+
+        // Act
+        swipeAndChoose("Steak", "Used it")
+        app.tabBars.buttons["Home"].tap()
+
+        // Assert
+        XCTAssertTrue(staticText(beginningWith: "1 item used up this month · about").waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "37")).firstMatch.exists)
+    }
+
+    func test_aUseByItem_isLabelledAsUseBy() {
+        // Arrange
+        app.tabBars.buttons["Pantry"].tap()
+        app.buttons["Add item"].firstMatch.tap()
+        XCTAssertTrue(app.textFields["Item name"].waitForExistence(timeout: 10))
+        app.textFields["Item name"].tap()
+        app.textFields["Item name"].typeText("Chicken")
+        app.buttons["Tomorrow"].tap()
+
+        // Act
+        app.segmentedControls["Date type"].buttons["Use by"].tap()
+        app.buttons["Add to pantry"].tap()
+
+        // Assert: the row's date reads "Use by ..."
+        XCTAssertTrue(row("Chicken").waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Use by")).firstMatch.exists)
+    }
+
     func test_threwAway_andDelete_doNotCountAsSaved() {
         // Arrange
         addItemExpiringTomorrow("Milk")

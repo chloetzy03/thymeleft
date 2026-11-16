@@ -80,7 +80,7 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
     }
 
     private func tile(for entry: ExpiringItem) -> HomeTileViewModel {
-        let badge = textFormatter.badgeText(daysRemaining: entry.daysRemaining)
+        let badge = textFormatter.badgeText(daysRemaining: entry.daysRemaining, dateType: entry.item.dateType)
         return HomeTileViewModel(
             id: entry.item.id,
             emoji: iconProvider.emoji(for: entry.item.name),
@@ -88,7 +88,7 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
             name: entry.item.name,
             badgeText: badge,
             status: entry.status,
-            accessibilityText: "\(entry.item.name), \(textFormatter.spokenText(daysRemaining: entry.daysRemaining))")
+            accessibilityText: "\(entry.item.name), \(textFormatter.spokenText(daysRemaining: entry.daysRemaining, dateType: entry.item.dateType))")
     }
 
     private func savedText(for snapshot: HomeSnapshot) -> String {
