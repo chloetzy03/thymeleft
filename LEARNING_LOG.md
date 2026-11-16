@@ -402,3 +402,62 @@ Parser: 21 tests. Real Vision chain: 6 tests. Interactor/presenter: 20 tests. UI
 
 ---
 
+## Milestone 6 – Recipes (`feature/recipes`)
+
+### What you can do now
+Open the **Recipes** tab: dishes built from your food, with photos, what you'd use and what's missing. Switch **Use up first** / **Best match**. Tap a recipe for ingredients (ticked if you have them), steps, and a link to the original. No internet? Recipes you've already loaded still show, with a note.
+
+### How it works, in plain words
+1. **Pick your food:** only items that are still good (expired food is never suggested), soonest-to-expire first.
+2. **Translate to the recipe site's words:** "Frozen peas" -> "Peas", "Greek yoghurt" -> "Yogurt" (`IngredientMatcher`). Their database wants exact ingredient names.
+3. **Search once per ingredient** (the free service can't search two at once), score recipes higher when they use food that expires sooner, fetch full details for the best 12.
+4. **Compare each recipe with your pantry** (`RecipeRanker`) and sort.
+5. **Save what we fetched** so it works offline next time.
+
+### The new pieces
+| Part | File | Job in plain words |
+|---|---|---|
+| Entity | `Recipe`, `RecipeMatch` | A recipe; a recipe compared with your pantry (used / missing / score) |
+| Service | `IngredientMatcher` | Is "Full cream milk" the "Milk" in a recipe? Simplifies words, handles plurals and spellings |
+| Service | `RecipeRanker` | **The brain.** Pure maths; two orderings |
+| Service | `RecipeService` + `MealDBRecipeService` | Job description, real TheMealDB version, and a stub for UI tests |
+| Service | `RecipeCaching` | Saves fetched recipes on the phone (file), keeps the newest 150 |
+| Service | `RemoteImageLoading` | Downloads recipe photos once and remembers them |
+| **Module** | `Modules/Recipes/` | The list: Interactor does the fetching/ranking, Presenter the words, View the screen |
+| **Module** | `Modules/RecipeDetail/` | The detail screen. **No Interactor**, since it has no logic of its own. VIPER only adds a part when it has a job |
+
+### Concepts in plain words
+- **Design around the API you really have.** I tested TheMealDB first: one ingredient per search, `{"meals": null}` (not an empty list) for no results, exact ingredient names, a source link that can be missing. The design (and tests) follow from that.
+- **Graceful fallback.** Online fails -> use saved recipes -> else a friendly message. Each case has its own wording.
+- **Ignore stale answers.** Every load gets a number; if you start a newer load, older slower ones stop reporting.
+- **Reuse what you already have.** Switching the order re-sorts what's loaded, with no new network calls (a test proves it).
+- **Safe links.** Only `http`/`https` links are opened, so a strange address in recipe data can't open something else.
+- **Test with a fake internet.** A stand-in `URLProtocol` answers requests with canned replies, so tests check the real parsing code without the network.
+
+### Bugs found by really using it (not by tests!)
+Running against the real service showed two problems tidy fake data hid:
+1. **Duplicates:** two cartons of milk showed "Uses Avocado, Milk, Milk", and counted milk's urgency twice. Fix: treat same-named items as one (the soonest-expiring counts).
+2. **Silly top result:** "Use up first" put a recipe missing 12 ingredients first, just because it used lots of expiring food. Fix: `rescueScore` = urgency, reduced about 15% for every ingredient you'd have to buy. Salmon Avocado Salad (missing 3) now beats Chicken Tacos (missing 12).
+
+Test-writing lessons: (a) an XCTest expectation can be fulfilled only once, and fulfilling it twice crashes the test run ("Crash ... signal abrt"). Spies should let go of an expectation after using it. (b) My made-up test foods "Food1, Food2" all became "food" because the matcher ignores digits, so the test was wrong, not the code. (c) `@MainActor` test methods must be `async` in this project.
+
+### Verified
+248 unit tests (matcher, ranker, parsing with a fake network, cache, interactor incl. offline paths, presenters) plus 5 UI flows with sample recipes. Also run for real against the live TheMealDB: photos load, rankings look sensible, the detail screen shows ticked ingredients.
+Not verified: how the list behaves with a slow or flaky connection on a real phone, and recipes for unusual foods (matching is word-based, so odd names can say "missing" wrongly).
+
+### Commit messages used
+- `feat: add recipe entities, ingredient matcher, ranker, TheMealDB service and cache with tests`
+- `feat: add recipes screen, recipe detail and image loading (VIPER modules)`
+- `test: add recipe interactor, presenter and UI tests`
+- `fix: count same-named items once and weigh missing ingredients in use-up-first ranking`
+- `docs: add milestone 6 notes`
+
+### Check your understanding
+1. Why do we search by ingredient first and fetch details second? What does each call return?
+2. Why does the list ranking weigh missing ingredients instead of using expiry alone?
+3. What happens, step by step, when you open Recipes with no internet? (Two cases: something saved, nothing saved.)
+4. Why does the detail screen have no Interactor?
+5. Two cartons of milk: what did the app do wrong at first, and where did we fix it?
+6. How do tests check the real TheMealDB parsing code without using the internet?
+
+---

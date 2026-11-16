@@ -27,12 +27,20 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Settings in the Me tab: reminder time/days, date format, red/amber thresholds | 3 | Done |
 | Item photos (camera or library) instead of emoji | 4 | Done |
 | Scan expiry date (live camera, or a photo of the date), keep a pack photo | 5 | Done (live camera needs a real-iPhone check) |
-| Recipe suggestions (TheMealDB) | 6 | Planned |
+| Recipe suggestions from what you have (TheMealDB), use-up-first or best-match, offline saved recipes, full detail screen | 6 | Done |
 | Home tab (greeting, use-soon tiles, saved-from-the-bin) | 7 | Planned |
 | Polish: icon, mascot, privacy policy, accessibility audit, TestFlight | 8 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
+
+## Recipes (how they behave)
+- The Recipes tab suggests dishes built from your food. "Use up first" favours recipes that rescue items closest to expiring (but a recipe needing a huge shop ranks lower); "Best match" favours the fewest missing ingredients.
+- Expired food is never suggested. Water, salt, pepper and oil are assumed to be in your kitchen.
+- Each recipe shows what you'd use, what's missing, a photo, ingredients ticked as have/need, and steps. A link to the original (and video) appears when the recipe has one.
+- Works offline: every recipe it fetches is saved on the phone (up to 150). With no internet it shows saved recipes plus a note.
+- Credit: "Recipes from TheMealDB" is shown on both screens.
+- TODO before release: confirm TheMealDB's terms for a commercial app and likely buy their supporter key; the free test key is for development.
 
 ## Scanning (how it behaves)
 - Scan tab opens a new item with the scanner running; the Add/Edit form also has a "Scan the date on the pack" button.
