@@ -1,0 +1,20 @@
+"thyme leftTests/HomeTests.swift"
+  s_7ae13adebac50a::t_471e842d9951b1 39,54,63,77,83,102,263-264,279-280,295-296
+  s_7ae13adebac50a::t_d15ef9e5aedd6f 1-38,40-53,55-62,64-76,78-82,84-101,103-262,265-278,281-294,297-373
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f747294a3323e2002237fbe3f82520c23f21043b",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
