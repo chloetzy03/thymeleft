@@ -1,0 +1,25 @@
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_d133d1598edd0f 68-69,73-83,94
+"thyme leftTests/AddEditItemPresenterTests.swift"
+  s_7ae13adebac50a::t_d133d1598edd0f 71,83,506,508-510,513-514,517-520,523,525-526,529-530,533-548
+"thyme left/Modules/AddEditItem/AddEditItemPresenter.swift"
+  s_7ae13adebac50a::t_d133d1598edd0f 34-35,55,65-66,69,95-96
+"thyme left/Modules/AddEditItem/AddEditItemRouter.swift"
+  s_7ae13adebac50a::t_d133d1598edd0f 40,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "74304554fc31b86e63bbbd7a9d10d2d6a1057e4c",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
