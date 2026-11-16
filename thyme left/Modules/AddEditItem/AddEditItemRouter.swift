@@ -37,7 +37,7 @@ enum AddEditItemBuilder {
                       photoStore: PhotoStoring,
                       dateFormatter: ExpiryDateFormatter,
                       recognizer: TextRecognizing,
-                      startWithScanner: Bool = false,
+                      prefill: ScanResult? = nil,
                       onSaved: @escaping () -> Void) -> UIViewController {
         let view = AddEditItemViewController()
         let router = AddEditItemRouter { onResult in
@@ -50,7 +50,7 @@ enum AddEditItemBuilder {
         let presenter = AddEditItemPresenter(view: view, interactor: interactor, router: router,
                                              iconProvider: iconProvider, dateProvider: dateProvider,
                                              settingsStore: settingsStore, photoStore: photoStore,
-                                             existingItem: existing, startWithScanner: startWithScanner,
+                                             existingItem: existing, prefill: prefill,
                                              onSaved: onSaved)
         view.presenter = presenter
         interactor.output = presenter
