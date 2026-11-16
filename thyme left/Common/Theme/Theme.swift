@@ -6,24 +6,24 @@ enum Theme {
 
     // MARK: - Colours (each has a light-mode and a dark-mode version)
     enum Colors {
-        static let background = UIColor.dynamic(light: 0xFAF6EA, dark: 0x121712) // cream page
-        static let card       = UIColor.dynamic(light: 0xFFFFFF, dark: 0x1C241E) // white cards
-        static let sage       = UIColor.dynamic(light: 0xE6EDDB, dark: 0x243027) // soft green panels
-        static let brand      = UIColor.dynamic(light: 0x2F5A3E, dark: 0x7FBF8E) // deep green buttons
-        static let onBrand    = UIColor.dynamic(light: 0xFFFFFF, dark: 0x0F1A12) // text on green buttons
-        static let ink        = UIColor.dynamic(light: 0x2B4A32, dark: 0xE8F0EA) // main text
-        static let muted      = UIColor.dynamic(light: 0x7C8F80, dark: 0x9AAE9F) // quiet text
-        static let divider    = UIColor.dynamic(light: 0xE7E0CB, dark: 0x2A332C) // thin lines
-        static let chip       = UIColor.dynamic(light: 0xEFEADA, dark: 0x232C25) // unselected filter chip
-        static let iconTile   = UIColor.dynamic(light: 0xEEF2E6, dark: 0x26312A) // square behind an emoji
+        static let background = UIColor.dynamic(light: 0xFAF6EA, dark: 0x1A1D19) // cream page
+        static let card       = UIColor.dynamic(light: 0xFFFFFF, dark: 0x242822) // white cards
+        static let sage       = UIColor.dynamic(light: 0xE6EDDB, dark: 0x2E352C) // soft green panels
+        static let brand      = UIColor.dynamic(light: 0x2F5A3E, dark: 0xA7C4A0) // deep green buttons
+        static let onBrand    = UIColor.dynamic(light: 0xFFFFFF, dark: 0x1A2418) // text on green buttons
+        static let ink        = UIColor.dynamic(light: 0x2B4A32, dark: 0xF1EDE0) // main text
+        static let muted      = UIColor.dynamic(light: 0x5A6C5E, dark: 0xA9AC9F) // quiet text
+        static let divider    = UIColor.dynamic(light: 0xE7E0CB, dark: 0x353B32) // thin lines
+        static let chip       = UIColor.dynamic(light: 0xEFEADA, dark: 0x2C312A) // unselected filter chip
+        static let iconTile   = UIColor.dynamic(light: 0xEEF2E6, dark: 0x323930) // square behind an emoji
 
         // Expiry status: a soft background plus a readable text colour for each.
-        static let urgentBackground = UIColor.dynamic(light: 0xF8DDD6, dark: 0x4A2A24)
-        static let urgentText       = UIColor.dynamic(light: 0xA4412F, dark: 0xF2A99B)
-        static let soonBackground   = UIColor.dynamic(light: 0xFBE9C4, dark: 0x4A3A18)
-        static let soonText         = UIColor.dynamic(light: 0x8A6012, dark: 0xF0CC7A)
-        static let freshBackground  = UIColor.dynamic(light: 0xDDEBD6, dark: 0x233A2A)
-        static let freshText        = UIColor.dynamic(light: 0x2F5A3E, dark: 0x9ADBA8)
+        static let urgentBackground = UIColor.dynamic(light: 0xF8DDD6, dark: 0x4A2E28)
+        static let urgentText       = UIColor.dynamic(light: 0xA4412F, dark: 0xF0B4A6)
+        static let soonBackground   = UIColor.dynamic(light: 0xFBE9C4, dark: 0x4A3D1E)
+        static let soonText         = UIColor.dynamic(light: 0x8A6012, dark: 0xEBCB87)
+        static let freshBackground  = UIColor.dynamic(light: 0xDDEBD6, dark: 0x2F3F2F)
+        static let freshText        = UIColor.dynamic(light: 0x2F5A3E, dark: 0xB5D8B0)
     }
 
     // MARK: - Fonts
