@@ -115,7 +115,7 @@ final class PantryListViewController: UIViewController, PantryListViewProtocol {
             chipBar.topAnchor.constraint(equalTo: safe.topAnchor),
             chipBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             chipBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            chipBar.heightAnchor.constraint(equalToConstant: 48),
+            chipBar.heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
 
             tableView.topAnchor.constraint(equalTo: chipBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

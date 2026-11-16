@@ -27,7 +27,7 @@ final class PantryListRouter: PantryListRouterProtocol {
 
     /// Slides the form up from the bottom, with its own top bar (Cancel / Save).
     private func present(_ screen: UIViewController) {
-        let navigation = UINavigationController(rootViewController: screen)
+        let navigation = ThemedNavigationController(rootViewController: screen)
         viewController?.present(navigation, animated: true)
     }
 }

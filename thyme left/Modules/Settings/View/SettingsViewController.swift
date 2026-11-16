@@ -26,7 +26,7 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Theme.Colors.background
-        title = "Me"
+        navigationItem.title = "Settings" // not `title`: that would also rename the tab
         navigationController?.navigationBar.prefersLargeTitles = true
         buildLayout()
         presenter?.viewDidLoad()

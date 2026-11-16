@@ -12,6 +12,7 @@ final class AddEditItemPresenterTests: XCTestCase {
         var expiryDate: Date?
         var nameError: String?
         var priceError: String?
+        var pastDateNote: String?
         var errorMessage: String?
         var primerShownCount = 0
         var shownPhotos: [Data?] = []
@@ -22,6 +23,7 @@ final class AddEditItemPresenterTests: XCTestCase {
         func showEmoji(_ emoji: String) { self.emoji = emoji }
         func showExpiryDate(_ date: Date) { expiryDate = date }
         func showNameError(_ message: String?) { nameError = message }
+        func showPastDateNote(_ message: String?) { pastDateNote = message }
         func showPriceError(_ message: String?) { priceError = message }
         func showError(message: String) { errorMessage = message }
         func showReminderPrimer() { primerShownCount += 1 }
@@ -317,6 +319,36 @@ final class AddEditItemPresenterTests: XCTestCase {
         sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
 
         XCTAssertEqual(interactor.savedDrafts.first?.dateType, .bestBefore)
+    }
+
+    func test_aDateInThePast_showsAGentleNote_andAFutureDateClearsIt() async {
+        let (sut, view, _, _) = makeSUT()
+        sut.viewDidLoad()
+        XCTAssertNil(view.pastDateNote, "the default date is a week away")
+
+        sut.didChangeExpiryDate(calendar.date(byAdding: .day, value: -2, to: today)!)
+        XCTAssertEqual(view.pastDateNote, "This date has already passed.")
+
+        sut.didChangeExpiryDate(today) // today is not "passed"
+        XCTAssertNil(view.pastDateNote)
+    }
+
+    func test_aScannedDateInThePast_showsTheNote() async {
+        let (sut, view, _, _) = makeSUT()
+        sut.viewDidLoad()
+
+        sut.didScan(ScanResult(date: calendar.date(byAdding: .day, value: -10, to: today)!, photoData: nil))
+
+        XCTAssertEqual(view.pastDateNote, "This date has already passed.")
+    }
+
+    func test_editingAnAlreadyExpiredItem_showsTheNoteStraightAway() async {
+        let item = PantryItem(name: "Milk", location: .fridge, expiryDate: calendar.date(byAdding: .day, value: -1, to: today)!)
+        let (sut, view, _, _) = makeSUT(existing: item)
+
+        sut.viewDidLoad()
+
+        XCTAssertEqual(view.pastDateNote, "This date has already passed.")
     }
 
     // MARK: Problems

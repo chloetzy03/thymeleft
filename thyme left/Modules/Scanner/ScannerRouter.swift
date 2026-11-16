@@ -6,17 +6,23 @@ final class ScannerRouter: ScannerRouterProtocol {
 
     weak var viewController: UIViewController?
     private let onResult: (ScanResult) -> Void
+    private let isPopUp: Bool
 
-    init(onResult: @escaping (ScanResult) -> Void) {
+    /// `isPopUp` is true when the scanner was opened on top of another screen (from the Add form).
+    /// The Scan tab is not a pop-up, so there is nothing to close there.
+    init(isPopUp: Bool, onResult: @escaping (ScanResult) -> Void) {
+        self.isPopUp = isPopUp
         self.onResult = onResult
     }
 
     func finish(with result: ScanResult) {
+        guard isPopUp else { onResult(result); return }
         // Close first, then hand over the result, so the form below is visible when it updates.
         viewController?.dismiss(animated: true) { [onResult] in onResult(result) }
     }
 
     func close() {
+        guard isPopUp else { return }
         viewController?.dismiss(animated: true)
     }
 }
@@ -29,9 +35,10 @@ enum ScannerBuilder {
                       dateFormatter: ExpiryDateFormatter,
                       dateProvider: DateProviding,
                       recognizer: TextRecognizing,
+                      isPopUp: Bool = true,
                       onResult: @escaping (ScanResult) -> Void) -> UIViewController {
-        let view = ScannerViewController()
-        let router = ScannerRouter(onResult: onResult)
+        let view = ScannerViewController(isPopUp: isPopUp)
+        let router = ScannerRouter(isPopUp: isPopUp, onResult: onResult)
         let interactor = ScannerInteractor(recognizer: recognizer, settingsStore: settingsStore,
                                            dateProvider: dateProvider)
         let presenter = ScannerPresenter(view: view, interactor: interactor, router: router,

@@ -70,6 +70,7 @@ final class PantryItemCell: UITableViewCell {
         subtitleLabel.font = Theme.Typography.caption.font
         subtitleLabel.textColor = Theme.Colors.muted
         subtitleLabel.adjustsFontForContentSizeCategory = true
+        subtitleLabel.numberOfLines = 0 // let it wrap instead of cutting the date off at big text sizes
 
         let textStack = UIStackView(arrangedSubviews: [nameLabel, subtitleLabel])
         textStack.axis = .vertical

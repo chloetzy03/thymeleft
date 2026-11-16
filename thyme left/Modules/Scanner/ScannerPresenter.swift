@@ -100,7 +100,10 @@ final class ScannerPresenter: ScannerPresenterProtocol, ScannerInteractorOutput 
             dateText: dateFormatter.string(from: date),
             countdownText: countdown(days),
             sourceText: current.sourceText,
-            swapText: swapText))
+            swapText: swapText,
+            guessNote: current.dayWasGuessed && !showingAlternative
+                ? "We couldn't see a day on the pack, so we used the last day of the month. You can change it on the next screen."
+                : nil))
     }
 
     private func countdown(_ days: Int) -> String {

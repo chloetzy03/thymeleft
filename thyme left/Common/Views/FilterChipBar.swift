@@ -32,7 +32,9 @@ final class FilterChipBar: UIView {
             stack.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
             stack.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
             // Make the row at least as tall as the bar, so it never wobbles up and down.
-            stack.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor, constant: -12)
+            stack.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor, constant: -12),
+            // At big text sizes the chips get taller, and the bar must grow with them.
+            heightAnchor.constraint(greaterThanOrEqualTo: stack.heightAnchor, constant: 12)
         ])
     }
 

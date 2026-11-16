@@ -74,9 +74,8 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
     // MARK: Layout
 
     private func buildLayout() {
-        segmented.selectedSegmentTintColor = Theme.Colors.brand
-        segmented.setTitleTextAttributes([.foregroundColor: Theme.Colors.onBrand], for: .selected)
-        segmented.setTitleTextAttributes([.foregroundColor: Theme.Colors.ink], for: .normal)
+        styleSegmented()
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in self.styleSegmented() }
         segmented.accessibilityLabel = "Order recipes by"
         segmented.addAction(UIAction { [weak self] _ in
             guard let self else { return }
@@ -107,6 +106,8 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         attributionLabel.font = Theme.Typography.caption.font
         attributionLabel.textColor = Theme.Colors.muted
         attributionLabel.textAlignment = .center
+        attributionLabel.numberOfLines = 0
+        attributionLabel.adjustsFontForContentSizeCategory = true
         attributionLabel.frame = CGRect(x: 0, y: 0, width: 0, height: 60)
         tableView.tableFooterView = attributionLabel
 
@@ -142,8 +143,21 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         ])
     }
 
+    /// The segmented control's text colours are fixed when set, so pick the right ones for light or dark.
+    private func styleSegmented() {
+        segmented.selectedSegmentTintColor = Theme.Colors.brand
+        segmented.setTitleTextAttributes([.foregroundColor: Theme.Colors.onBrand.resolvedColor(with: traitCollection)], for: .selected)
+        segmented.setTitleTextAttributes([.foregroundColor: Theme.Colors.ink.resolvedColor(with: traitCollection)], for: .normal)
+    }
+
     /// A table header doesn't resize itself, so measure it after its content changes.
     private func sizeHeader() {
+        // The footer is one wrapping label; give it as much height as its text needs.
+        let footerWidth = max(tableView.bounds.width, view.bounds.width) - 32
+        let footerHeight = attributionLabel.sizeThatFits(CGSize(width: footerWidth, height: .greatestFiniteMagnitude)).height + 32
+        attributionLabel.frame = CGRect(x: 0, y: 0, width: 0, height: footerHeight)
+        tableView.tableFooterView = attributionLabel
+
         guard let header = tableView.tableHeaderView else { return }
         let width = tableView.bounds.width > 0 ? tableView.bounds.width : view.bounds.width
         let height = header.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height),

@@ -7,6 +7,8 @@ struct ScannedExpiryDate: Equatable {
     let sourceText: String
     /// When day and month could be swapped (like 03/04/26), the OTHER reading. Otherwise nil.
     let alternative: Date?
+    /// True when the pack only showed a month and year ("NOV 2027"), so we assumed the last day of that month.
+    var dayWasGuessed = false
 }
 
 /// What the scanner hands back once the user taps "Use this date".
