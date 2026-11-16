@@ -1,0 +1,21 @@
+"thyme leftUITests/ScannerFlowUITests.swift"
+  s_7ae13adebac50a::t_78978c1a80abe8 1-18,25-96,98-102
+  s_7ae13adebac50a::t_51ec3d653345b9 23-24
+  s_7ae13adebac50a::t_2ea63f54cfd763 19-22,97
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "02a8d141c7fbdd37c7694643913fe67d875e1d68",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
