@@ -21,10 +21,10 @@ final class PantryListPresenterTests: XCTestCase {
 
     private final class InteractorSpy: PantryListInteractorInput {
         var requestedLocations: [StorageLocation?] = []
-        var deletedIDs: [UUID] = []
+        var finished: [(id: UUID, outcome: ItemOutcome)] = []
 
         func loadItems(in location: StorageLocation?) { requestedLocations.append(location) }
-        func deleteItem(id: UUID) { deletedIDs.append(id) }
+        func finishItem(id: UUID, as outcome: ItemOutcome) { finished.append((id, outcome)) }
     }
 
     private final class RouterSpy: PantryListRouterProtocol {
@@ -244,18 +244,19 @@ final class PantryListPresenterTests: XCTestCase {
         XCTAssertEqual(interactor.requestedLocations, [nil])
     }
 
-    func test_didDeleteRow_thenDidDeleteItem_reloadsTheCurrentFilter() async {
+    func test_didFinishRow_passesTheChosenOutcome_thenReloadsTheCurrentFilter() async {
         // Arrange
         let (sut, _, interactor, _) = makeSUT()
         let id = UUID()
         sut.didSelectFilter(at: 2) // Pantry
 
         // Act
-        sut.didDeleteRow(id: id)
+        sut.didFinishRow(id: id, as: .used)
         sut.didDeleteItem()
 
         // Assert
-        XCTAssertEqual(interactor.deletedIDs, [id])
+        XCTAssertEqual(interactor.finished.map(\.id), [id])
+        XCTAssertEqual(interactor.finished.map(\.outcome), [.used])
         XCTAssertEqual(interactor.requestedLocations.last, .pantry)
     }
 

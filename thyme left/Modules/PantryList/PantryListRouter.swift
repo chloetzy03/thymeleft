@@ -45,7 +45,8 @@ enum PantryListBuilder {
                       reminders: ReminderServicing,
                       photoStore: PhotoStoring,
                       photoCache: PhotoImageCache,
-                      recognizer: TextRecognizing) -> UIViewController {
+                      recognizer: TextRecognizing,
+                      outcomes: OutcomeRepository) -> UIViewController {
         let view = PantryListViewController(photoCache: photoCache)
         let router = PantryListRouter { existing, onSaved in
             AddEditItemBuilder.build(existing: existing, repository: repository,
@@ -56,7 +57,7 @@ enum PantryListBuilder {
         }
         let interactor = PantryListInteractor(repository: repository, settingsStore: settingsStore,
                                            dateProvider: dateProvider, reminders: reminders,
-                                           photoStore: photoStore)
+                                           photoStore: photoStore, outcomes: outcomes)
         let presenter = PantryListPresenter(view: view, interactor: interactor, router: router,
                                           iconProvider: iconProvider, dateFormatter: dateFormatter)
 

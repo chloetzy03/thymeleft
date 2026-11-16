@@ -160,14 +160,28 @@ extension PantryListViewController: UITableViewDataSource, UITableViewDelegate {
         presenter?.didSelectRow(id: sections[indexPath.section].rows[indexPath.row].id)
     }
 
-    // Swipe a row to the left to reveal "Delete".
+    // Swipe a row to the left to say what happened to the food.
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let id = sections[indexPath.section].rows[indexPath.row].id
-        let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, done in
-            self?.presenter?.didDeleteRow(id: id)
-            done(true)
+
+        func action(_ title: String, _ outcome: ItemOutcome, style: UIContextualAction.Style,
+                    color: UIColor, symbol: String) -> UIContextualAction {
+            let action = UIContextualAction(style: style, title: title) { [weak self] _, _, done in
+                self?.presenter?.didFinishRow(id: id, as: outcome)
+                done(true)
+            }
+            action.backgroundColor = color
+            action.image = UIImage(systemName: symbol)
+            return action
         }
-        return UISwipeActionsConfiguration(actions: [delete])
+        let configuration = UISwipeActionsConfiguration(actions: [
+            action("Delete", .removed, style: .destructive, color: Theme.Colors.urgentText, symbol: "trash"),
+            action("Threw away", .wasted, style: .normal, color: Theme.Colors.soonText, symbol: "arrow.3.trianglepath"),
+            action("Used it", .used, style: .normal, color: Theme.Colors.brand, symbol: "checkmark.circle")
+        ])
+        // A long swipe must never delete by accident, so it performs nothing.
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
     }
 }
