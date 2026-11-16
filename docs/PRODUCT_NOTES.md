@@ -29,7 +29,12 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Scan expiry date (live camera, or a photo of the date), keep a pack photo | 5 | Done (live camera needs a real-iPhone check) |
 | Recipe suggestions from what you have (TheMealDB), use-up-first or best-match, offline saved recipes, full detail screen | 6 | Done |
 | Home tab: time-aware greeting, use-soon tiles, "What can I cook?", saved-from-the-bin counter with optional money estimate; swipe Used it / Threw away / Delete | 7 | Done |
-| Polish: icon, mascot, privacy policy, accessibility audit, TestFlight | 8 | Planned |
+| Optional price per item; Best before / Use by with clearer past-date wording | 7.5 | Done |
+| Real-iPhone testing and fixes | 8 | In progress (user testing) |
+| Accessibility audit (VoiceOver, largest text, contrast, Reduce Motion) | 9 | Planned |
+| Chinese language (Simplified and/or Traditional), Chinese date scanning | 10 | Planned (needs decision) |
+| App icon and Sprig mascot | 11 | Planned (needs decision) |
+| Release prep: privacy policy, privacy manifest, screenshots, App Store text, TestFlight | 12 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
