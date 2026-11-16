@@ -30,11 +30,12 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Recipe suggestions from what you have (TheMealDB), use-up-first or best-match, offline saved recipes, full detail screen | 6 | Done |
 | Home tab: time-aware greeting, use-soon tiles, "What can I cook?", saved-from-the-bin counter with optional money estimate; swipe Used it / Threw away / Delete | 7 | Done |
 | Optional price per item; Best before / Use by with clearer past-date wording | 7.5 | Done |
-| Real-iPhone testing and fixes (round 1: scanner day bug, photo, dark mode, Scan tab as camera screen) | 8 | Round 1 done; more testing ongoing |
+| Real-iPhone testing and fixes (round 1: scanner day bug, photo, dark mode, Scan tab as camera screen) | 8 | Round 1 done; reminders confirmed working on a real iPhone |
 | Accessibility audit (contrast, largest text, VoiceOver labels) | 9 | First pass done; re-check on device |
-| Chinese language (Simplified and/or Traditional), Chinese date scanning | 10 | Planned (needs decision) |
-| App icon and Sprig mascot | 11 | Planned (needs decision) |
-| Release prep: privacy policy, privacy manifest, screenshots, App Store text, TestFlight | 12 | Planned |
+| App icon (13 options in docs/design/app-icons.html) then Sprig mascot art | 10 | Options ready, waiting for a pick |
+| Recipe search (by dish or ingredient) and a fuller Home screen | 11 | Planned (needs decisions) |
+| Chinese language (Simplified), Chinese date scanning | 12 | Planned |
+| Release prep: privacy policy, privacy manifest, screenshots, App Store text, TestFlight | 13 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
