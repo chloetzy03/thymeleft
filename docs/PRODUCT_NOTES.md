@@ -28,11 +28,18 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Item photos (camera or library) instead of emoji | 4 | Done |
 | Scan expiry date (live camera, or a photo of the date), keep a pack photo | 5 | Done (live camera needs a real-iPhone check) |
 | Recipe suggestions from what you have (TheMealDB), use-up-first or best-match, offline saved recipes, full detail screen | 6 | Done |
-| Home tab (greeting, use-soon tiles, saved-from-the-bin) | 7 | Planned |
+| Home tab: time-aware greeting, use-soon tiles, "What can I cook?", saved-from-the-bin counter with optional money estimate; swipe Used it / Threw away / Delete | 7 | Done |
 | Polish: icon, mascot, privacy policy, accessibility audit, TestFlight | 8 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
+
+## Home and "saved from the bin" (how they behave)
+- The app opens on Home: "Good morning/afternoon/evening, chef!", up to three use-soon tiles, a big "What can I cook?" button and a monthly counter.
+- Swiping a pantry row offers Used it, Threw away and Delete. Only "Used it" counts as food saved; "Threw away" is remembered but not counted; Delete (mistakes) is neither. A long swipe never deletes.
+- Money is an estimate (items used this month x an average value you choose in Me, in your own currency) and can be turned off.
+- Privacy: history is only names and dates, kept on the phone.
+- Selling point: "See the food you've rescued, not just the food you've lost."
 
 ## Recipes (how they behave)
 - The Recipes tab suggests dishes built from your food. "Use up first" favours recipes that rescue items closest to expiring (but a recipe needing a huge shop ranks lower); "Best match" favours the fewest missing ingredients.

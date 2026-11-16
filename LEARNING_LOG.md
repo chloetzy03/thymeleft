@@ -461,3 +461,62 @@ Not verified: how the list behaves with a slow or flaky connection on a real pho
 6. How do tests check the real TheMealDB parsing code without using the internet?
 
 ---
+
+## Milestone 7 – Home tab and "saved from the bin" (`feature/home`)
+
+### What you can do now
+The app opens on **Home**: a time-aware greeting, up to three "use soon" tiles, a big **What can I cook?** button, and a **Saved from the bin** counter. In the Pantry, swipe a row left for **Used it**, **Threw away** or **Delete**. In Me you can switch the money estimate off or change the average item value.
+
+### The new idea: remember WHY an item left
+Before, deleting an item erased it with no trace. To count food saved we need to know the reason, so each swipe now records a tiny history line (`OutcomeEntry`: name, outcome, date) in a second SwiftData table (`OutcomeRecord`).
+| Swipe | Recorded? | Counts as |
+|---|---|---|
+| Used it | yes, `.used` | food saved |
+| Threw away | yes, `.wasted` | not saved (kept for future insights) |
+| Delete | no | neither. It's for mistakes, so it never inflates the numbers |
+
+### The new pieces
+| Part | File | Job in plain words |
+|---|---|---|
+| Entity | `ItemOutcome`, `OutcomeEntry` | Why it left; one history line |
+| Service | `OutcomeRepository` (+ SwiftData, in-memory) | Another "job description" for storage |
+| Service | `MoneyFormatter` | "$3" or "£34" in your own currency |
+| **Module** | `Modules/Home/` | Interactor gathers numbers, Presenter writes the friendly sentences, View draws them, Router just switches tabs |
+| Changed | Pantry module | Three swipe choices that record history |
+| Changed | Settings | "Show money saved" and "Average item value" |
+| Changed | `RootTabBarController` | Opens on Home; Home's buttons switch tabs |
+
+### Concepts in plain words
+- **Record first, delete second.** If saving the history fails, the item is NOT deleted, so nothing vanishes without a record (a test checks this).
+- **A "this month" counter** compares the calendar month and year (October 2026 is not November 2026, and neither is November 2025). Tests cover both.
+- **A router can be tiny.** Home's Router only switches tabs: two closures. VIPER doesn't need every part to be big.
+- **Safe swipes.** `performsFirstActionWithFullSwipe = false` means a long swipe only reveals the buttons. Accidentally deleting food would feel awful.
+- **Database upgrade.** Adding a new table (`OutcomeRecord`) to SwiftData is a light, automatic migration. I checked it on the real app: your existing pantry was still there after the update.
+- **Estimates are honest.** The money line says "about", is switchable, and the Settings note explains it is items used x your average value. We don't pretend to know prices.
+- **Where you start is a decision.** Real users open on Home; UI tests open on Pantry by default (so older tests still work), or on Home with `-uiTestingStartOnHome`.
+
+### Mistakes and lessons this time
+- Two unit-test crashes, both my test-writing, not the app: (1) main-actor test methods must be `async` (a rule we keep hitting; I now check for it every time), and (2) a SwiftData test container must be kept alive for as long as its context is used. If it is thrown away, the test traps.
+- I had written a lenient UI assertion (`a || b`). Lenient checks can hide regressions, so I tightened it to the one element that should exist.
+
+### Verified
+271 unit tests (Home logic, greeting at every hour boundary, "this month" edge cases, money maths, real SwiftData save/load of every item field including reminder and photo, new settings, swipe outcomes) and 8 UI flows (empty state, tiles, What can I cook, Used it counting, Threw away and Delete not counting, long swipe safety, savings settings). Also checked visually on the real app with real saved data.
+Not verified: the greeting text at your real local time zone on a physical phone (the logic is tested at every hour).
+
+### Commit messages used
+- `feat: record why items leave the pantry (used, threw away, delete) with history storage`
+- `feat: add money-saved options to settings`
+- `feat: add the Home tab (VIPER module) and make it the first tab`
+- `test: add home, outcome, persistence and settings tests`
+- `test: add home and swipe-outcome UI tests`
+- `docs: add milestone 7 notes`
+
+### Check your understanding
+1. Why does a plain Delete record nothing, while Threw away records `.wasted` but isn't counted as saved?
+2. If saving the history fails, what happens to the item, and why is that the right behaviour?
+3. What makes "this month" tricky? Name two cases the tests cover.
+4. Why does Home's Router need only two closures?
+5. How does the app keep a long swipe from deleting food by accident?
+6. What does adding the new `OutcomeRecord` table mean for people who already have a pantry saved?
+
+---
