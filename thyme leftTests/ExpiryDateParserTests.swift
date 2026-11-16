@@ -186,6 +186,58 @@ final class ExpiryDateParserTests: XCTestCase {
     }
 }
 
+final class ExpiryDateParserSplitDateTests: XCTestCase {
+
+    private let parser = ExpiryDateParser(calendar: TestCalendar.utc)
+    private let now = TestCalendar.date(2026, 11, 15)
+
+    private func parse(_ lines: [String]) -> ScannedExpiryDate? {
+        parser.parse(lines: lines, dayFirst: true, now: now)
+    }
+
+    func test_parse_dayAndMonthOnSeparateLines_isReadAsOneDate() {
+        // Arrange: the camera split "5 NOV 2027" into two pieces (this was the "always 30 Nov" bug)
+        let lines = ["EXP", "5", "NOV 2027"]
+
+        // Act
+        let result = parse(lines)
+
+        // Assert
+        XCTAssertEqual(result?.date, TestCalendar.date(2027, 11, 5))
+        XCTAssertEqual(result?.dayWasGuessed, false)
+    }
+
+    func test_parse_dayMonthOnOneLineAndYearOnTheNext_isReadAsOneDate() {
+        XCTAssertEqual(parse(["BEST BEFORE", "05 NOV", "2027"])?.date, TestCalendar.date(2027, 11, 5))
+    }
+
+    func test_parse_aDayWhichLooksLikeALetter_isFixed() {
+        // "S" is often a misread "5"; "O5" a misread "05"
+        XCTAssertEqual(parse(["EXP S NOV 2027"])?.date, TestCalendar.date(2027, 11, 5))
+        XCTAssertEqual(parse(["EXP O5 NOV 2027"])?.date, TestCalendar.date(2027, 11, 5))
+        XCTAssertEqual(parse(["EXP 1S NOV 2027"])?.date, TestCalendar.date(2027, 11, 15))
+    }
+
+    func test_parse_aNormalWordBeforeAMonth_isNotTurnedIntoANumber() {
+        // "IS" is a word, so "NOV 2027" stays a month-only date
+        let result = parse(["BEST BEFORE DATE IS NOV 2027"])
+        XCTAssertEqual(result?.date, TestCalendar.date(2027, 11, 30))
+        XCTAssertEqual(result?.dayWasGuessed, true)
+    }
+
+    func test_parse_monthOnly_saysTheDayWasGuessed() {
+        let result = parse(["EXP NOV 2027"])
+        XCTAssertEqual(result?.date, TestCalendar.date(2027, 11, 30))
+        XCTAssertEqual(result?.dayWasGuessed, true)
+    }
+
+    func test_parse_aFullDateBeatsTheSameMonthWithoutADay() {
+        // The same month appears twice: once with a day, once without. The day wins.
+        let result = parse(["EXP 5 NOV 2027", "NOV 2027"])
+        XCTAssertEqual(result?.date, TestCalendar.date(2027, 11, 5))
+    }
+}
+
 final class DayFirstPreferenceTests: XCTestCase {
 
     func test_isDayFirst_followsTheChosenFormat() {

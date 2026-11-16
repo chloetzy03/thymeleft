@@ -19,13 +19,38 @@ struct ExpiryDateParser {
     func parse(lines: [String], dayFirst: Bool, now: Date) -> ScannedExpiryDate? {
         var candidates: [Candidate] = []
 
-        for (index, rawLine) in lines.enumerated() {
-            let line = normalize(rawLine)
-            let previous = index > 0 ? normalize(lines[index - 1]) : ""
-            for found in dates(in: line, dayFirst: dayFirst) where isPlausible(found.date, now: now) {
-                let label = label(before: found.range, in: line, previousLine: previous)
-                candidates.append(Candidate(date: found.date, alternative: found.alternative,
+        // Cameras often split one printed date across lines ("5" / "NOV 2027", or "5 NOV" / "2027").
+        // So we also read every pair of neighbouring lines as if they were one line.
+        func gather(_ texts: [(raw: String, previous: String)]) -> [Candidate] {
+            var result: [Candidate] = []
+            for (rawLine, previous) in texts {
+                let line = normalize(rawLine)
+                for found in dates(in: line, dayFirst: dayFirst) where isPlausible(found.date, now: now) {
+                    let label = label(before: found.range, in: line, previousLine: previous)
+                    result.append(Candidate(date: found.date, alternative: found.alternative, hasDay: found.hasDay,
                                             label: label, sourceText: rawLine.trimmingCharacters(in: .whitespaces)))
+                }
+            }
+            return result
+        }
+
+        candidates = gather(lines.enumerated().map { index, line in (line, index > 0 ? normalize(lines[index - 1]) : "") })
+        if lines.count > 1 {
+            let pairs = (1..<lines.count).map { index in
+                ("\(lines[index - 1]) \(lines[index])", index > 1 ? normalize(lines[index - 2]) : "")
+            }
+            // A joined pair only matters when it finds a date no single line found on its own.
+            let alone = candidates
+            for joined in gather(pairs) where !alone.contains(where: { $0.hasDay && $0.date == joined.date }) {
+                candidates.append(joined)
+            }
+        }
+
+        // "NOV 2027" (no day) is only a fallback. If the same month also appears WITH a day somewhere,
+        // the day-less one is just the same date read badly, so drop it.
+        candidates = candidates.filter { candidate in
+            candidate.hasDay || !candidates.contains { other in
+                other.hasDay && calendar.isDate(other.date, equalTo: candidate.date, toGranularity: .month)
             }
         }
 
@@ -38,7 +63,8 @@ struct ExpiryDateParser {
 
         return ScannedExpiryDate(date: best.date,
                                  sourceText: best.sourceText,
-                                 alternative: best.alternative.flatMap { isPlausible($0, now: now) ? $0 : nil })
+                                 alternative: best.alternative.flatMap { isPlausible($0, now: now) ? $0 : nil },
+                                 dayWasGuessed: !best.hasDay)
     }
 
     // MARK: - Types
@@ -58,6 +84,7 @@ struct ExpiryDateParser {
     private struct Candidate {
         let date: Date
         let alternative: Date?
+        let hasDay: Bool
         let label: Label
         let sourceText: String
     }
@@ -65,6 +92,7 @@ struct ExpiryDateParser {
     private struct Found {
         let date: Date
         let alternative: Date?
+        let hasDay: Bool
         let range: NSRange
     }
 
@@ -83,7 +111,27 @@ struct ExpiryDateParser {
         for fix in fixes {
             result = result.replacingOccurrences(of: fix.pattern, with: fix.replacement, options: .regularExpression)
         }
+        result = fixDayLetters(in: result)
         return result.replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+    }
+
+    /// Cameras read the day number in "5 NOV 2027" as "S NOV 2027" (S looks like 5), "O5" as "05" and so on.
+    /// If a short token sits right before a month name and a year, turn the look-alike letters into digits.
+    private func fixDayLetters(in text: String) -> String {
+        let pattern = #"(?<![A-Z\d])([0-9OILSBZ]{1,2})(?= ?(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\.? ?[\-/']? ?\d)"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return text }
+        let look: [Character: Character] = ["O": "0", "I": "1", "L": "1", "S": "5", "B": "8", "Z": "2"]
+        var result = text
+        // Go from the end so earlier positions stay valid while we replace.
+        for match in regex.matches(in: text, range: NSRange(text.startIndex..., in: text)).reversed() {
+            guard let range = Range(match.range(at: 1), in: result) else { continue }
+            let token = String(result[range])
+            // A two-letter token with no digit ("IS", "BO") is probably a real word, so leave it.
+            if token.count == 2, !token.contains(where: \.isNumber) { continue }
+            let fixed = String(token.map { look[$0] ?? $0 })
+            if let day = Int(fixed), (1...31).contains(day) { result.replaceSubrange(range, with: fixed) }
+        }
+        return result
     }
 
     // MARK: - Finding dates
@@ -92,7 +140,7 @@ struct ExpiryDateParser {
         var found: [Found] = []
         var used: [NSRange] = []
 
-        func take(_ pattern: String, build: ([String]) -> (date: Date, alternative: Date?)?) {
+        func take(_ pattern: String, hasDay: Bool = true, build: ([String]) -> (date: Date, alternative: Date?)?) {
             guard let regex = try? NSRegularExpression(pattern: pattern) else { return }
             let whole = NSRange(line.startIndex..., in: line)
             for match in regex.matches(in: line, range: whole) {
@@ -103,7 +151,7 @@ struct ExpiryDateParser {
                     return String(line[range])
                 }
                 if let result = build(parts) {
-                    found.append(Found(date: result.date, alternative: result.alternative, range: match.range))
+                    found.append(Found(date: result.date, alternative: result.alternative, hasDay: hasDay, range: match.range))
                     used.append(match.range)
                 }
             }
@@ -133,13 +181,13 @@ struct ExpiryDateParser {
             return (date, nil)
         }
         // 5. NOV 2026, NOV26 (no day: it lasts until the end of that month)
-        take(#"(?<![A-Z])([A-Z]{3,9})\.? ?[\-/']? ?(\d{4}|\d{2})(?!\d)"#) { parts in
+        take(#"(?<![A-Z])([A-Z]{3,9})\.? ?[\-/']? ?(\d{4}|\d{2})(?!\d)"#, hasDay: false) { parts in
             guard let month = Self.monthNumber(parts[1]), let year = Int(parts[2]),
                   let date = endOfMonth(month: month, year: fullYear(year)) else { return nil }
             return (date, nil)
         }
         // 6. 11/2026, 11.26 (month and year only)
-        take(#"(?<![\d/.\-])(\d{1,2})[./\-](\d{4}|\d{2})(?![\d/.\-])"#) { parts in
+        take(#"(?<![\d/.\-])(\d{1,2})[./\-](\d{4}|\d{2})(?![\d/.\-])"#, hasDay: false) { parts in
             guard let month = Int(parts[1]), let year = Int(parts[2]),
                   let date = endOfMonth(month: month, year: fullYear(year)) else { return nil }
             return (date, nil)
