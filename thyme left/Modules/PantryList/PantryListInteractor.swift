@@ -62,7 +62,8 @@ final class PantryListInteractor: PantryListInteractorInput {
             // History goes first: if it can't be saved we stop, so nothing disappears without a record.
             // A plain Delete (outcome .removed) is not history: it counts as neither saved nor wasted.
             if let item, outcome != .removed {
-                try outcomes.record(OutcomeEntry(itemName: item.name, outcome: outcome, date: dateProvider.now))
+                try outcomes.record(OutcomeEntry(itemName: item.name, outcome: outcome,
+                                                 date: dateProvider.now, value: item.price))
             }
             try repository.delete(id: id)
             if let photoFileName = item?.photoFileName { photoStore.deletePhoto(named: photoFileName) }

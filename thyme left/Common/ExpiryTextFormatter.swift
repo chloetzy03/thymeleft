@@ -29,6 +29,33 @@ struct ExpiryTextFormatter {
         }
     }
 
+    /// Badge text that knows what kind of date it is. Only the "already passed" case differs.
+    func badgeText(daysRemaining days: Int, dateType: DateType) -> String {
+        guard days < 0 else { return badgeText(daysRemaining: days) }
+        // "Expired" sounds final. These say what actually passed.
+        return dateType == .useBy ? "Past use-by" : "Past date"
+    }
+
+    /// VoiceOver sentence that knows the date type, including a gentle safety hint once it has passed.
+    /// (Translation: "best before" gets "check before eating"; "use by" gets "do not eat".)
+    func spokenText(daysRemaining days: Int, dateType: DateType) -> String {
+        let when: String
+        switch days {
+        case ..<0:
+            let ago = -days
+            when = ago == 1 ? "yesterday" : "\(ago) days ago"
+        case 0: when = "today"
+        case 1: when = "tomorrow"
+        default: when = "in \(badgeText(daysRemaining: days))"
+        }
+        switch (dateType, days < 0) {
+        case (.useBy, true): return "past its use by date, \(when). Do not eat"
+        case (.bestBefore, true): return "past its best before date, \(when). Check before eating"
+        case (.useBy, false): return "use by \(when)"
+        case (.bestBefore, false): return spokenText(daysRemaining: days)
+        }
+    }
+
     /// How early a reminder is, e.g. "1 day before", "1 week before", "Same day".
     func reminderLeadText(daysBefore days: Int) -> String {
         switch days {

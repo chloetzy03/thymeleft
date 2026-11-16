@@ -28,6 +28,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     private let photoStore: PhotoStoring
     private let formatter: ExpiryTextFormatter
     private let calendar: Calendar
+    /// Decides whether "3.50" or "3,50" is the right way to write a price.
+    private let locale: Locale
     private let existingItem: PantryItem?
     /// Called after a successful save, so the previous screen can refresh itself.
     private let onSaved: () -> Void
@@ -37,6 +39,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     /// What the user has decided about the photo so far (nothing is saved until they tap Save).
     private var photoChange: PhotoChange = .keep
     private var hasPhoto: Bool
+    private var dateType: DateType
+    private var priceText: String
 
     private let locations = StorageLocation.allCases
     /// The "Remind me" choices, in the order they appear. Filled in when the form loads.
@@ -52,6 +56,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
          existingItem: PantryItem?,
          formatter: ExpiryTextFormatter = ExpiryTextFormatter(),
          calendar: Calendar = .current,
+         locale: Locale = .current,
          prefill: ScanResult? = nil,
          onSaved: @escaping () -> Void) {
         self.view = view
@@ -66,6 +71,9 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         self.photoChange = prefill?.photoData.map { .replace($0) } ?? .keep
         self.formatter = formatter
         self.calendar = calendar
+        self.locale = locale
+        self.dateType = existingItem?.dateType ?? .bestBefore
+        self.priceText = Self.priceText(for: existingItem?.price, locale: locale)
         self.prefill = prefill
         self.onSaved = onSaved
     }
@@ -94,7 +102,10 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
             selectedReminderIndex: reminderOptions.firstIndex { $0.preference == reminder } ?? 0,
             photoData: existingItem?.photoFileName.flatMap { photoStore.photoData(named: $0) } ?? prefill?.photoData,
             expiryDate: existingItem?.expiryDate ?? prefill?.date ?? defaultExpiry,
-            quickDateTitles: quickDates.map(\.title)))
+            quickDateTitles: quickDates.map(\.title),
+            dateTypeTitles: DateType.allCases.map(\.displayName),
+            selectedDateTypeIndex: DateType.allCases.firstIndex(of: dateType) ?? 0,
+            priceText: priceText))
     }
 
     func didTapScan() {
@@ -115,6 +126,16 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         guard quickDates.indices.contains(index),
               let date = calendar.date(byAdding: quickDates[index].offset, to: dateProvider.now) else { return }
         view?.showExpiryDate(date)
+    }
+
+    func didSelectDateType(at index: Int) {
+        guard DateType.allCases.indices.contains(index) else { return }
+        dateType = DateType.allCases[index]
+    }
+
+    func didChangePrice(_ text: String) {
+        priceText = text
+        view?.showPriceError(nil) // the user is fixing it, so hide the old message
     }
 
     func didTapPhoto() {
@@ -146,9 +167,21 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     func didTapSave(name: String, quantity: Int, locationIndex: Int, reminderIndex: Int, expiryDate: Date) {
         guard locations.indices.contains(locationIndex),
               reminderOptions.indices.contains(reminderIndex) else { return }
+        // The price is optional: empty is fine, but something that isn't a number is not.
+        let trimmedPrice = priceText.trimmingCharacters(in: .whitespacesAndNewlines)
+        var price: Double?
+        if !trimmedPrice.isEmpty {
+            guard let parsed = Self.parsePrice(trimmedPrice, locale: locale) else {
+                view?.showPriceError("Please enter the price as a number, like 3.50.")
+                return
+            }
+            price = parsed
+        }
         let draft = PantryItemDraft(name: name, quantity: quantity,
                                     location: locations[locationIndex],
                                     expiryDate: expiryDate,
+                                    dateType: dateType,
+                                    price: price,
                                     reminder: reminderOptions[reminderIndex].preference,
                                     photo: photoChange)
         interactor.save(draft, replacing: existingItem)
@@ -189,6 +222,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         case .invalidQuantity:
             let range = PantryItemRules.quantityRange
             view?.showError(message: "Quantity must be between \(range.lowerBound) and \(range.upperBound).")
+        case .invalidPrice:
+            view?.showPriceError("That price doesn't look right. Please check it.")
         }
     }
 
@@ -197,6 +232,25 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     }
 
     // MARK: Helpers
+
+    /// Turns "3,50" or "3.50" (whatever the phone's region uses) into a number. Nil if it isn't one.
+    private static func parsePrice(_ text: String, locale: Locale) -> Double? {
+        let formatter = NumberFormatter()
+        formatter.locale = locale
+        formatter.numberStyle = .decimal
+        return formatter.number(from: text)?.doubleValue
+    }
+
+    /// The reverse: shows an existing price the way the user would type it ("3.5", not "3.500000").
+    private static func priceText(for price: Double?, locale: Locale) -> String {
+        guard let price else { return "" }
+        let formatter = NumberFormatter()
+        formatter.locale = locale
+        formatter.numberStyle = .decimal
+        formatter.usesGroupingSeparator = false
+        formatter.maximumFractionDigits = 2
+        return formatter.string(from: NSNumber(value: price)) ?? ""
+    }
 
     private func finish() {
         onSaved()

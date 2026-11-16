@@ -35,16 +35,18 @@ final class OutcomeRecord {
     var itemName: String
     var outcomeRawValue: String
     var date: Date
+    var value: Double?
 
-    init(id: UUID, itemName: String, outcomeRawValue: String, date: Date) {
+    init(id: UUID, itemName: String, outcomeRawValue: String, date: Date, value: Double? = nil) {
         self.id = id
         self.itemName = itemName
         self.outcomeRawValue = outcomeRawValue
         self.date = date
+        self.value = value
     }
 
     var entry: OutcomeEntry {
-        OutcomeEntry(id: id, itemName: itemName, outcome: ItemOutcome(rawValue: outcomeRawValue) ?? .removed, date: date)
+        OutcomeEntry(id: id, itemName: itemName, outcome: ItemOutcome(rawValue: outcomeRawValue) ?? .removed, date: date, value: value)
     }
 }
 
@@ -59,7 +61,7 @@ final class SwiftDataOutcomeRepository: OutcomeRepository {
 
     func record(_ entry: OutcomeEntry) throws {
         context.insert(OutcomeRecord(id: entry.id, itemName: entry.itemName,
-                                      outcomeRawValue: entry.outcome.rawValue, date: entry.date))
+                                      outcomeRawValue: entry.outcome.rawValue, date: entry.date, value: entry.value))
         try context.save()
     }
 

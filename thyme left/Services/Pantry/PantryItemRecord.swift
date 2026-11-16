@@ -16,9 +16,13 @@ final class PantryItemRecord {
     var reminderStoredValue: Int = -2
     /// Optional, so items saved before photos existed upgrade smoothly.
     var photoFileName: String?
+    /// Defaults let items saved before these existed upgrade smoothly.
+    var dateTypeRawValue: String = "bestBefore"
+    var price: Double?
 
     init(id: UUID, name: String, quantity: Int, locationRawValue: String, expiryDate: Date,
-         reminderStoredValue: Int, photoFileName: String?, createdAt: Date) {
+         reminderStoredValue: Int, photoFileName: String?,
+         dateTypeRawValue: String, price: Double?, createdAt: Date) {
         self.id = id
         self.name = name
         self.quantity = quantity
@@ -26,6 +30,8 @@ final class PantryItemRecord {
         self.expiryDate = expiryDate
         self.reminderStoredValue = reminderStoredValue
         self.photoFileName = photoFileName
+        self.dateTypeRawValue = dateTypeRawValue
+        self.price = price
         self.createdAt = createdAt
     }
 
@@ -33,7 +39,8 @@ final class PantryItemRecord {
         self.init(id: item.id, name: item.name, quantity: item.quantity,
                   locationRawValue: item.location.rawValue,
                   expiryDate: item.expiryDate, reminderStoredValue: item.reminder.storedValue,
-                  photoFileName: item.photoFileName, createdAt: item.createdAt)
+                  photoFileName: item.photoFileName, dateTypeRawValue: item.dateType.rawValue,
+                  price: item.price, createdAt: item.createdAt)
     }
 
     func update(from item: PantryItem) {
@@ -43,13 +50,16 @@ final class PantryItemRecord {
         expiryDate = item.expiryDate
         reminderStoredValue = item.reminder.storedValue
         photoFileName = item.photoFileName
+        dateTypeRawValue = item.dateType.rawValue
+        price = item.price
     }
 
     /// Converts back to the plain `PantryItem` the app uses.
     var entity: PantryItem {
         PantryItem(id: id, name: name, quantity: quantity,
                    location: StorageLocation(rawValue: locationRawValue) ?? .pantry,
-                   expiryDate: expiryDate, reminder: ReminderPreference(storedValue: reminderStoredValue),
+                   expiryDate: expiryDate, dateType: DateType(rawValue: dateTypeRawValue) ?? .bestBefore,
+                   price: price, reminder: ReminderPreference(storedValue: reminderStoredValue),
                    photoFileName: photoFileName, createdAt: createdAt)
     }
 }

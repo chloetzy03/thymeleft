@@ -8,6 +8,8 @@ struct PantryItemDraft: Equatable {
     var quantity: Int
     var location: StorageLocation
     var expiryDate: Date
+    var dateType: DateType = .bestBefore
+    var price: Double?
     var reminder: ReminderPreference = .useDefault
     var photo: PhotoChange = .keep
 }
@@ -23,6 +25,8 @@ enum PhotoChange: Equatable {
 enum PantryItemRules {
     static let maxNameLength = 40
     static let quantityRange = 1...99
+    /// A sanity limit so a slipped finger can't record a million-dollar carrot.
+    static let maxPrice = 100_000.0
 }
 
 /// Why a draft was turned down.
@@ -30,4 +34,5 @@ enum ItemValidationError: Error, Equatable {
     case emptyName
     case nameTooLong(max: Int)
     case invalidQuantity
+    case invalidPrice
 }

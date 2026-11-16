@@ -9,6 +9,9 @@ struct PantryItem: Identifiable, Equatable {
     var quantity: Int
     var location: StorageLocation
     var expiryDate: Date
+    var dateType: DateType
+    /// What the user paid, if they told us. Nil means "use the average value instead".
+    var price: Double?
     var reminder: ReminderPreference
     /// Name of the photo file on the phone, or nil when the item has no photo (we show an emoji).
     var photoFileName: String?
@@ -19,6 +22,8 @@ struct PantryItem: Identifiable, Equatable {
          quantity: Int = 1,
          location: StorageLocation,
          expiryDate: Date,
+         dateType: DateType = .bestBefore,
+         price: Double? = nil,
          reminder: ReminderPreference = .useDefault,
          photoFileName: String? = nil,
          createdAt: Date = Date()) {
@@ -27,6 +32,8 @@ struct PantryItem: Identifiable, Equatable {
         self.quantity = quantity
         self.location = location
         self.expiryDate = expiryDate
+        self.dateType = dateType
+        self.price = price
         self.reminder = reminder
         self.photoFileName = photoFileName
         self.createdAt = createdAt

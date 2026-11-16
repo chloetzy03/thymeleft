@@ -11,6 +11,7 @@ final class AddEditItemPresenterTests: XCTestCase {
         var emoji: String?
         var expiryDate: Date?
         var nameError: String?
+        var priceError: String?
         var errorMessage: String?
         var primerShownCount = 0
         var shownPhotos: [Data?] = []
@@ -21,6 +22,7 @@ final class AddEditItemPresenterTests: XCTestCase {
         func showEmoji(_ emoji: String) { self.emoji = emoji }
         func showExpiryDate(_ date: Date) { expiryDate = date }
         func showNameError(_ message: String?) { nameError = message }
+        func showPriceError(_ message: String?) { priceError = message }
         func showError(message: String) { errorMessage = message }
         func showReminderPrimer() { primerShownCount += 1 }
         func showPhoto(_ data: Data?) { shownPhotos.append(data) }
@@ -80,6 +82,7 @@ final class AddEditItemPresenterTests: XCTestCase {
                                        settingsStore: InMemorySettingsStore(settings: settings),
                                        photoStore: photoStore ?? InMemoryPhotoStore(),
                                        existingItem: existing, calendar: calendar,
+                                       locale: Locale(identifier: "en_US"),
                                        prefill: prefill, onSaved: onSaved)
         return (sut, view, interactor, router)
     }
@@ -236,6 +239,86 @@ final class AddEditItemPresenterTests: XCTestCase {
         XCTAssertEqual(savedCallbackCount, 0)
     }
 
+    // MARK: Date type and price
+
+    func test_viewDidLoad_whenAdding_defaultsToBestBeforeWithNoPrice() async throws {
+        let (sut, view, _, _) = makeSUT()
+
+        sut.viewDidLoad()
+
+        let form = try XCTUnwrap(view.form)
+        XCTAssertEqual(form.dateTypeTitles, ["Best before", "Use by"])
+        XCTAssertEqual(form.selectedDateTypeIndex, 0)
+        XCTAssertEqual(form.priceText, "")
+    }
+
+    func test_viewDidLoad_whenEditing_showsTheItemsDateTypeAndPrice() async throws {
+        let item = PantryItem(name: "Chicken", location: .fridge, expiryDate: today,
+                              dateType: .useBy, price: 3.5)
+        let (sut, view, _, _) = makeSUT(existing: item)
+
+        sut.viewDidLoad()
+
+        let form = try XCTUnwrap(view.form)
+        XCTAssertEqual(form.selectedDateTypeIndex, 1)
+        XCTAssertEqual(form.priceText, "3.5")
+    }
+
+    func test_didTapSave_includesTheChosenDateTypeAndPrice() async {
+        let (sut, _, interactor, _) = makeSUT()
+        sut.viewDidLoad()
+        sut.didSelectDateType(at: 1)
+        sut.didChangePrice("4.25")
+
+        sut.didTapSave(name: "Chicken", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        XCTAssertEqual(interactor.savedDrafts.first?.dateType, .useBy)
+        XCTAssertEqual(interactor.savedDrafts.first?.price, 4.25)
+    }
+
+    func test_didTapSave_withAnEmptyPrice_savesWithoutOne() async {
+        let (sut, _, interactor, _) = makeSUT()
+        sut.viewDidLoad()
+        sut.didChangePrice("   ")
+
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        XCTAssertEqual(interactor.savedDrafts.count, 1)
+        XCTAssertNil(interactor.savedDrafts.first?.price)
+    }
+
+    func test_didTapSave_withAPriceThatIsNotANumber_showsAMessageAndDoesNotSave() async {
+        let (sut, view, interactor, _) = makeSUT()
+        sut.viewDidLoad()
+        sut.didChangePrice("abc")
+
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        XCTAssertEqual(view.priceError, "Please enter the price as a number, like 3.50.")
+        XCTAssertTrue(interactor.savedDrafts.isEmpty)
+    }
+
+    func test_changingThePrice_clearsTheOldPriceMessage() async {
+        let (sut, view, _, _) = makeSUT()
+        sut.viewDidLoad()
+        sut.didChangePrice("abc")
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        sut.didChangePrice("3")
+
+        XCTAssertNil(view.priceError)
+    }
+
+    func test_didSelectDateType_withInvalidIndex_changesNothing() async {
+        let (sut, _, interactor, _) = makeSUT()
+        sut.viewDidLoad()
+
+        sut.didSelectDateType(at: 9)
+        sut.didTapSave(name: "Milk", quantity: 1, locationIndex: 0, reminderIndex: 0, expiryDate: today)
+
+        XCTAssertEqual(interactor.savedDrafts.first?.dateType, .bestBefore)
+    }
+
     // MARK: Problems
 
     func test_didFailValidation_showsFriendlyMessages() async {
@@ -251,6 +334,9 @@ final class AddEditItemPresenterTests: XCTestCase {
 
         sut.didFailValidation(.invalidQuantity)
         XCTAssertEqual(view.errorMessage, "Quantity must be between 1 and 99.")
+
+        sut.didFailValidation(.invalidPrice)
+        XCTAssertEqual(view.priceError, "That price doesn't look right. Please check it.")
     }
 
     func test_didFail_showsASaveErrorMessage() async {

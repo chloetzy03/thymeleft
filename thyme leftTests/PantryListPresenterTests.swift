@@ -153,6 +153,38 @@ final class PantryListPresenterTests: XCTestCase {
         XCTAssertEqual(row.accessibilityText, "Milk, Fridge, quantity 2, expires tomorrow")
     }
 
+    func test_didLoad_forAPastUseByItem_saysItClearlyAndWarns() async throws {
+        // Arrange
+        let (sut, view, _, _) = makeSUT()
+        let expiry = Calendar.current.date(from: DateComponents(year: 2026, month: 11, day: 18, hour: 12))!
+        let chicken = ExpiringItem(
+            item: PantryItem(name: "Chicken", location: .fridge, expiryDate: expiry, dateType: .useBy),
+            daysRemaining: -2, status: .expired)
+
+        // Act
+        sut.didLoad([chicken])
+
+        // Assert
+        let row = try XCTUnwrap(view.sections.first?.rows.first)
+        XCTAssertEqual(row.subtitle, "Fridge · x1 · Use by 18/11/2026")
+        XCTAssertEqual(row.badgeText, "Past use-by")
+        XCTAssertEqual(row.accessibilityText,
+                       "Chicken, Fridge, quantity 1, past its use by date, 2 days ago. Do not eat")
+    }
+
+    func test_didLoad_forAPastBestBeforeItem_suggestsCheckingFirst() async throws {
+        // Arrange
+        let (sut, view, _, _) = makeSUT()
+
+        // Act
+        sut.didLoad([makeEntry("Pasta", days: -3, status: .expired)])
+
+        // Assert
+        let row = try XCTUnwrap(view.sections.first?.rows.first)
+        XCTAssertEqual(row.badgeText, "Past date")
+        XCTAssertTrue(row.accessibilityText.hasSuffix("Check before eating"))
+    }
+
     func test_didLoad_carriesTheItemsPhotoNameIntoTheRow() async throws {
         // Arrange
         let (sut, view, _, _) = makeSUT()
