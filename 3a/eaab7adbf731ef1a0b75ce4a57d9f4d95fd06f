@@ -1,0 +1,25 @@
+"thyme left/Services/FoodIconProvider.swift"
+  s_7ae13adebac50a::t_972606965727e4 38-39
+"thyme left/Services/Recipes/IngredientMatcher.swift"
+  s_7ae13adebac50a::t_972606965727e4 25-26
+"thyme left/Services/FoodNameTranslator.swift"
+  s_7ae13adebac50a::t_972606965727e4 1-110
+"thyme left/Common/Extensions/Array+DisplayList.swift"
+  s_7ae13adebac50a::t_30740ab1e96626 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3aeaab7adbf731ef1a0b75ce4a57d9f4d95fd06f",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
