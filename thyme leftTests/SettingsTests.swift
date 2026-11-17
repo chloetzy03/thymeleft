@@ -327,8 +327,9 @@ final class SettingsPresenterTests: XCTestCase {
     }
 
     private final class RouterSpy: SettingsRouterProtocol {
-        var openCount = 0
+        var openCount = 0, welcomeCount = 0
         func openSystemSettings() { openCount += 1 }
+        func showWelcome() { welcomeCount += 1 }
     }
 
     private let calendar = TestCalendar.utc
@@ -457,5 +458,16 @@ final class SettingsPresenterTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(router.openCount, 1)
+    }
+
+    func test_tappingShowWelcomeAgain_asksTheRouter() async {
+        // Arrange
+        let (sut, _, _, router) = makeSUT()
+
+        // Act
+        sut.didTapShowWelcome()
+
+        // Assert
+        XCTAssertEqual(router.welcomeCount, 1)
     }
 }
