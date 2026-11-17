@@ -1,0 +1,28 @@
+"thyme leftTests/WelcomeTests.swift"
+  s_7ae13adebac50a::t_5e310ac1570abc 1-32,34-42,44-59,61-68,70-79,81-92,94-121,123-163,165-172,174-183,185-188
+  s_7ae13adebac50a::t_6333ed4c3fb7fb 33,43,60,69,80,93,122,164,173,184
+"thyme leftUITests/WelcomeFlowUITests.swift"
+  s_7ae13adebac50a::t_561cc093adb46f 1-100
+"thyme leftTests/SettingsTests.swift"
+  s_7ae13adebac50a::t_561cc093adb46f 462-471
+  s_7ae13adebac50a::t_b40c2278e170e3 330,332
+  s_7ae13adebac50a::t_8716afee93188e 472
+"thyme leftTests/HomeTests.swift"
+  s_7ae13adebac50a::t_d1c5df8b4e8eb9 402
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "31f76c079a8abc5009712f6675a84f97fa0f3e34",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
