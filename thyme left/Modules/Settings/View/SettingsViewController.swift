@@ -20,6 +20,7 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
 
     private var reminderRows: [UIView] = []
     private let savingsNote = UILabel()
+    private let welcomeButton = UIButton(type: .system)
 
     // MARK: Life of the screen
 
@@ -191,6 +192,15 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
         openButton.contentHorizontalAlignment = .leading
         openButton.addAction(UIAction { [weak self] _ in self?.presenter?.didTapOpenSystemSettings() },
                              for: .touchUpInside)
+        var welcomeConfig = UIButton.Configuration.plain()
+        welcomeConfig.baseForegroundColor = Theme.Colors.brand
+        var welcomeTitle = AttributedString(String(localized: "Show again"))
+        welcomeTitle.font = Theme.Typography.body.font
+        welcomeConfig.attributedTitle = welcomeTitle
+        welcomeButton.configuration = welcomeConfig
+        welcomeButton.accessibilityLabel = String(localized: "Show the welcome tour again")
+        welcomeButton.addAction(UIAction { [weak self] _ in self?.presenter?.didTapShowWelcome() }, for: .touchUpInside)
+
         let bannerStack = UIStackView(arrangedSubviews: [bannerLabel, openButton])
         bannerStack.axis = .vertical
         bannerStack.spacing = 6
@@ -226,7 +236,9 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
             sectionHeader(String(localized: "SAVINGS")),
             card(FormCardRow(title: String(localized: "Show money saved"), control: moneySwitch)),
             card(FormCardRow(title: String(localized: "Average item value"), control: itemValueButton)),
-            pad(savingsNote)
+            pad(savingsNote),
+            sectionHeader(String(localized: "ABOUT")),
+            card(FormCardRow(title: String(localized: "Welcome tour"), control: welcomeButton))
         ])
         column.axis = .vertical
         column.spacing = 10

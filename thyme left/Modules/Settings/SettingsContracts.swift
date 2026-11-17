@@ -48,6 +48,7 @@ protocol SettingsPresenterProtocol: AnyObject {
     func didChangeShowMoneySaved(isOn: Bool)
     func didSelectItemValue(at index: Int)
     func didTapOpenSystemSettings()
+    func didTapShowWelcome()
 }
 
 // MARK: - Interactor (the chef)
@@ -69,4 +70,6 @@ protocol SettingsInteractorOutput: AnyObject {
 @MainActor
 protocol SettingsRouterProtocol: AnyObject {
     func openSystemSettings()
+    /// Shows the welcome tour again.
+    func showWelcome()
 }

@@ -689,3 +689,41 @@ Not verified: the greeting text at your real local time zone on a physical phone
 6. How would you add a new screen text so nothing is forgotten?
 
 ---
+
+## Milestone 13 – First-run welcome tour (branch `feature/welcome-screen`)
+
+**What we built (plain English)**
+- The very first time the app opens, a full-screen tour covers it: **Scan the date → Swipe when you're done → We'll remind you**. Swipe between slides or tap Next. "Skip" closes it at once. The last slide asks (nicely) for reminders, then iOS shows its own permission question.
+- It never comes back by itself. **Settings → About → Welcome tour → Show again** brings it back (handy for demos).
+- It's in English and Chinese, works with big text (a slide scrolls if the words don't fit) and with VoiceOver (each slide reads as a title then a sentence, plus "Page 1 of 3").
+
+**Where each part lives (VIPER again)**
+- `WelcomeStore` (a tiny yes/no memory, saved in UserDefaults) answers "has this person seen it?". Behind a protocol, so tests use an in-memory copy.
+- Interactor: remembers the tour was seen, and can ask about reminders.
+- Presenter: the slide words and what each button does (Next / Skip / Turn on reminders / Maybe later).
+- View: sideways-swiping slides + dots + two buttons. Router: closes it.
+- `RootTabBarController` decides *when*: once, after the app first appears.
+
+**Concepts**
+- *Remember before you ask*: we mark the tour as seen BEFORE iOS's reminder question, so even if the app is closed in the middle, the tour won't repeat.
+- *Same answer whatever the choice*: "Turn on reminders" and "Maybe later" both finish the tour. Saying no is allowed.
+- *The UI-test switch*: UI tests skip the tour (otherwise it would cover every test); `-uiTestingShowWelcome` brings it back for the tests about it.
+- *A crash found by a test*: a constraint tying a slide to the swiping area was activated before the slide was inside it, and iOS aborts when two views have no common parent. Fix: attach it after the slide is added.
+- *The recurring test gotcha*: `@MainActor` test methods must be `async` or the test host crashes ("pointer being freed was not allocated").
+- *Reuse*: the Settings "Show again" row uses the same `FormCardRow` as every other setting.
+
+**Commit messages used**
+- `feat: add the first-run welcome tour (VIPER module and welcome store)`
+- `feat: show the tour once at first launch and add Show again in Settings`
+- `feat: translate the welcome tour into Chinese`
+- `test: welcome presenter, interactor, store and UI tests`
+- `docs: add milestone 13 notes`
+
+### Check your understanding
+1. Why do we mark the tour as seen before asking iOS about reminders?
+2. Why do "Turn on reminders" and "Maybe later" both close the tour?
+3. Why does `AppContainer` need a flag for UI tests, and what would happen without it?
+4. Why is the "has the tour been seen?" memory behind a protocol?
+5. What went wrong in the first version, and what did the test tell us?
+
+---

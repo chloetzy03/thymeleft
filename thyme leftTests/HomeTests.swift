@@ -399,7 +399,7 @@ final class OutcomeAndPersistenceTests: XCTestCase {
             func save(_ settings: AppSettings) { saved.append(settings) }
             func setNotificationsEnabled(_ isOn: Bool) {}
         }
-        final class RouterSpy: SettingsRouterProtocol { func openSystemSettings() {} }
+        final class RouterSpy: SettingsRouterProtocol { func openSystemSettings() {}; func showWelcome() {} }
         let view = ViewSpy(), interactor = InteractorSpy()
         let formatter = ExpiryDateFormatter(settingsStore: InMemorySettingsStore())
         let sut = SettingsPresenter(view: view, interactor: interactor, router: RouterSpy(), dateFormatter: formatter,

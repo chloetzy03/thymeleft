@@ -35,7 +35,7 @@ People who throw away groceries because they forgot the date, and want an easy a
 | App icon: the smiling fridge with a sprout, in light, dark and tinted versions (sources in docs/design/icon-source) | 10 | Done (Sprig mascot art can follow later) |
 | Recipe search (by dish or ingredient) and a fuller Home screen (shortcuts, This week strip, Tonight's idea) | 11 | Done |
 | Simplified Chinese: every screen, Chinese food names (emoji, recipe matching, search), Chinese dates on packs, camera permission text | 12 | Done (Chinese scanning needs a real-phone check) |
-| First-run welcome (3 short slides: Scan, Swipe, Remind) | 13 | Planned |
+| First-run welcome (3 slides: Scan, Swipe, Remind), shown once, can be shown again from Settings | 13 | Done |
 | Release prep: privacy policy, privacy manifest, screenshots (English and Chinese), App Store text (English and Chinese), TestFlight | 14 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
@@ -47,6 +47,10 @@ People who throw away groceries because they forgot the date, and want an easy a
 - Money is an estimate (items used this month x an average value you choose in Me, in your own currency) and can be turned off.
 - Privacy: history is only names and dates, kept on the phone.
 - Selling point: "See the food you've rescued, not just the food you've lost."
+
+## First-run welcome
+- Three swipeable slides the first time the app opens: scan the date, swipe when you're done, get reminders. "Skip" and "Maybe later" are always there; reminders are only asked on the last slide, by choice.
+- It never repeats on its own. Settings → About → Welcome tour → Show again.
 
 ## Languages
 - English and Simplified Chinese (简体中文). The app follows the phone's language; iOS also lets people pick a language for just this app.
