@@ -1,0 +1,22 @@
+"thyme left/Services/Scanning/TextRecognizing.swift"
+  s_7ae13adebac50a::t_2728aded1e20bb 48-51,74-78
+  s_7ae13adebac50a::t_8a93162af882d2 79
+"thyme left/Services/Scanning/ExpiryDateParser.swift"
+  s_7ae13adebac50a::t_2728aded1e20bb 104-106,162-173,232-233
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e5cc86145e32e22fe7dbd07a9a511ce9b132f72e",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
