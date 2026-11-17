@@ -32,7 +32,7 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Optional price per item; Best before / Use by with clearer past-date wording | 7.5 | Done |
 | Real-iPhone testing and fixes (round 1: scanner day bug, photo, dark mode, Scan tab as camera screen) | 8 | Round 1 done; reminders confirmed working on a real iPhone |
 | Accessibility audit (contrast, largest text, VoiceOver labels) | 9 | First pass done; re-check on device |
-| App icon (round 1: docs/design/app-icons.html, round 2 light+dark: app-icons-v2.html) then Sprig mascot art | 10 | Round 2 ready, waiting for a pick |
+| App icon: the fridge with a sprout and a timer, in light, dark and tinted versions (sources in docs/design/icon-source) | 10 | Done (Sprig mascot art can follow later) |
 | Recipe search (by dish or ingredient) and a fuller Home screen (shortcuts, This week strip, Tonight's idea) | 11 | Done |
 | Chinese language (Simplified), Chinese date scanning | 12 | Planned |
 | Release prep: privacy policy, privacy manifest, screenshots, App Store text, TestFlight | 13 | Planned |
