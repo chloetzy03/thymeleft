@@ -1,0 +1,17 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "NSCameraUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "thyme left 使用相机来读取到期日期，并给你的食材拍照。所有内容都不会离开你的手机。"
+          }
+        }
+      }
+    }
+  }
+}

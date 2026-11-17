@@ -26,12 +26,12 @@ final class PantryListViewController: UIViewController, PantryListViewProtocol {
         super.viewDidLoad()
         view.backgroundColor = Theme.Colors.background
 
-        title = "Pantry"
+        title = String(localized: "Pantry")
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             systemItem: .add,
             primaryAction: UIAction { [weak self] _ in self?.presenter?.didTapAdd() })
-        navigationItem.rightBarButtonItem?.accessibilityLabel = "Add item"
+        navigationItem.rightBarButtonItem?.accessibilityLabel = String(localized: "Add item")
 
         buildLayout()
         presenter?.viewDidLoad()
@@ -79,8 +79,8 @@ final class PantryListViewController: UIViewController, PantryListViewProtocol {
     }
 
     func showError(message: String) {
-        let alert = UIAlertController(title: "Something went wrong", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: String(localized: "Something went wrong"), message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: String(localized: "OK"), style: .default))
         present(alert, animated: true)
     }
 
@@ -176,9 +176,9 @@ extension PantryListViewController: UITableViewDataSource, UITableViewDelegate {
             return action
         }
         let configuration = UISwipeActionsConfiguration(actions: [
-            action("Delete", .removed, style: .destructive, color: Theme.Colors.urgentText, symbol: "trash"),
-            action("Threw away", .wasted, style: .normal, color: Theme.Colors.soonText, symbol: "arrow.3.trianglepath"),
-            action("Used it", .used, style: .normal, color: Theme.Colors.brand, symbol: "checkmark.circle")
+            action(String(localized: "Delete"), .removed, style: .destructive, color: Theme.Colors.urgentText, symbol: "trash"),
+            action(String(localized: "Threw away"), .wasted, style: .normal, color: Theme.Colors.soonText, symbol: "arrow.3.trianglepath"),
+            action(String(localized: "Used it"), .used, style: .normal, color: Theme.Colors.brand, symbol: "checkmark.circle")
         ])
         // A long swipe must never delete by accident, so it performs nothing.
         configuration.performsFirstActionWithFullSwipe = false

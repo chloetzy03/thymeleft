@@ -127,20 +127,20 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             case .takePhoto:
                 // The simulator has no camera, so only offer this when one exists.
                 guard UIImagePickerController.isSourceTypeAvailable(.camera) else { continue }
-                sheet.addAction(UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
+                sheet.addAction(UIAlertAction(title: String(localized: "Take photo"), style: .default) { [weak self] _ in
                     self?.presenter?.didSelectPhotoOption(.takePhoto)
                 })
             case .chooseFromLibrary:
-                sheet.addAction(UIAlertAction(title: "Choose from library", style: .default) { [weak self] _ in
+                sheet.addAction(UIAlertAction(title: String(localized: "Choose from library"), style: .default) { [weak self] _ in
                     self?.presenter?.didSelectPhotoOption(.chooseFromLibrary)
                 })
             case .removePhoto:
-                sheet.addAction(UIAlertAction(title: "Remove photo", style: .destructive) { [weak self] _ in
+                sheet.addAction(UIAlertAction(title: String(localized: "Remove photo"), style: .destructive) { [weak self] _ in
                     self?.presenter?.didSelectPhotoOption(.removePhoto)
                 })
             }
         }
-        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        sheet.addAction(UIAlertAction(title: String(localized: "Cancel"), style: .cancel))
         sheet.popoverPresentationController?.sourceView = photoButton // needed on iPad
         present(sheet, animated: true)
     }
@@ -164,11 +164,11 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .denied, .restricted:
             let alert = UIAlertController(
-                title: "Camera is off",
-                message: "Allow camera access in iOS Settings to take photos of your food.",
+                title: String(localized: "Camera is off"),
+                message: String(localized: "Allow camera access in iOS Settings to take photos of your food."),
                 preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Not now", style: .cancel))
-            alert.addAction(UIAlertAction(title: "Open Settings", style: .default) { _ in
+            alert.addAction(UIAlertAction(title: String(localized: "Not now"), style: .cancel))
+            alert.addAction(UIAlertAction(title: String(localized: "Open Settings"), style: .default) { _ in
                 if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
             })
             present(alert, animated: true)
@@ -209,21 +209,21 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
 
     func showReminderPrimer() {
         let alert = UIAlertController(
-            title: "Get reminders?",
-            message: "We'll nudge you before things expire so nothing goes to waste. You can change this any time in the Me tab.",
+            title: String(localized: "Get reminders?"),
+            message: String(localized: "We'll nudge you before things expire so nothing goes to waste. You can change this any time in the Me tab."),
             preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Not now", style: .cancel) { [weak self] _ in
+        alert.addAction(UIAlertAction(title: String(localized: "Not now"), style: .cancel) { [weak self] _ in
             self?.presenter?.didRespondToReminderPrimer(allow: false)
         })
-        alert.addAction(UIAlertAction(title: "Allow reminders", style: .default) { [weak self] _ in
+        alert.addAction(UIAlertAction(title: String(localized: "Allow reminders"), style: .default) { [weak self] _ in
             self?.presenter?.didRespondToReminderPrimer(allow: true)
         })
         present(alert, animated: true)
     }
 
     func showError(message: String) {
-        let alert = UIAlertController(title: "Something went wrong", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: String(localized: "Something went wrong"), message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: String(localized: "OK"), style: .default))
         present(alert, animated: true)
     }
 
@@ -286,18 +286,18 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
             badge.bottomAnchor.constraint(equalTo: emojiTile.bottomAnchor, constant: -4)
         ])
 
-        emojiTile.accessibilityLabel = "Item photo"
-        emojiTile.accessibilityHint = "Add, change or remove a photo"
+        emojiTile.accessibilityLabel = String(localized: "Item photo")
+        emojiTile.accessibilityHint = String(localized: "Add, change or remove a photo")
         emojiTile.addAction(UIAction { [weak self] _ in self?.presenter?.didTapPhoto() }, for: .touchUpInside)
 
-        nameField.placeholder = "What is it? e.g. Milk"
+        nameField.placeholder = String(localized: "What is it? e.g. Milk")
         nameField.font = Theme.Typography.sectionTitle.font
         nameField.textColor = Theme.Colors.ink
         nameField.adjustsFontForContentSizeCategory = true
         nameField.returnKeyType = .done
         nameField.autocapitalizationType = .sentences
         nameField.clearButtonMode = .whileEditing
-        nameField.accessibilityLabel = "Item name"
+        nameField.accessibilityLabel = String(localized: "Item name")
         nameField.addAction(UIAction { [weak self] _ in
             self?.presenter?.nameChanged(self?.nameField.text ?? "")
         }, for: .editingChanged)
@@ -324,7 +324,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         quantityValueLabel.font = Theme.Typography.itemName.font
         quantityValueLabel.textColor = Theme.Colors.ink
         quantityValueLabel.adjustsFontForContentSizeCategory = true
-        stepper.accessibilityLabel = "Quantity"
+        stepper.accessibilityLabel = String(localized: "Quantity")
         stepper.addAction(UIAction { [weak self] _ in self?.updateQuantityLabel() }, for: .valueChanged)
         let quantityControl = UIStackView(arrangedSubviews: [quantityValueLabel, stepper])
         quantityControl.axis = .horizontal
@@ -335,19 +335,19 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         var locationConfig = UIButton.Configuration.plain()
         locationConfig.baseForegroundColor = Theme.Colors.brand
         locationButton.configuration = locationConfig
-        locationButton.accessibilityLabel = "Storage location"
+        locationButton.accessibilityLabel = String(localized: "Storage location")
 
         // --- Reminder
         var reminderConfig = UIButton.Configuration.plain()
         reminderConfig.baseForegroundColor = Theme.Colors.brand
         reminderButton.configuration = reminderConfig
-        reminderButton.accessibilityLabel = "Reminder"
+        reminderButton.accessibilityLabel = String(localized: "Reminder")
 
         // --- Expiry date
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
         datePicker.tintColor = Theme.Colors.brand
-        datePicker.accessibilityLabel = "Expiry date"
+        datePicker.accessibilityLabel = String(localized: "Expiry date")
         datePicker.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.presenter?.didChangeExpiryDate(self.datePicker.date)
@@ -361,7 +361,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         quickDateBar.onSelect = { [weak self] index in self?.presenter?.didSelectQuickDate(at: index) }
 
         // --- What kind of date is it? (tell the Presenter whenever the choice changes)
-        dateTypeControl.accessibilityLabel = "Date type"
+        dateTypeControl.accessibilityLabel = String(localized: "Date type")
         dateTypeControl.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.presenter?.didSelectDateType(at: self.dateTypeControl.selectedSegmentIndex)
@@ -374,7 +374,7 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         priceField.font = Theme.Typography.itemName.font
         priceField.adjustsFontForContentSizeCategory = true
         priceField.textColor = Theme.Colors.ink
-        priceField.accessibilityLabel = "Price"
+        priceField.accessibilityLabel = String(localized: "Price")
         priceField.accessibilityIdentifier = "priceField"
         // The number pad has no "Done" key, so we add a small bar above it.
         let keyboardBar = UIToolbar()
@@ -401,11 +401,11 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         scanConfig.image = UIImage(systemName: "viewfinder")
         scanConfig.imagePadding = 8
         scanConfig.cornerStyle = .large
-        var scanTitle = AttributedString("Scan the date on the pack")
+        var scanTitle = AttributedString(String(localized: "Scan the date on the pack"))
         scanTitle.font = Theme.Typography.button.font
         scanConfig.attributedTitle = scanTitle
         scanButton.configuration = scanConfig
-        scanButton.accessibilityLabel = "Scan date"
+        scanButton.accessibilityLabel = String(localized: "Scan date")
         scanButton.addAction(UIAction { [weak self] _ in self?.presenter?.didTapScan() }, for: .touchUpInside)
 
         // --- Save button
@@ -434,16 +434,16 @@ final class AddEditItemViewController: UIViewController, AddEditItemViewProtocol
         let column = UIStackView(arrangedSubviews: [
             padded(nameCard),
             padded(nameErrorLabel),
-            padded(FormCardRow(title: "Quantity", control: quantityControl)),
-            padded(FormCardRow(title: "Where is it kept?", control: locationButton)),
+            padded(FormCardRow(title: String(localized: "Quantity"), control: quantityControl)),
+            padded(FormCardRow(title: String(localized: "Where is it kept?"), control: locationButton)),
             padded(scanButton),
-            padded(FormCardRow(title: "Expires", control: datePicker)),
+            padded(FormCardRow(title: String(localized: "Expires"), control: datePicker)),
             padded(pastDateLabel),
             quickDateBar, // already has its own side margins
-            padded(FormCardRow(title: "Date type", control: dateTypeControl)),
-            padded(FormCardRow(title: "Price (optional)", control: priceField)),
+            padded(FormCardRow(title: String(localized: "Date type"), control: dateTypeControl)),
+            padded(FormCardRow(title: String(localized: "Price (optional)"), control: priceField)),
             padded(priceErrorLabel),
-            padded(FormCardRow(title: "Remind me", control: reminderButton)),
+            padded(FormCardRow(title: String(localized: "Remind me"), control: reminderButton)),
             padded(saveButton)
         ])
         column.axis = .vertical

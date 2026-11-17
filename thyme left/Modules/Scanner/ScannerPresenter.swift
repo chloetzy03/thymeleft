@@ -77,7 +77,7 @@ final class ScannerPresenter: ScannerPresenterProtocol, ScannerInteractorOutput 
     }
 
     func didFindNothing() {
-        view?.showNothingFound(message: "We couldn't find a date in that picture. Try a clearer photo of the printed date.")
+        view?.showNothingFound(message: String(localized: "We couldn't find a date in that picture. Try a clearer photo of the printed date."))
     }
 
     // MARK: Helpers
@@ -94,7 +94,7 @@ final class ScannerPresenter: ScannerPresenterProtocol, ScannerInteractorOutput 
         var swapText: String?
         if let alternative = current.alternative {
             let other = showingAlternative ? current.date : alternative
-            swapText = "Not right? Read it as \(dateFormatter.string(from: other)) instead"
+            swapText = String(localized: "Not right? Read it as \(dateFormatter.string(from: other)) instead")
         }
         view?.showFound(ScanFoundViewModel(
             dateText: dateFormatter.string(from: date),
@@ -102,16 +102,16 @@ final class ScannerPresenter: ScannerPresenterProtocol, ScannerInteractorOutput 
             sourceText: current.sourceText,
             swapText: swapText,
             guessNote: current.dayWasGuessed && !showingAlternative
-                ? "We couldn't see a day on the pack, so we used the last day of the month. You can change it on the next screen."
+                ? String(localized: "We couldn't see a day on the pack, so we used the last day of the month. You can change it on the next screen.")
                 : nil))
     }
 
     private func countdown(_ days: Int) -> String {
         switch days {
-        case ..<0: return "That date has already passed"
-        case 0: return "Expires today"
-        case 1: return "Expires tomorrow"
-        default: return "Expires in \(textFormatter.badgeText(daysRemaining: days))"
+        case ..<0: return String(localized: "That date has already passed")
+        case 0: return String(localized: "Expires today")
+        case 1: return String(localized: "Expires tomorrow")
+        default: return String(localized: "Expires in \(textFormatter.badgeText(daysRemaining: days))")
         }
     }
 }

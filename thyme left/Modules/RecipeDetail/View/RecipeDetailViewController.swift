@@ -42,10 +42,10 @@ final class RecipeDetailViewController: UIViewController, RecipeDetailViewProtoc
         if let subtitle = detail.subtitle { column.addArrangedSubview(label(subtitle, font: Theme.Typography.body.font, color: Theme.Colors.muted)) }
         column.addArrangedSubview(pill(detail.haveSummary))
 
-        column.addArrangedSubview(label("Ingredients", font: Theme.Typography.sectionTitle.font, header: true))
+        column.addArrangedSubview(label(String(localized: "Ingredients"), font: Theme.Typography.sectionTitle.font, header: true))
         for ingredient in detail.ingredients { column.addArrangedSubview(ingredientRow(ingredient)) }
 
-        column.addArrangedSubview(label("Steps", font: Theme.Typography.sectionTitle.font, header: true))
+        column.addArrangedSubview(label(String(localized: "Steps"), font: Theme.Typography.sectionTitle.font, header: true))
         for (index, step) in detail.steps.enumerated() {
             column.addArrangedSubview(label("\(index + 1). \(step)", font: Theme.Typography.body.font))
         }
@@ -56,7 +56,7 @@ final class RecipeDetailViewController: UIViewController, RecipeDetailViewProtoc
         if let title = detail.videoButtonTitle {
             column.addArrangedSubview(button(title, filled: false) { [weak self] in self?.presenter?.didTapVideo() })
         }
-        column.addArrangedSubview(label("Recipe data from TheMealDB (themealdb.com)",
+        column.addArrangedSubview(label(String(localized: "Recipe data from TheMealDB (themealdb.com)"),
                                         font: Theme.Typography.caption.font, color: Theme.Colors.muted))
     }
 

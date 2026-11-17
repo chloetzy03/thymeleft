@@ -8,6 +8,8 @@ struct RecipeRowViewModel: Equatable {
     let imageURL: URL?
     let usesText: String        // "Uses Milk, Spinach"
     let missingText: String     // "Missing: cream" or "You have everything"
+    /// True when something is missing (the view colours the line amber). Never compare the words: they change per language.
+    var hasMissing = false
     let accessibilityText: String
 }
 

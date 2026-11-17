@@ -47,15 +47,15 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
     func didLoad(_ snapshot: HomeSnapshot) {
         view?.showHome(HomeViewModel(
             greeting: greeting(),
-            tagline: "Make good food go further.",
+            tagline: String(localized: "Make good food go further."),
             summary: summary(for: snapshot),
             tiles: snapshot.useSoon.map(tile(for:)),
-            cookTitle: "✨ What can I cook?",
-            cookSubtitle: "Recipes using your existing ingredients",
-            addFirstTitle: snapshot.pantryCount == 0 ? "Add your first item" : nil,
+            cookTitle: String(localized: "✨ What can I cook?"),
+            cookSubtitle: String(localized: "Recipes using your existing ingredients"),
+            addFirstTitle: snapshot.pantryCount == 0 ? String(localized: "Add your first item") : nil,
             week: snapshot.pantryCount == 0 ? nil : weekModel(for: snapshot),
             idea: snapshot.recipeIdea.map(ideaModel(for:)),
-            savedTitle: "Saved from the bin",
+            savedTitle: String(localized: "Saved from the bin"),
             savedText: savedText(for: snapshot)))
     }
 
@@ -70,18 +70,18 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
     func greeting() -> String {
         let hour = calendar.component(.hour, from: dateProvider.now)
         switch hour {
-        case 5..<12: return "Good morning, chef!"
-        case 12..<18: return "Good afternoon, chef!"
-        default: return "Good evening, chef!"
+        case 5..<12: return String(localized: "Good morning, chef!")
+        case 12..<18: return String(localized: "Good afternoon, chef!")
+        default: return String(localized: "Good evening, chef!")
         }
     }
 
     private func summary(for snapshot: HomeSnapshot) -> String {
-        if snapshot.pantryCount == 0 { return "Your pantry is empty. Add something and we'll watch the dates." }
+        if snapshot.pantryCount == 0 { return String(localized: "Your pantry is empty. Add something and we'll watch the dates.") }
         switch snapshot.attentionCount {
-        case 0: return "Nothing is about to expire. Nice work!"
-        case 1: return "You've got 1 ingredient to use soon."
-        default: return "You've got \(snapshot.attentionCount) ingredients to use soon."
+        case 0: return String(localized: "Nothing is about to expire. Nice work!")
+        case 1: return String(localized: "You've got 1 ingredient to use soon.")
+        default: return String(localized: "You've got \(snapshot.attentionCount) ingredients to use soon.")
         }
     }
 
@@ -105,7 +105,7 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
         formatter.setLocalizedDateFormatFromTemplate("EEE")
 
         let days = snapshot.week.enumerated().map { index, day -> HomeWeekDayViewModel in
-            HomeWeekDayViewModel(label: index == 0 ? "Today" : formatter.string(from: day.date),
+            HomeWeekDayViewModel(label: index == 0 ? String(localized: "Today") : formatter.string(from: day.date),
                                  countText: day.count == 0 ? "\u{00B7}" : "\(day.count)",
                                  count: day.count,
                                  status: day.count == 0 ? .fresh : day.status)
@@ -113,35 +113,35 @@ final class HomePresenter: HomePresenterProtocol, HomeInteractorOutput {
         let total = snapshot.week.reduce(0) { $0 + $1.count }
         let subtitle: String
         switch total {
-        case 0: subtitle = "Nothing runs out in the next 7 days."
-        case 1: subtitle = "1 item runs out in the next 7 days."
-        default: subtitle = "\(total) items run out in the next 7 days."
+        case 0: subtitle = String(localized: "Nothing runs out in the next 7 days.")
+        case 1: subtitle = String(localized: "1 item runs out in the next 7 days.")
+        default: subtitle = String(localized: "\(total) items run out in the next 7 days.")
         }
         var footnote: String?
-        if snapshot.pastCount == 1 { footnote = "1 item is already past its date." }
-        if snapshot.pastCount > 1 { footnote = "\(snapshot.pastCount) items are already past their date." }
+        if snapshot.pastCount == 1 { footnote = String(localized: "1 item is already past its date.") }
+        if snapshot.pastCount > 1 { footnote = String(localized: "\(snapshot.pastCount) items are already past their date.") }
 
-        let spoken = days.map { $0.count == 0 ? "\($0.label), none" : "\($0.label), \($0.count)" }.joined(separator: ". ")
-        return HomeWeekViewModel(title: "This week", subtitle: subtitle, days: days, footnote: footnote,
-                                 accessibilityText: "This week. \(subtitle) \(spoken). \(footnote ?? "")")
+        let spoken = days.map { $0.count == 0 ? String(localized: "\($0.label), none") : "\($0.label), \($0.count)" }.joined(separator: ". ")
+        return HomeWeekViewModel(title: String(localized: "This week"), subtitle: subtitle, days: days, footnote: footnote,
+                                 accessibilityText: String(localized: "This week. \(subtitle) \(spoken). \(footnote ?? "")"))
     }
 
     private func ideaModel(for idea: HomeRecipeIdea) -> HomeIdeaViewModel {
-        let uses = idea.usedItemNames.prefix(3).joined(separator: ", ")
-        var subtitle = "Uses \(uses)"
-        if idea.missingCount == 0 { subtitle += " · you have everything" }
-        else { subtitle += " · \(idea.missingCount) more to find" }
-        return HomeIdeaViewModel(caption: "Tonight's idea", title: idea.name, subtitle: subtitle,
-                                 accessibilityText: "Tonight's idea: \(idea.name). \(subtitle)")
+        let uses = Array(idea.usedItemNames.prefix(3)).joinedForDisplay()
+        var subtitle = String(localized: "Uses \(uses)")
+        if idea.missingCount == 0 { subtitle += String(localized: " · you have everything") }
+        else { subtitle += String(localized: " · \(idea.missingCount) more to find") }
+        return HomeIdeaViewModel(caption: String(localized: "Tonight's idea"), title: idea.name, subtitle: subtitle,
+                                 accessibilityText: String(localized: "Tonight's idea: \(idea.name). \(subtitle)"))
     }
 
     private func savedText(for snapshot: HomeSnapshot) -> String {
         guard snapshot.usedThisMonth > 0 else {
-            return "Swipe a pantry item and tap \"Used it\" when you finish it. It counts here."
+            return String(localized: "Swipe a pantry item and tap \"Used it\" when you finish it. It counts here.")
         }
-        let items = snapshot.usedThisMonth == 1 ? "1 item" : "\(snapshot.usedThisMonth) items"
-        var text = "\(items) used up this month"
-        if let value = snapshot.savedValue { text += " · about \(MoneyFormatter.string(value, locale: locale))" }
+        let items = snapshot.usedThisMonth == 1 ? String(localized: "1 item") : String(localized: "\(snapshot.usedThisMonth) items")
+        var text = String(localized: "\(items) used up this month")
+        if let value = snapshot.savedValue { text += String(localized: " · about \(MoneyFormatter.string(value, locale: locale))") }
         return text
     }
 }

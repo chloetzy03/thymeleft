@@ -51,7 +51,7 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Theme.Colors.background
-        navigationItem.title = "Scan a date" // not `title`: that would also rename the tab
+        navigationItem.title = String(localized: "Scan a date") // not `title`: that would also rename the tab
         if isPopUp {
             navigationItem.leftBarButtonItem = UIBarButtonItem(
                 systemItem: .cancel,
@@ -93,8 +93,8 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
         frameView.isHidden = (scanner == nil)
         pickedImageData = nil
         hintLabel.text = scanner == nil
-            ? "Live scanning isn't available here. Choose a photo of the date instead."
-            : "Point the camera at the printed date"
+            ? String(localized: "Live scanning isn't available here. Choose a photo of the date instead.")
+            : String(localized: "Point the camera at the printed date")
         hintLabel.isHidden = false
         try? scanner?.startScanning()
     }
@@ -106,7 +106,7 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
         frameView.isHidden = true
         dateLabel.text = found.dateText
         countdownLabel.text = found.countdownText
-        sourceLabel.text = "Read from: \(found.sourceText)"
+        sourceLabel.text = String(localized: "Read from: \(found.sourceText)")
         guessLabel.text = found.guessNote
         guessLabel.isHidden = (found.guessNote == nil)
         swapButton.isHidden = (found.swapText == nil)
@@ -118,7 +118,7 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
             swapButton.configuration = config
         }
         card.isHidden = false
-        UIAccessibility.post(notification: .announcement, argument: "Found \(found.dateText). \(found.countdownText)")
+        UIAccessibility.post(notification: .announcement, argument: String(localized: "Found \(found.dateText). \(found.countdownText)"))
     }
 
     func showNothingFound(message: String) {
@@ -133,7 +133,7 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
             showFallbackIfNeeded()
             return
         }
-        let scanner = DataScannerViewController(recognizedDataTypes: [.text()],
+        let scanner = DataScannerViewController(recognizedDataTypes: [liveTextType()],
                                                 qualityLevel: .accurate,
                                                 recognizesMultipleItems: true,
                                                 isHighFrameRateTrackingEnabled: false,
@@ -156,6 +156,13 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
         presenter?.viewDidLoad()
     }
 
+    /// The live camera reads English and Chinese when this iPhone supports both.
+    private func liveTextType() -> DataScannerViewController.RecognizedDataType {
+        let supported = DataScannerViewController.supportedTextRecognitionLanguages
+        let wanted = TextRecognitionLanguages.preferred.filter { supported.contains($0) }
+        return wanted.isEmpty ? .text() : .text(languages: wanted)
+    }
+
     private func showFallbackIfNeeded() {
         presenter?.viewDidLoad() // refreshes the hint text
         fallbackStack.isHidden = false
@@ -165,7 +172,7 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
         let denied = [AVAuthorizationStatus.denied, .restricted].contains(AVCaptureDevice.authorizationStatus(for: .video))
         settingsButton.isHidden = !denied
         if denied {
-            hintLabel.text = "Camera access is off. Turn it on in Settings, or choose a photo of the date."
+            hintLabel.text = String(localized: "Camera access is off. Turn it on in Settings, or choose a photo of the date.")
         }
     }
 
@@ -176,7 +183,7 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
         device.torchMode = on ? .on : .off
         device.unlockForConfiguration()
         torchButton.configuration?.image = UIImage(systemName: on ? "flashlight.on.fill" : "flashlight.off.fill")
-        torchButton.accessibilityValue = on ? "On" : "Off"
+        torchButton.accessibilityValue = on ? String(localized: "On") : String(localized: "Off")
     }
 
     /// The text lines the camera can see right now, top to bottom.
@@ -222,10 +229,10 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
             usePhotoButton.isEnabled = true
             guard let data = image?.jpegData(compressionQuality: 0.9) else {
                 let alert = UIAlertController(
-                    title: "Couldn't take the photo",
-                    message: "We'll still use the date. You can add a photo on the next screen.",
+                    title: String(localized: "Couldn't take the photo"),
+                    message: String(localized: "We'll still use the date. You can add a photo on the next screen."),
                     preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in self?.finish(with: nil) })
+                alert.addAction(UIAlertAction(title: String(localized: "OK"), style: .default) { [weak self] _ in self?.finish(with: nil) })
                 present(alert, animated: true)
                 return
             }
@@ -277,10 +284,10 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
 
         // Fallback: choose a photo of the date
         let fallbackButton = UIButton(type: .system)
-        styledButton(fallbackButton, title: "Choose a photo of the date", filled: true) { [weak self] in self?.choosePhoto() }
-        fallbackButton.accessibilityLabel = "Choose a photo of the date"
+        styledButton(fallbackButton, title: String(localized: "Choose a photo of the date"), filled: true) { [weak self] in self?.choosePhoto() }
+        fallbackButton.accessibilityLabel = String(localized: "Choose a photo of the date")
         fallbackStack.addArrangedSubview(fallbackButton)
-        styledButton(settingsButton, title: "Open Settings", filled: false) {
+        styledButton(settingsButton, title: String(localized: "Open Settings"), filled: false) {
             if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
         }
         settingsButton.isHidden = true
@@ -311,10 +318,10 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
         }
         styledButton(swapButton, title: "", filled: false) { [weak self] in self?.presenter?.didTapSwap() }
         swapButton.isHidden = true
-        styledButton(useButton, title: "Use this date", filled: true) { [weak self] in self?.confirm(withPhoto: false) }
-        styledButton(usePhotoButton, title: "Use date and keep photo", filled: false) { [weak self] in self?.confirm(withPhoto: true) }
-        styledButton(retryButton, title: "Scan again", filled: false) { [weak self] in self?.presenter?.didTapRetry() }
-        useButton.accessibilityLabel = "Use this date"
+        styledButton(useButton, title: String(localized: "Use this date"), filled: true) { [weak self] in self?.confirm(withPhoto: false) }
+        styledButton(usePhotoButton, title: String(localized: "Use date and keep photo"), filled: false) { [weak self] in self?.confirm(withPhoto: true) }
+        styledButton(retryButton, title: String(localized: "Scan again"), filled: false) { [weak self] in self?.presenter?.didTapRetry() }
+        useButton.accessibilityLabel = String(localized: "Use this date")
 
         let cardStack = UIStackView(arrangedSubviews: [dateLabel, countdownLabel, sourceLabel, guessLabel, swapButton,
                                                        useButton, usePhotoButton, retryButton])
@@ -337,10 +344,10 @@ final class ScannerViewController: UIViewController, ScannerViewProtocol {
             button.isHidden = true
             button.addAction(UIAction { _ in action() }, for: .touchUpInside)
         }
-        styleRound(photoLibraryButton, symbol: "photo.on.rectangle", label: "Choose a photo of the date") { [weak self] in
+        styleRound(photoLibraryButton, symbol: "photo.on.rectangle", label: String(localized: "Choose a photo of the date")) { [weak self] in
             self?.choosePhoto()
         }
-        styleRound(torchButton, symbol: "flashlight.off.fill", label: "Torch") { [weak self] in
+        styleRound(torchButton, symbol: "flashlight.off.fill", label: String(localized: "Torch")) { [weak self] in
             guard let self else { return }
             self.setTorch(on: !self.torchIsOn)
         }

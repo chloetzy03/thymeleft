@@ -115,10 +115,10 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
             reminderTime: reminderDate,
             dateFormatTitles: DateFormatPreference.allCases.map(\.displayName),
             selectedDateFormatIndex: DateFormatPreference.allCases.firstIndex(of: settings.dateFormat) ?? 0,
-            datePreview: "Today looks like \(today)",
+            datePreview: String(localized: "Today looks like \(today)"),
             urgentTitles: SettingsChoices.urgentDays.map(urgentTitle),
             selectedUrgentIndex: SettingsChoices.urgentDays.firstIndex(of: settings.urgentDays) ?? 1,
-            soonTitles: SettingsChoices.soonDays.map { "\($0) days or less" },
+            soonTitles: SettingsChoices.soonDays.map { String(localized: "\($0) days or less") },
             selectedSoonIndex: SettingsChoices.soonDays.firstIndex(of: settings.soonDays) ?? 1,
             showMoneySaved: settings.showMoneySaved,
             itemValueTitles: SettingsChoices.itemValues.map { MoneyFormatter.string($0, locale: locale) },
@@ -127,15 +127,15 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
 
     private func urgentTitle(days: Int) -> String {
         switch days {
-        case 0: return "Expires today"
-        case 1: return "1 day or less"
-        default: return "\(days) days or less"
+        case 0: return String(localized: "Expires today")
+        case 1: return String(localized: "1 day or less")
+        default: return String(localized: "\(days) days or less")
         }
     }
 
     /// Only shown when the user wants reminders but iOS is blocking them.
     private func banner() -> String? {
         guard settings.notificationsEnabled, permission == .denied else { return nil }
-        return "Notifications are turned off for thyme left in iOS Settings, so reminders can't reach you."
+        return String(localized: "Notifications are turned off for thyme left in iOS Settings, so reminders can't reach you.")
     }
 }
