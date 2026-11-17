@@ -101,7 +101,9 @@ struct ExpiryDateParser {
     /// Upper-case, tidy spaces, and fix letters the camera often mistakes for digits
     /// (an "O" inside a number is almost always a zero).
     private func normalize(_ text: String) -> String {
-        var result = text.uppercased()
+        // Full-width digits and punctuation (as printed on some packs) become normal ones first: "２０２７" -> "2027".
+        let halfWidth = text.applyingTransform(.fullwidthToHalfwidth, reverse: false) ?? text
+        var result = halfWidth.uppercased()
             .replacingOccurrences(of: ",", with: " ")
             .replacingOccurrences(of: "\u{2019}", with: "'")
         let fixes: [(pattern: String, replacement: String)] = [
@@ -157,6 +159,18 @@ struct ExpiryDateParser {
             }
         }
 
+        // 0a. Chinese style: 2027年11月5日, 2027年11月5号, 27年11月5日 (year, month, day: never ambiguous)
+        take(#"(?<!\d)(\d{4}|\d{2}) ?年 ?(\d{1,2}) ?月 ?(\d{1,2}) ?[日号]?"#) { parts in
+            guard let year = Int(parts[1]), let month = Int(parts[2]), let day = Int(parts[3]),
+                  let date = makeDate(day: day, month: month, year: fullYear(year)) else { return nil }
+            return (date, nil)
+        }
+        // 0b. Chinese style without a day: 2027年11月 (lasts until the end of that month)
+        take(#"(?<!\d)(\d{4}|\d{2}) ?年 ?(\d{1,2}) ?月"#, hasDay: false) { parts in
+            guard let year = Int(parts[1]), let month = Int(parts[2]),
+                  let date = endOfMonth(month: month, year: fullYear(year)) else { return nil }
+            return (date, nil)
+        }
         // 1. 18/11/2026, 18-11-26, 18.11.26, 18 11 2026 (day and month in the user's order)
         take(#"(?<!\d)(\d{1,2})[\s./\-](\d{1,2})[\s./\-](\d{4}|\d{2})(?!\d)"#) { parts in
             guard let a = Int(parts[1]), let b = Int(parts[2]), let year = Int(parts[3]) else { return nil }
@@ -215,8 +229,8 @@ struct ExpiryDateParser {
         let carriedLabel = (before.count < 6 && previousIsOnlyALabel) ? previousLine + " " : ""
         let context = String((carriedLabel + before).suffix(24))
 
-        let expiryEnd = lastMatchEnd(of: #"\bEXP\w*|BEST ?BEFORE|\bBBE?\b|USE ?BY|BEST ?BY|SELL ?BY|\bUBD\b|\bBEFORE\b"#, in: context)
-        let madeEnd = lastMatchEnd(of: #"\bMF[GD]\b|\bMANUF\w*|\bPROD\w*|\bPKD\b|\bPACKED\b|\bDOM\b"#, in: context)
+        let expiryEnd = lastMatchEnd(of: #"\bEXP\w*|BEST ?BEFORE|\bBBE?\b|USE ?BY|BEST ?BY|SELL ?BY|\bUBD\b|\bBEFORE\b|保质期至|保质期限至|有效期至|有效期|到期|食用期限|最佳食用|赏味期|请在|截止|失效"#, in: context)
+        let madeEnd = lastMatchEnd(of: #"\bMF[GD]\b|\bMANUF\w*|\bPROD\w*|\bPKD\b|\bPACKED\b|\bDOM\b|生产日期|生产|制造|灌装|包装日期|出厂|分装"#, in: context)
 
         switch (expiryEnd, madeEnd) {
         case let (expiry?, made?): return expiry > made ? .expiry : .manufactured // the closest label wins
