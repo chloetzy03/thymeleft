@@ -342,6 +342,17 @@
         }
       }
     },
+    "ABOUT": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关于"
+          }
+        }
+      }
+    },
     "Add an item": {
       "extractionState": "manual",
       "localizations": {
@@ -848,6 +859,17 @@
         }
       }
     },
+    "Get a friendly nudge before things expire, so good food never goes to waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "食材快到期前给你一个温馨提醒，别让好食物浪费掉。"
+          }
+        }
+      }
+    },
     "Get reminders?": {
       "extractionState": "manual",
       "localizations": {
@@ -1002,6 +1024,17 @@
         }
       }
     },
+    "Maybe later": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后再说"
+          }
+        }
+      }
+    },
     "Me": {
       "extractionState": "manual",
       "localizations": {
@@ -1031,6 +1064,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "不提醒"
+          }
+        }
+      }
+    },
+    "Next": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一步"
           }
         }
       }
@@ -1266,6 +1310,17 @@
         }
       }
     },
+    "Page %lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %1$lld 页，共 %2$lld 页"
+          }
+        }
+      }
+    },
     "Pantry": {
       "extractionState": "manual",
       "localizations": {
@@ -1328,6 +1383,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "把相机对准印刷的日期"
+          }
+        }
+      }
+    },
+    "Point your camera at the date on the pack. We read it for you, so no typing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把相机对准包装上的日期，我们帮你读出来，不用打字。"
           }
         }
       }
@@ -1618,6 +1684,17 @@
         }
       }
     },
+    "Scan the date": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扫描日期"
+          }
+        }
+      }
+    },
     "Scan the date on the pack": {
       "extractionState": "manual",
       "localizations": {
@@ -1673,6 +1750,17 @@
         }
       }
     },
+    "Show again": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再看一次"
+          }
+        }
+      }
+    },
     "Show money saved": {
       "extractionState": "manual",
       "localizations": {
@@ -1680,6 +1768,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "显示节省的金额"
+          }
+        }
+      }
+    },
+    "Show the welcome tour again": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再看一次欢迎介绍"
+          }
+        }
+      }
+    },
+    "Skip": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过"
+          }
+        }
+      }
+    },
+    "Slide a food to the left and tap “Used it”. Watch your savings grow.": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把食材向左滑，点“用完了”，看着你节省的钱慢慢变多。"
           }
         }
       }
@@ -1724,6 +1845,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "在食品柜里左滑一件食材，点“用完了”，它就会计入这里。"
+          }
+        }
+      }
+    },
+    "Swipe when you're done": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "吃完就左滑"
           }
         }
       }
@@ -1889,6 +2021,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "重试"
+          }
+        }
+      }
+    },
+    "Turn on reminders": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开启提醒"
           }
         }
       }
@@ -2102,6 +2245,17 @@
         }
       }
     },
+    "We'll remind you": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我们会提醒你"
+          }
+        }
+      }
+    },
     "We'll still use the date. You can add a photo on the next screen.": {
       "extractionState": "manual",
       "localizations": {
@@ -2109,6 +2263,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "日期仍会保留。你可以在下一页添加照片。"
+          }
+        }
+      }
+    },
+    "Welcome tour": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎介绍"
           }
         }
       }
