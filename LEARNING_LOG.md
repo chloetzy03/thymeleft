@@ -620,3 +620,26 @@ Not verified: the greeting text at your real local time zone on a physical phone
 5. What happens to the This week strip when the pantry is empty, and why?
 
 ---
+
+## Milestone 10 – App icon (branch `feature/app-icon`)
+
+**What we did (plain English)**
+- You picked the fridge. We chose the version **without a face**: at the tiny sizes iOS uses, a face turns into two dots, while a plain fridge stays one clean shape. Sprig the mascot lives inside the app instead.
+- The icon is drawn as an SVG (a text-based picture), then turned into three 1024×1024 PNGs: **light**, **dark** and **tinted** (iOS lets users pick any of these looks for their home screen).
+
+**Concepts**
+- *One big file, iOS shrinks it*: you supply 1024 px; iOS makes every smaller size.
+- *No rounded corners and no transparency*: iOS rounds the corners itself, and the App Store rejects icons with an alpha (see-through) channel.
+- *Tinted icons are greys only*: iOS adds the colour.
+- *Keep the source*: the SVGs are saved so the icon can be changed later without redrawing.
+
+**Commit messages used**
+- `feat: add the app icon (fridge with sprout and timer, light/dark/tinted)`
+
+### Check your understanding
+1. Why do we supply only one size, and who makes the others?
+2. Why must the icon have no transparency?
+3. Why does the tinted version use only greys?
+4. Why did we drop the smiley face from the icon?
+
+---
