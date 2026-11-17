@@ -1,0 +1,31 @@
+"thyme left/Modules/Settings/SettingsPresenter.swift"
+  s_7ae13adebac50a::t_b40c2278e170e3 89-92
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_e3daba9ce3ca3e 103-117
+  s_7ae13adebac50a::t_b40c2278e170e3 71-72
+  s_7ae13adebac50a::t_7fee0803a0f138 118
+"thyme left/Modules/Settings/View/SettingsViewController.swift"
+  s_7ae13adebac50a::t_b40c2278e170e3 23,195-203,239-241
+"thyme left/App/AppContainer.swift"
+  s_7ae13adebac50a::t_e3daba9ce3ca3e 25,63-67
+"thyme left/Modules/Settings/SettingsContracts.swift"
+  s_7ae13adebac50a::t_b40c2278e170e3 51,73-74
+"thyme left/Modules/Settings/SettingsRouter.swift"
+  s_7ae13adebac50a::t_b40c2278e170e3 7-14,29-30,32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0f3aa5e87786d825c8d08074f0a3884092d8346d",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
