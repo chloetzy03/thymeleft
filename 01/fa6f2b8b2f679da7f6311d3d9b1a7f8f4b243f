@@ -1,0 +1,30 @@
+"thyme left/Modules/Welcome/WelcomeInteractor.swift"
+  s_7ae13adebac50a::t_6e737134b4d09c 1-31
+"thyme left/Modules/Welcome/WelcomeRouter.swift"
+  s_7ae13adebac50a::t_6e737134b4d09c 1-31
+"thyme left/Modules/Welcome/WelcomeContracts.swift"
+  s_7ae13adebac50a::t_6e737134b4d09c 1-58
+"thyme left/Modules/Welcome/View/WelcomeViewController.swift"
+  s_7ae13adebac50a::t_e3daba9ce3ca3e 1-39,46-232
+  s_7ae13adebac50a::t_21cce0952b4d6d 40-45
+"thyme left/Services/WelcomeStore.swift"
+  s_7ae13adebac50a::t_6e737134b4d09c 1-38
+"thyme left/Modules/Welcome/WelcomePresenter.swift"
+  s_7ae13adebac50a::t_6e737134b4d09c 1-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "01fa6f2b8b2f679da7f6311d3d9b1a7f8f4b243f",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
