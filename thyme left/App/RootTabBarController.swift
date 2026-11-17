@@ -71,18 +71,18 @@ final class RootTabBarController: UITabBarController {
             dateProvider: container.dateProvider)
 
         viewControllers = [
-            makeTab(title: "Home", symbol: "house",
+            makeTab(title: String(localized: "Home"), symbol: "house",
                     content: home),
             // The Scan tab IS the camera screen (no pop-up). Once a date is found, a new item
             // opens with the date (and photo, if kept) already filled in.
-            makeTab(title: "Scan", symbol: "viewfinder", content: scanner),
+            makeTab(title: String(localized: "Scan"), symbol: "viewfinder", content: scanner),
             // The pantry sits inside a navigation controller: it gives us the big title on top
             // and lets us push other screens (like "Add item") on top of it.
-            makeTab(title: "Pantry", symbol: "refrigerator",
+            makeTab(title: String(localized: "Pantry"), symbol: "refrigerator",
                     content: ThemedNavigationController(rootViewController: pantry)),
-            makeTab(title: "Recipes", symbol: "fork.knife",
+            makeTab(title: String(localized: "Recipes"), symbol: "fork.knife",
                     content: ThemedNavigationController(rootViewController: recipes)),
-            makeTab(title: "Me", symbol: "person.crop.circle",
+            makeTab(title: String(localized: "Me"), symbol: "person.crop.circle",
                     content: ThemedNavigationController(rootViewController: settings))
         ]
         // Real users start on Home. UI tests start on Pantry (where most of them begin)

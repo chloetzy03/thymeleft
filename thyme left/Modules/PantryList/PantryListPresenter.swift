@@ -80,8 +80,8 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
         let fresh = items.filter { !$0.status.needsAttention }.map(row(for:))
 
         var sections: [PantrySectionViewModel] = []
-        if !needAttention.isEmpty { sections.append(PantrySectionViewModel(title: "USE SOON", rows: needAttention)) }
-        if !fresh.isEmpty { sections.append(PantrySectionViewModel(title: "FRESH", rows: fresh)) }
+        if !needAttention.isEmpty { sections.append(PantrySectionViewModel(title: String(localized: "USE SOON"), rows: needAttention)) }
+        if !fresh.isEmpty { sections.append(PantrySectionViewModel(title: String(localized: "FRESH"), rows: fresh)) }
         view?.showSections(sections)
     }
 
@@ -90,20 +90,20 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
     }
 
     func didFail(_ error: Error) {
-        view?.showError(message: "We couldn't load your pantry. Please try again.")
+        view?.showError(message: String(localized: "We couldn't load your pantry. Please try again."))
     }
 
     // MARK: Helpers
 
     private var filterTitles: [String] {
-        locations.map { $0?.displayName ?? "All" }
+        locations.map { $0?.displayName ?? String(localized: "All") }
     }
 
     private func row(for entry: ExpiringItem) -> PantryRowViewModel {
         let item = entry.item
         let badge = formatter.badgeText(daysRemaining: entry.daysRemaining, dateType: item.dateType)
         let dateText = dateFormatter.string(from: item.expiryDate)
-        let datePart = item.dateType == .useBy ? "Use by \(dateText)" : dateText
+        let datePart = item.dateType == .useBy ? String(localized: "Use by \(dateText)") : dateText
         return PantryRowViewModel(
             id: item.id,
             emoji: iconProvider.emoji(for: item.name),
@@ -112,8 +112,7 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
             subtitle: "\(item.location.displayName) · x\(item.quantity) · \(datePart)",
             badgeText: badge,
             status: entry.status,
-            accessibilityText: "\(item.name), \(item.location.displayName), quantity \(item.quantity), "
-                + formatter.spokenText(daysRemaining: entry.daysRemaining, dateType: item.dateType)
+            accessibilityText: String(localized: "\(item.name), \(item.location.displayName), quantity \(item.quantity), \(formatter.spokenText(daysRemaining: entry.daysRemaining, dateType: item.dateType))")
         )
     }
 
@@ -121,14 +120,14 @@ final class PantryListPresenter: PantryListPresenterProtocol, PantryListInteract
         guard let location else {
             return PantryEmptyStateViewModel(
                 emoji: "🌿",
-                title: "Nothing here yet",
-                message: "Add your first item and we'll watch the dates for you.",
-                buttonTitle: "Add first item")
+                title: String(localized: "Nothing here yet"),
+                message: String(localized: "Add your first item and we'll watch the dates for you."),
+                buttonTitle: String(localized: "Add first item"))
         }
         return PantryEmptyStateViewModel(
             emoji: "🌿",
-            title: "Nothing in the \(location.displayName.lowercased())",
-            message: "Items you store in the \(location.displayName.lowercased()) will show up here.",
+            title: String(localized: "Nothing in the \(location.displayName.lowercased())"),
+            message: String(localized: "Items you store in the \(location.displayName.lowercased()) will show up here."),
             buttonTitle: nil)
     }
 }

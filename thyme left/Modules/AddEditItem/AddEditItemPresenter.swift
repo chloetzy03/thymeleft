@@ -10,10 +10,10 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         let offset: DateComponents
     }
     private let quickDates = [
-        QuickDate(title: "Tomorrow", offset: DateComponents(day: 1)),
-        QuickDate(title: "3 days", offset: DateComponents(day: 3)),
-        QuickDate(title: "1 week", offset: DateComponents(day: 7)),
-        QuickDate(title: "1 month", offset: DateComponents(month: 1))
+        QuickDate(title: String(localized: "Tomorrow"), offset: DateComponents(day: 1)),
+        QuickDate(title: String(localized: "3 days"), offset: DateComponents(day: 3)),
+        QuickDate(title: String(localized: "1 week"), offset: DateComponents(day: 7)),
+        QuickDate(title: String(localized: "1 month"), offset: DateComponents(month: 1))
     ]
 
     /// A brand-new item starts with an expiry date one week from today.
@@ -90,8 +90,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         let reminder = existingItem?.reminder ?? .useDefault
 
         view?.showForm(AddEditFormViewModel(
-            title: existingItem == nil ? "Add item" : "Edit item",
-            saveButtonTitle: existingItem == nil ? "Add to pantry" : "Save changes",
+            title: existingItem == nil ? String(localized: "Add item") : String(localized: "Edit item"),
+            saveButtonTitle: existingItem == nil ? String(localized: "Add to pantry") : String(localized: "Save changes"),
             name: name,
             emoji: iconProvider.emoji(for: name),
             quantity: existingItem?.quantity ?? 1,
@@ -178,7 +178,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
         var price: Double?
         if !trimmedPrice.isEmpty {
             guard let parsed = Self.parsePrice(trimmedPrice, locale: locale) else {
-                view?.showPriceError("Please enter the price as a number, like 3.50.")
+                view?.showPriceError(String(localized: "Please enter the price as a number, like 3.50."))
                 return
             }
             price = parsed
@@ -222,19 +222,19 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     func didFailValidation(_ error: ItemValidationError) {
         switch error {
         case .emptyName:
-            view?.showNameError("Please give this item a name.")
+            view?.showNameError(String(localized: "Please give this item a name."))
         case .nameTooLong(let max):
-            view?.showNameError("That name is too long. Please use \(max) characters or fewer.")
+            view?.showNameError(String(localized: "That name is too long. Please use \(max) characters or fewer."))
         case .invalidQuantity:
             let range = PantryItemRules.quantityRange
-            view?.showError(message: "Quantity must be between \(range.lowerBound) and \(range.upperBound).")
+            view?.showError(message: String(localized: "Quantity must be between \(range.lowerBound) and \(range.upperBound)."))
         case .invalidPrice:
-            view?.showPriceError("That price doesn't look right. Please check it.")
+            view?.showPriceError(String(localized: "That price doesn't look right. Please check it."))
         }
     }
 
     func didFail(_ error: Error) {
-        view?.showError(message: "We couldn't save this item. Please try again.")
+        view?.showError(message: String(localized: "We couldn't save this item. Please try again."))
     }
 
     // MARK: Helpers
@@ -242,7 +242,7 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     /// Past dates are allowed (you might find an old pack), but we say so, so it isn't a surprise.
     private func updatePastDateNote(for date: Date) {
         let isPast = calendar.startOfDay(for: date) < calendar.startOfDay(for: dateProvider.now)
-        view?.showPastDateNote(isPast ? "This date has already passed." : nil)
+        view?.showPastDateNote(isPast ? String(localized: "This date has already passed.") : nil)
     }
 
     /// Turns "3,50" or "3.50" (whatever the phone's region uses) into a number. Nil if it isn't one.
@@ -273,8 +273,8 @@ final class AddEditItemPresenter: AddEditItemPresenterProtocol, AddEditItemInter
     private func makeReminderOptions() -> [(title: String, preference: ReminderPreference)] {
         let defaultDays = settingsStore.load().defaultReminderDaysBefore
         var options: [(String, ReminderPreference)] = [
-            ("Default (\(formatter.reminderLeadText(daysBefore: defaultDays).lowercased()))", .useDefault),
-            ("Never", .never)
+            (String(localized: "Default (\(formatter.reminderLeadText(daysBefore: defaultDays).lowercased()))"), .useDefault),
+            (String(localized: "Never"), .never)
         ]
         for days in SettingsChoices.reminderDaysBefore {
             options.append((formatter.reminderLeadText(daysBefore: days), .daysBefore(days)))

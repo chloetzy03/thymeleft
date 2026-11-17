@@ -45,6 +45,10 @@ final class VisionTextRecognizer: TextRecognizing {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         request.usesLanguageCorrection = false // dates aren't dictionary words, so don't "correct" them
+        // Packs are often English AND Chinese, so read both (only the ones this iPhone supports).
+        let supported = (try? request.supportedRecognitionLanguages()) ?? []
+        let wanted = TextRecognitionLanguages.preferred.filter { supported.contains($0) }
+        if !wanted.isEmpty { request.recognitionLanguages = wanted }
 
         try VNImageRequestHandler(cgImage: image).perform([request])
         let observations = request.results ?? []
@@ -66,4 +70,10 @@ final class StubTextRecognizer: TextRecognizing {
     }
 
     func recognizeLines(in imageData: Data) async throws -> [String] { lines }
+}
+
+/// Which languages the text readers should understand.
+enum TextRecognitionLanguages {
+    /// English first (most dates are digits and English labels), then Simplified Chinese.
+    static let preferred = ["en-US", "zh-Hans"]
 }

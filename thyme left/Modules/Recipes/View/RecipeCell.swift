@@ -36,7 +36,7 @@ final class RecipeCell: UITableViewCell {
         titleLabel.text = row.title
         usesLabel.text = row.usesText
         missingLabel.text = row.missingText
-        missingLabel.textColor = row.missingText.hasPrefix("Missing") ? Theme.Colors.soonText : Theme.Colors.freshText
+        missingLabel.textColor = row.hasMissing ? Theme.Colors.soonText : Theme.Colors.freshText
         isAccessibilityElement = true
         accessibilityLabel = row.accessibilityText
 

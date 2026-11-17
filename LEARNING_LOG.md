@@ -643,3 +643,49 @@ Not verified: the greeting text at your real local time zone on a physical phone
 4. Why did we drop the smiley face from the icon?
 
 ---
+
+## Milestone 12 – Simplified Chinese 简体中文 (branch `feature/chinese-language`)
+
+**What we built (plain English)**
+- **Every word on screen can be Chinese.** The phone's language decides: set the iPhone to 简体中文 and the app follows. (iOS also lets people pick a language for one app in Settings → thyme left → Language, so we did not build our own switch.)
+- **Chinese food names work.** Type "牛奶" and you get the 🥛 emoji, recipes that use milk, and a search for "鸡肉" finds chicken recipes.
+- **Chinese dates on packs can be scanned**, like `保质期至2027年11月5日`, `请在2027年3月8日前食用`, even full-width digits. The camera now reads English and Chinese together.
+- **The icon is now the smiling fridge** (no timer), as you chose.
+
+**How it works**
+1. Every user-facing text in the code is wrapped like `String(localized: "Add item")`. The English words are the "key".
+2. `Localizable.xcstrings` (a "String Catalog") is the translation table: key → 简体中文. `InfoPlist.xcstrings` translates the camera permission pop-up.
+3. If a key has no Chinese yet, iOS quietly shows the English. So `scripts/check_localization.py` and the tests check that nothing was forgotten.
+4. `FoodNameTranslator` is a small Chinese↔English food dictionary. The recipe database only speaks English, so a Chinese item is translated just for comparing. It also works backwards: "Missing: Cheese" reads "还缺：奶酪".
+
+**Concepts**
+- *Localization vs translation*: localization = making the app able to switch languages (moving text out of the code); translation = the actual Chinese words.
+- *Keys and placeholders*: `"You have \(have) of \(total) ingredients"` becomes `You have %lld of %lld ingredients`. Chinese may reorder the pieces, so it uses `%1$lld` / `%2$lld`.
+- *Never compare translated text*: code like `if text.hasPrefix("Missing")` breaks in Chinese. We use a true/false flag (`hasMissing`) instead.
+- *Don't translate identifiers*: reminder ids (`expiry-<id>`), accessibility identifiers and file names stay as they are.
+- *Different grammar*: Chinese has no plurals ("1 day" / "2 days" are both "天"), no spaces between words, and uses "、" instead of ", " in lists.
+- *Compiler-extracted keys*: after a build, the compiler writes the list of every text it found. Our script compares that list with the catalog, so a missing translation is caught by a machine, not by eye.
+- *Limits (be honest in the App Store text)*: recipe names and steps come from TheMealDB and stay in English; only the ~170 most common foods are translated.
+
+**Bugs/gotchas met**
+- Xcode refused two keys that differ only in capital letters ("Today" / "today") because of its auto-generated Swift symbols. We turned that generator off (we don't use it).
+- The icon preview tool cached old pictures, so we rendered each version under a new file name.
+
+**Commit messages used**
+- `feat: switch the app icon to the smiling fridge (no timer)`
+- `feat: make every on-screen text translatable (String(localized:))`
+- `feat: add Simplified Chinese translations and the camera permission text`
+- `feat: understand Chinese food names (emoji, recipe matching, search)`
+- `feat: scan Chinese dates and read Chinese text on packs`
+- `test: Chinese unit tests, translation-file checks and a Chinese UI test`
+- `docs: add milestone 12 notes`
+
+### Check your understanding
+1. What is the "key" in `String(localized: "Add item")`, and what happens if Chinese is missing for it?
+2. Why do some Chinese translations use `%1$@` and `%2$@`?
+3. Why is `if row.missingText.hasPrefix("Missing")` a bug waiting to happen, and what did we do instead?
+4. Why does the recipe search translate "鸡肉" to "chicken" before asking the internet?
+5. Which strings must NOT be translated, and why? Name two.
+6. How would you add a new screen text so nothing is forgotten?
+
+---

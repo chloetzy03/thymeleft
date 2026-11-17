@@ -52,8 +52,8 @@ struct ReminderPlanner {
         return PlannedReminder(
             id: Self.identifier(for: item.id),
             fireDate: fireDate,
-            title: "\(item.name) \(formatter.spokenText(daysRemaining: daysBefore))",
-            body: "\(item.location.displayName) · x\(item.quantity). Use it up before it goes off 🌿")
+            title: String(localized: "\(item.name) \(formatter.spokenText(daysRemaining: daysBefore))"),
+            body: String(localized: "\(item.location.displayName) · x\(item.quantity). Use it up before it goes off 🌿"))
     }
 
     /// The reminder's name is built from the item's id (not its name), so renaming an item or

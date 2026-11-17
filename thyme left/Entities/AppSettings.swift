@@ -9,10 +9,10 @@ enum DateFormatPreference: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        case .system: return "Match my phone"
-        case .dayMonthYear: return "DD/MM/YYYY"
-        case .monthDayYear: return "MM/DD/YYYY"
-        case .yearMonthDay: return "YYYY-MM-DD"
+        case .system: return String(localized: "Match my phone")
+        case .dayMonthYear: return String(localized: "DD/MM/YYYY")
+        case .monthDayYear: return String(localized: "MM/DD/YYYY")
+        case .yearMonthDay: return String(localized: "YYYY-MM-DD")
         }
     }
 }

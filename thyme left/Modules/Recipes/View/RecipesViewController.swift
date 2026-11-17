@@ -28,7 +28,7 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Theme.Colors.background
-        title = "Recipes"
+        title = String(localized: "Recipes")
         navigationController?.navigationBar.prefersLargeTitles = true
         buildLayout()
         buildSearch()
@@ -89,7 +89,7 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
-        searchController.searchBar.placeholder = "Search dishes or ingredients"
+        searchController.searchBar.placeholder = String(localized: "Search dishes or ingredients")
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.returnKeyType = .search
         searchController.searchBar.tintColor = Theme.Colors.brand
@@ -119,7 +119,7 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
     private func buildLayout() {
         styleSegmented()
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in self.styleSegmented() }
-        segmented.accessibilityLabel = "Order recipes by"
+        segmented.accessibilityLabel = String(localized: "Order recipes by")
         segmented.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.presenter?.didSelectSort(at: self.segmented.selectedSegmentIndex)
@@ -145,7 +145,7 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         header.frame = CGRect(x: 0, y: 0, width: 0, height: 120)
         tableView.tableHeaderView = header
 
-        attributionLabel.text = "Recipes from TheMealDB (themealdb.com)"
+        attributionLabel.text = String(localized: "Recipes from TheMealDB (themealdb.com)")
         attributionLabel.font = Theme.Typography.caption.font
         attributionLabel.textColor = Theme.Colors.muted
         attributionLabel.textAlignment = .center
@@ -167,7 +167,7 @@ final class RecipesViewController: UIViewController, RecipesViewProtocol {
         messageView.isHidden = true
         messageView.onButtonTap = { [weak self] in self?.presenter?.didTapRetry() }
         spinner.color = Theme.Colors.brand
-        spinner.accessibilityLabel = "Loading recipes"
+        spinner.accessibilityLabel = String(localized: "Loading recipes")
         for subview in [tableView, messageView, spinner] {
             subview.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(subview)

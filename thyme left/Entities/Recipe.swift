@@ -32,8 +32,8 @@ enum RecipeSortMode: Int, CaseIterable {
 
     var title: String {
         switch self {
-        case .useItUpFirst: return "Use up first"
-        case .bestMatch: return "Best match"
+        case .useItUpFirst: return String(localized: "Use up first")
+        case .bestMatch: return String(localized: "Best match")
         }
     }
 }

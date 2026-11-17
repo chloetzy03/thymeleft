@@ -26,7 +26,7 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Theme.Colors.background
-        navigationItem.title = "Settings" // not `title`: that would also rename the tab
+        navigationItem.title = String(localized: "Settings") // not `title`: that would also rename the tab
         navigationController?.navigationBar.prefersLargeTitles = true
         buildLayout()
         presenter?.viewDidLoad()
@@ -136,7 +136,7 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
     private func buildLayout() {
         // Controls
         notificationsSwitch.onTintColor = Theme.Colors.brand
-        notificationsSwitch.accessibilityLabel = "Reminders"
+        notificationsSwitch.accessibilityLabel = String(localized: "Reminders")
         notificationsSwitch.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.presenter?.didChangeNotifications(isOn: self.notificationsSwitch.isOn)
@@ -145,26 +145,26 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
         reminderTimePicker.datePickerMode = .time
         reminderTimePicker.preferredDatePickerStyle = .compact
         reminderTimePicker.tintColor = Theme.Colors.brand
-        reminderTimePicker.accessibilityLabel = "Reminder time"
+        reminderTimePicker.accessibilityLabel = String(localized: "Reminder time")
         reminderTimePicker.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.presenter?.didChangeReminderTime(self.reminderTimePicker.date)
         }, for: .valueChanged)
 
         moneySwitch.onTintColor = Theme.Colors.brand
-        moneySwitch.accessibilityLabel = "Show money saved"
+        moneySwitch.accessibilityLabel = String(localized: "Show money saved")
         moneySwitch.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             self.presenter?.didChangeShowMoneySaved(isOn: self.moneySwitch.isOn)
         }, for: .valueChanged)
-        itemValueButton.accessibilityLabel = "Average item value"
+        itemValueButton.accessibilityLabel = String(localized: "Average item value")
 
-        defaultReminderButton.accessibilityLabel = "Default reminder"
-        dateFormatButton.accessibilityLabel = "Date format"
-        urgentButton.accessibilityLabel = "Red when"
-        soonButton.accessibilityLabel = "Amber when"
+        defaultReminderButton.accessibilityLabel = String(localized: "Default reminder")
+        dateFormatButton.accessibilityLabel = String(localized: "Date format")
+        urgentButton.accessibilityLabel = String(localized: "Red when")
+        soonButton.accessibilityLabel = String(localized: "Amber when")
 
-        savingsNote.text = "An estimate. Items you've used up count at the price you entered, or at this value if you left the price blank. It stays on your phone."
+        savingsNote.text = String(localized: "An estimate. Items you've used up count at the price you entered, or at this value if you left the price blank. It stays on your phone.")
         savingsNote.font = Theme.Typography.caption.font
         savingsNote.textColor = Theme.Colors.muted
         savingsNote.numberOfLines = 0
@@ -184,7 +184,7 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
         var openConfig = UIButton.Configuration.plain()
         openConfig.baseForegroundColor = Theme.Colors.soonText
         openConfig.contentInsets = .zero
-        var openTitle = AttributedString("Open Settings")
+        var openTitle = AttributedString(String(localized: "Open Settings"))
         openTitle.font = Theme.Typography.button.font
         openConfig.attributedTitle = openTitle
         let openButton = UIButton(configuration: openConfig)
@@ -207,25 +207,25 @@ final class SettingsViewController: UIViewController, SettingsViewProtocol {
         bannerRow.isHidden = true // an unseen view must not leave a gap, so we hide the whole row
 
         // Rows
-        let defaultReminderRow = FormCardRow(title: "Remind me", control: defaultReminderButton)
-        let timeRow = FormCardRow(title: "At", control: reminderTimePicker)
+        let defaultReminderRow = FormCardRow(title: String(localized: "Remind me"), control: defaultReminderButton)
+        let timeRow = FormCardRow(title: String(localized: "At"), control: reminderTimePicker)
         reminderRows = [defaultReminderRow, timeRow]
 
         let column = UIStackView(arrangedSubviews: [
-            sectionHeader("REMINDERS"),
-            card(FormCardRow(title: "Expiry reminders", control: notificationsSwitch)),
+            sectionHeader(String(localized: "REMINDERS")),
+            card(FormCardRow(title: String(localized: "Expiry reminders"), control: notificationsSwitch)),
             bannerRow,
             card(defaultReminderRow),
             card(timeRow),
-            sectionHeader("DATES"),
-            card(FormCardRow(title: "Date format", control: dateFormatButton)),
+            sectionHeader(String(localized: "DATES")),
+            card(FormCardRow(title: String(localized: "Date format"), control: dateFormatButton)),
             pad(datePreviewLabel),
-            sectionHeader("COLOURS"),
-            card(FormCardRow(title: "Turns red", control: urgentButton)),
-            card(FormCardRow(title: "Turns amber", control: soonButton)),
-            sectionHeader("SAVINGS"),
-            card(FormCardRow(title: "Show money saved", control: moneySwitch)),
-            card(FormCardRow(title: "Average item value", control: itemValueButton)),
+            sectionHeader(String(localized: "COLOURS")),
+            card(FormCardRow(title: String(localized: "Turns red"), control: urgentButton)),
+            card(FormCardRow(title: String(localized: "Turns amber"), control: soonButton)),
+            sectionHeader(String(localized: "SAVINGS")),
+            card(FormCardRow(title: String(localized: "Show money saved"), control: moneySwitch)),
+            card(FormCardRow(title: String(localized: "Average item value"), control: itemValueButton)),
             pad(savingsNote)
         ])
         column.axis = .vertical

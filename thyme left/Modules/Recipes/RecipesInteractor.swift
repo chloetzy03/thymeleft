@@ -70,16 +70,18 @@ final class RecipesInteractor: RecipesInteractorInput {
     private func runSearch(_ query: String, generation myGeneration: Int) async {
         // Search works even with an empty pantry; it just can't say "you have this" then.
         let usable = usablePantry() ?? []
+        // The recipe source speaks English, so a Chinese search like "鸡肉" is searched as "chicken".
+        let searchWords = FoodNameTranslator.shared.english(for: query)
         var recipes: [Recipe]
         var offline = false
         do {
-            recipes = try await searchOnline(query)
+            recipes = try await searchOnline(searchWords)
             guard myGeneration == generation else { return }
             cache.store(recipes)
         } catch {
             guard myGeneration == generation else { return }
             // No internet: look through the recipes saved on the phone instead.
-            recipes = searchSaved(query)
+            recipes = searchSaved(searchWords)
             offline = true
             if recipes.isEmpty {
                 let isOffline = (error as? RecipeServiceError) == .offline

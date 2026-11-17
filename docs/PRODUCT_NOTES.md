@@ -32,10 +32,11 @@ People who throw away groceries because they forgot the date, and want an easy a
 | Optional price per item; Best before / Use by with clearer past-date wording | 7.5 | Done |
 | Real-iPhone testing and fixes (round 1: scanner day bug, photo, dark mode, Scan tab as camera screen) | 8 | Round 1 done; reminders confirmed working on a real iPhone |
 | Accessibility audit (contrast, largest text, VoiceOver labels) | 9 | First pass done; re-check on device |
-| App icon: the fridge with a sprout and a timer, in light, dark and tinted versions (sources in docs/design/icon-source) | 10 | Done (Sprig mascot art can follow later) |
+| App icon: the smiling fridge with a sprout, in light, dark and tinted versions (sources in docs/design/icon-source) | 10 | Done (Sprig mascot art can follow later) |
 | Recipe search (by dish or ingredient) and a fuller Home screen (shortcuts, This week strip, Tonight's idea) | 11 | Done |
-| Chinese language (Simplified), Chinese date scanning | 12 | Planned |
-| Release prep: privacy policy, privacy manifest, screenshots, App Store text, TestFlight | 13 | Planned |
+| Simplified Chinese: every screen, Chinese food names (emoji, recipe matching, search), Chinese dates on packs, camera permission text | 12 | Done (Chinese scanning needs a real-phone check) |
+| First-run welcome (3 short slides: Scan, Swipe, Remind) | 13 | Planned |
+| Release prep: privacy policy, privacy manifest, screenshots (English and Chinese), App Store text (English and Chinese), TestFlight | 14 | Planned |
 | Tip jar | Later | Planned |
 | "Thyme Left Plus" (iCloud sync, family sharing, widgets, themes) | Later | Idea |
 | Barcode lookup | Later | Idea |
@@ -46,6 +47,13 @@ People who throw away groceries because they forgot the date, and want an easy a
 - Money is an estimate (items used this month x an average value you choose in Me, in your own currency) and can be turned off.
 - Privacy: history is only names and dates, kept on the phone.
 - Selling point: "See the food you've rescued, not just the food you've lost."
+
+## Languages
+- English and Simplified Chinese (简体中文). The app follows the phone's language; iOS also lets people pick a language for just this app.
+- Chinese food names are understood (about 170 common foods): emoji, recipe matching and search all work with "牛奶", "鸡蛋", "三文鱼" and so on.
+- Chinese dates on packs are scanned: `保质期至2027年11月5日`, `请在2027年3月8日前食用`; production dates (`生产日期`) are ignored.
+- **Honest limits for the website and App Store text:** recipe names and steps come from TheMealDB and stay in English; unusual foods (e.g. 榴莲) get the plate emoji and are not matched to recipes.
+- To add a language later: translate `Localizable.xcstrings` and `InfoPlist.xcstrings`, then run `scripts/check_localization.py`.
 
 ## Price and date type (how they behave)
 - Optional price per item; "Saved from the bin" adds the real prices of items you used, falling back to your average value for items without one.

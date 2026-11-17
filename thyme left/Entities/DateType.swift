@@ -9,8 +9,8 @@ enum DateType: String, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .bestBefore: return "Best before"
-        case .useBy: return "Use by"
+        case .bestBefore: return String(localized: "Best before")
+        case .useBy: return String(localized: "Use by")
         }
     }
 }

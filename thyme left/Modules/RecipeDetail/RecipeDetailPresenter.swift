@@ -23,11 +23,11 @@ final class RecipeDetailPresenter: RecipeDetailPresenterProtocol {
             title: recipe.name,
             subtitle: [recipe.category, recipe.area].compactMap { $0 }.joined(separator: " · ").nilIfEmpty,
             imageURL: recipe.imageURL,
-            haveSummary: total == 0 ? "No ingredient list available" : "You have \(have) of \(total) ingredients",
+            haveSummary: total == 0 ? String(localized: "No ingredient list available") : String(localized: "You have \(have) of \(total) ingredients"),
             ingredients: match.ingredientAvailability.map(row(for:)),
             steps: Self.steps(from: recipe.instructions),
-            sourceButtonTitle: recipe.sourceURL == nil ? nil : "Open the original recipe",
-            videoButtonTitle: recipe.videoURL == nil ? nil : "Watch the video"))
+            sourceButtonTitle: recipe.sourceURL == nil ? nil : String(localized: "Open the original recipe"),
+            videoButtonTitle: recipe.videoURL == nil ? nil : String(localized: "Watch the video")))
     }
 
     func didTapSource() {
@@ -42,10 +42,10 @@ final class RecipeDetailPresenter: RecipeDetailPresenterProtocol {
 
     private func row(for item: RecipeMatch.IngredientAvailability) -> RecipeDetailViewModel.IngredientRow {
         let measure = item.ingredient.measure.isEmpty ? "" : " - \(item.ingredient.measure)"
-        let name = item.ingredient.name
+        let name = FoodNameTranslator.shared.displayName(forIngredient: item.ingredient.name)
         return .init(text: name + measure,
                      have: item.have,
-                     accessibilityText: "\(name)\(measure), " + (item.have ? "you have it" : "you need to get this"))
+                     accessibilityText: "\(name)\(measure), " + (item.have ? String(localized: "you have it") : String(localized: "you need to get this")))
     }
 
     /// Splits the instructions into steps, dropping lines like "STEP 2" or "3." that only label a step.

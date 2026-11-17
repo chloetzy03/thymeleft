@@ -159,10 +159,10 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
             button.addAction(UIAction { _ in action() }, for: .touchUpInside)
             return button
         }
-        let scan = button(title: "Scan a date", symbol: "viewfinder", label: "Scan a date") { [weak self] in
+        let scan = button(title: String(localized: "Scan a date"), symbol: "viewfinder", label: String(localized: "Scan a date")) { [weak self] in
             self?.presenter?.didTapScan()
         }
-        let add = button(title: "Add item", symbol: "plus.circle", label: "Add an item") { [weak self] in
+        let add = button(title: String(localized: "Add item"), symbol: "plus.circle", label: String(localized: "Add an item")) { [weak self] in
             self?.presenter?.didTapAdd()
         }
         let row = UIStackView(arrangedSubviews: [scan, add])
@@ -176,7 +176,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         weekCard.layer.cornerRadius = 20
         weekCard.isAccessibilityElement = true
         weekCard.accessibilityTraits = .button
-        weekCard.accessibilityHint = "Opens your pantry"
+        weekCard.accessibilityHint = String(localized: "Opens your pantry")
         weekCard.addAction(UIAction { [weak self] _ in self?.presenter?.didTapWeek() }, for: .touchUpInside)
 
         weekTitleLabel.font = Theme.Typography.itemName.font
@@ -214,7 +214,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         ideaCard.layer.cornerRadius = 20
         ideaCard.isAccessibilityElement = true
         ideaCard.accessibilityTraits = .button
-        ideaCard.accessibilityHint = "Opens recipe ideas"
+        ideaCard.accessibilityHint = String(localized: "Opens recipe ideas")
         ideaCard.addAction(UIAction { [weak self] _ in self?.presenter?.didTapIdea() }, for: .touchUpInside)
 
         ideaCaptionLabel.font = Theme.Typography.pill.font
@@ -307,7 +307,7 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
     }
 
     private func buildLayout() {
-        logoLabel.text = "thyme left."
+        logoLabel.text = String(localized: "thyme left.")
         logoLabel.font = Theme.Typography.logo.font
         logoLabel.textColor = Theme.Colors.brand
         logoLabel.adjustsFontForContentSizeCategory = true
@@ -374,8 +374,8 @@ final class HomeViewController: UIViewController, HomeViewProtocol {
         cookConfig.contentInsets = NSDirectionalEdgeInsets(top: 18, leading: 16, bottom: 18, trailing: 16)
         cookButton.configuration = cookConfig
         cookButton.addAction(UIAction { [weak self] _ in self?.presenter?.didTapCook() }, for: .touchUpInside)
-        cookButton.accessibilityLabel = "What can I cook?"
-        cookButton.accessibilityHint = "Opens recipe ideas using your food"
+        cookButton.accessibilityLabel = String(localized: "What can I cook?")
+        cookButton.accessibilityHint = String(localized: "Opens recipe ideas using your food")
 
         // Saved-from-the-bin card
         savedCard.backgroundColor = Theme.Colors.card

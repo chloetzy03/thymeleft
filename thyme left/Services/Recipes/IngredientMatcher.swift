@@ -22,7 +22,8 @@ struct IngredientMatcher {
 
     /// "Frozen Peas" -> ["pea"]
     static func tokens(_ text: String) -> [String] {
-        text.lowercased()
+        // Chinese food names ("牛奶") are first turned into English ("milk") so they can be compared.
+        FoodNameTranslator.shared.english(for: text).lowercased()
             .components(separatedBy: CharacterSet.letters.inverted)
             .filter { !$0.isEmpty && !ignoredWords.contains($0) }
             .map(singular)
