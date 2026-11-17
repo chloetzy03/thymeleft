@@ -68,7 +68,8 @@ final class RootTabBarController: UITabBarController {
             settingsStore: container.settingsStore,
             reminders: container.reminders,
             dateFormatter: container.dateFormatter,
-            dateProvider: container.dateProvider)
+            dateProvider: container.dateProvider,
+            showWelcome: { [weak self] in self?.showWelcome(animated: true) })
 
         viewControllers = [
             makeTab(title: String(localized: "Home"), symbol: "house",
@@ -97,6 +98,22 @@ final class RootTabBarController: UITabBarController {
             self.refreshIcons()
             self.styleTabBar() // label colours are fixed when set, so repaint them too
         }
+    }
+
+    private var hasCheckedWelcome = false
+
+    /// The very first time the app opens, a short welcome tour covers the screen.
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard !hasCheckedWelcome else { return }
+        hasCheckedWelcome = true
+        if !container.welcomeStore.hasSeenWelcome { showWelcome(animated: false) }
+    }
+
+    private func showWelcome(animated: Bool) {
+        guard presentedViewController == nil else { return }
+        present(WelcomeBuilder.build(store: container.welcomeStore, reminders: container.reminders),
+                animated: animated)
     }
 
     /// `result` is a scanned date and photo to fill the form with, or nil for an empty form.

@@ -86,6 +86,10 @@ final class SettingsPresenter: SettingsPresenterProtocol, SettingsInteractorOutp
         router.openSystemSettings()
     }
 
+    func didTapShowWelcome() {
+        router.showWelcome()
+    }
+
     // MARK: Things the Interactor tells us
 
     func didLoad(settings: AppSettings, permission: NotificationPermission) {

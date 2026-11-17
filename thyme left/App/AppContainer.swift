@@ -22,6 +22,7 @@ final class AppContainer {
     let imageLoader: RemoteImageLoading
     let dateProvider: DateProviding
     let foodIconProvider: FoodIconProviding
+    let welcomeStore: WelcomeStore
 
     /// Kept so the database stays open for as long as the app runs.
     private let modelContainer: ModelContainer?
@@ -59,6 +60,11 @@ final class AppContainer {
                 outcomes = InMemoryOutcomeRepository()
             }
         }
+        // The welcome tour is remembered on the phone. UI tests skip it unless they ask for it
+        // with `-uiTestingShowWelcome`.
+        welcomeStore = isUITesting
+            ? InMemoryWelcomeStore(hasSeenWelcome: !arguments.contains("-uiTestingShowWelcome"))
+            : UserDefaultsWelcomeStore()
         modelContainer = container
         pantryRepository = repository
         outcomeRepository = outcomes

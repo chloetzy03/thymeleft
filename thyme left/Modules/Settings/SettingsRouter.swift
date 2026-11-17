@@ -4,6 +4,14 @@ import UIKit
 @MainActor
 final class SettingsRouter: SettingsRouterProtocol {
 
+    private let onShowWelcome: () -> Void
+
+    init(showWelcome: @escaping () -> Void = {}) {
+        self.onShowWelcome = showWelcome
+    }
+
+    func showWelcome() { onShowWelcome() }
+
     func openSystemSettings() {
         // Jumps to this app's page in the iPhone's Settings app.
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
@@ -18,9 +26,10 @@ enum SettingsBuilder {
     static func build(settingsStore: SettingsStore,
                       reminders: ReminderServicing,
                       dateFormatter: ExpiryDateFormatter,
-                      dateProvider: DateProviding) -> UIViewController {
+                      dateProvider: DateProviding,
+                      showWelcome: @escaping () -> Void = {}) -> UIViewController {
         let view = SettingsViewController()
-        let router = SettingsRouter()
+        let router = SettingsRouter(showWelcome: showWelcome)
         let interactor = SettingsInteractor(settingsStore: settingsStore, reminders: reminders)
         let presenter = SettingsPresenter(view: view, interactor: interactor, router: router,
                                           dateFormatter: dateFormatter, dateProvider: dateProvider)
