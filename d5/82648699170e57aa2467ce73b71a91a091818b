@@ -1,0 +1,29 @@
+docs/design/icon-source/icon-light.svg
+  s_7ae13adebac50a::t_b20f2896e27818 1
+docs/design/icon-source/icon-dark.svg
+  s_7ae13adebac50a::t_b20f2896e27818 1
+docs/design/icon-source/icon-tinted.svg
+  s_7ae13adebac50a::t_b20f2896e27818 1
+"thyme left/Assets.xcassets/AppIcon.appiconset/Contents.json"
+  s_7ae13adebac50a::t_4b9a9d93d39ad2 4,16,28
+LEARNING_LOG.md
+  s_7ae13adebac50a::t_52194a69146a55 623-645
+docs/PRODUCT_NOTES.md
+  s_7ae13adebac50a::t_bde57773511700 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d582648699170e57aa2467ce73b71a91a091818b",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
