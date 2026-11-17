@@ -35,7 +35,8 @@ struct EmojiFoodIconProvider: FoodIconProviding {
     ]
 
     func emoji(for foodName: String) -> String {
-        let lowered = foodName.lowercased()
+        // "牛奶" is understood as "milk" first, so Chinese names get the right emoji too.
+        let lowered = FoodNameTranslator.shared.english(for: foodName).lowercased()
         return table.first { lowered.contains($0.keyword) }?.emoji ?? Self.fallback
     }
 }
