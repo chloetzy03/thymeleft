@@ -1,0 +1,83 @@
+"thyme left.xcodeproj/project.pbxproj"
+  s_7ae13adebac50a::t_550d5a18769151 208
+  s_7ae13adebac50a::t_8c988744ee2811 307,338
+"thyme left/Modules/RecipeDetail/View/RecipeDetailViewController.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 45,48,59
+"thyme left/Modules/Recipes/View/RecipesViewController.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 31,92,122,148,170
+"thyme left/Modules/Recipes/RecipesContracts.swift"
+  s_7ae13adebac50a::t_551aa4403946f3 11-12
+"thyme left/Modules/AddEditItem/View/AddEditItemViewController.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 130,134,138,143,167-168,170-171,212-213,215,218,225-226,289-290,293,300,327,338,344,350,364,377,404,408,437-438,440,443-444,446
+"thyme left/Modules/Scanner/ScannerPresenter.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 80,97,105,111-114
+"thyme left/Modules/PantryList/View/PantryListViewController.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 29,34,82-83
+  s_7ae13adebac50a::t_a4bfd3b14b097b 179-181
+"thyme left/Entities/Recipe.swift"
+  s_7ae13adebac50a::t_9cecae49749199 35-36
+"thyme left/Common/ExpiryTextFormatter.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 10-13,16,25-28,36,46-49,52-54,62-65
+"thyme left/Modules/Home/HomePresenter.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 50,53-55,58,73-75,80,82-84,108,116-118,121-122,124-126,131-135,140,142-144
+  s_7ae13adebac50a::t_30740ab1e96626 130
+"thyme left/Modules/AddEditItem/AddEditItemPresenter.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 13-16,93-94,181,225,227,230,232,237,245,276-277
+"thyme left/App/RootTabBarController.swift"
+  s_7ae13adebac50a::t_57a22e337b2721 74,78,81,83,85
+"thyme left/Modules/Settings/SettingsPresenter.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 118,121,130-132,139
+"thyme left/Localizable.xcstrings"
+  s_7ae13adebac50a::t_ccbf1275a32c45 1-2415
+"thyme left/Modules/Recipes/RecipesPresenter.swift"
+  s_7ae13adebac50a::t_30740ab1e96626 119,208,221,234-235
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 103,120,129,132-133,142-143,153-154,157-158,166-167,174-176,184-186,188-190,207,229
+  s_7ae13adebac50a::t_551aa4403946f3 215,226,228
+"thyme left/Modules/Recipes/View/RecipeCell.swift"
+  s_7ae13adebac50a::t_551aa4403946f3 39
+"thyme left/Entities/DateType.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 12-13
+"thyme left/Modules/Settings/View/SettingsViewController.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 29,139,148,155,160,162-165,167,187,210-211,215-216,220-221,223-228
+"thyme left/Services/ReminderPlanner.swift"
+  s_7ae13adebac50a::t_a4bfd3b14b097b 55
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 56
+"thyme left/Modules/Scanner/View/ScannerViewController.swift"
+  s_7ae13adebac50a::t_9cecae49749199 347,350
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 54,96-97,109,121,175,186,232-233,235,287-288,290,321-324
+  s_7ae13adebac50a::t_2728aded1e20bb 136,159-163
+  s_7ae13adebac50a::t_d45e4107608ece 164-165
+"thyme left/Entities/StorageLocation.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 10-13
+"thyme left/Entities/AppSettings.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 12-15
+"thyme left/Modules/PantryList/PantryListPresenter.swift"
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 83-84,93,99,106,123-125,129-130
+  s_7ae13adebac50a::t_a4bfd3b14b097b 115
+"thyme left/Modules/Recipes/RecipesInteractor.swift"
+  s_7ae13adebac50a::t_7e1d7f5511e606 73-74,78,84
+"thyme left/Modules/Home/View/HomeViewController.swift"
+  s_7ae13adebac50a::t_9cecae49749199 162,165
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 179,217,310,377-378
+"thyme left/InfoPlist.xcstrings"
+  s_7ae13adebac50a::t_ccbf1275a32c45 1-17
+"thyme left/Modules/RecipeDetail/RecipeDetailPresenter.swift"
+  s_7ae13adebac50a::t_30740ab1e96626 45
+  s_7ae13adebac50a::t_a9b5fcd9bcb9ac 26,29-30,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "95e4f3c45263e0b585ea1bd8195de1531a835606",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
