@@ -1,0 +1,24 @@
+"thyme leftUITests/ChineseFlowUITests.swift"
+  s_7ae13adebac50a::t_3a96fec30cf5f9 1-75
+"thyme leftTests/ChineseSupportTests.swift"
+  s_7ae13adebac50a::t_077a81d23b4195 164,199
+  s_7ae13adebac50a::t_fbc97939fd21aa 1-163,165-198,200-204
+scripts/check_localization.py
+  s_7ae13adebac50a::t_e47eb25e0786b5 1-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fb8ed7f5cad80e5e6ad3f51d59a436c8ced9a9eb",
+  "prompts": {},
+  "sessions": {
+    "s_7ae13adebac50a": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "6164b6fc-bb97-4cef-9f3f-b0f2e486d26b",
+        "model": "unknown"
+      },
+      "human_author": "chloe <chloetzy03@gmail.com>"
+    }
+  }
+}
